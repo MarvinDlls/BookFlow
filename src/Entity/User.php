@@ -71,9 +71,25 @@ class User
 
     public function __construct()
     {
+        $this->is_terms = false;
+        $this->is_gpdr = false;
+        $this->is_verified = false;
         $this->notifications = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->userHistories = new ArrayCollection();
+    }
+
+    #[ORM\PrePersist]
+    public function setCreatedAtValue()
+    {
+        $this->created_at = new \DateTimeImmutable();
+        $this->updated_at = new \DateTimeImmutable();
+    }
+
+    #[ORM\PreUpdate]
+    public function setUpdatedAtValue()
+    {
+        $this->updated_at = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
