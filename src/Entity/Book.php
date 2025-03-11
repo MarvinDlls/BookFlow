@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\BookRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -40,6 +42,31 @@ class Book
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
+
+    /**
+     * @var Collection<int, Reservation>
+     */
+    #[ORM\OneToMany(targetEntity: Reservation::class, mappedBy: 'book')]
+    private Collection $reservations;
+
+    /**
+     * @var Collection<int, UserHistory>
+     */
+    #[ORM\OneToMany(targetEntity: UserHistory::class, mappedBy: 'book')]
+    private Collection $userHistories;
+
+    /**
+     * @var Collection<int, Tag>
+     */
+    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'book')]
+    private Collection $tags;
+
+    public function __construct()
+    {
+        $this->reservations = new ArrayCollection();
+        $this->userHistories = new ArrayCollection();
+        $this->tags = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -150,6 +177,93 @@ class Book
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Reservation>
+     */
+    public function getReservations(): Collection
+    {
+        return $this->reservations;
+    }
+
+    public function addReservation(Reservation $reservation): static
+    {
+        if (!$this->reservations->contains($reservation)) {
+            $this->reservations->add($reservation);
+            $reservation->setBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReservation(Reservation $reservation): static
+    {
+        if ($this->reservations->removeElement($reservation)) {
+            // set the owning side to null (unless already changed)
+            if ($reservation->getBook() === $this) {
+                $reservation->setBook(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, UserHistory>
+     */
+    public function getUserHistories(): Collection
+    {
+        return $this->userHistories;
+    }
+
+    public function addUserHistory(UserHistory $userHistory): static
+    {
+        if (!$this->userHistories->contains($userHistory)) {
+            $this->userHistories->add($userHistory);
+            $userHistory->setBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeUserHistory(UserHistory $userHistory): static
+    {
+        if ($this->userHistories->removeElement($userHistory)) {
+            // set the owning side to null (unless already changed)
+            if ($userHistory->getBook() === $this) {
+                $userHistory->setBook(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tag>
+     */
+    public function getTags(): Collection
+    {
+        return $this->tags;
+    }
+
+    public function addTag(Tag $tag): static
+    {
+        if (!$this->tags->contains($tag)) {
+            $this->tags->add($tag);
+            $tag->addBook($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): static
+    {
+        if ($this->tags->removeElement($tag)) {
+            $tag->removeBook($this);
+        }
 
         return $this;
     }
