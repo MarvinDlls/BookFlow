@@ -22,14 +22,19 @@ final class BookController extends AbstractController
         $this->logger = $logger;
     }
 
-    #[Route('/books', name: 'app_books_list', methods: ['GET'])]
-    public function index(): Response
+    #[Route('/', name: 'app_books_list', methods: ['GET'])]
+    public function index(Request $request): Response
     {
         try {
-            $books = $this->googleApiService->fetchAllBooks();
+            // Récupérer les paramètres de pagination de la requête
+            $page = $request->query->getInt('page', 1);
+            $limit = $request->query->getInt('limit', 40);
+
+            // Utiliser la méthode avec pagination
+            $pagination = $this->googleApiService->fetchAllBooks($page, $limit);
 
             return $this->render('book/books.html.twig', [
-                'books' => $books,
+                'pagination' => $pagination,  // CHANGEMENT ICI: 'books' -> 'pagination'
                 'title' => 'Liste des livres'
             ]);
         } catch (\Exception $e) {
