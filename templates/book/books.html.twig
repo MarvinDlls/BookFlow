@@ -1,0 +1,124 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block body %}
+	<div class="container my-4">
+		<h1 class="mb-4">{{ title }}</h1>
+
+		{# Affichage des messages flash #}
+		{% for label, messages in app.flashes %}
+			{% for message in messages %}
+				<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+					{{ message }}
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+				</div>
+			{% endfor %}
+		{% endfor %}
+
+		{# Formulaire de recherche #}
+		<div class="mb-4">
+			<form action="{{ path('app_books_search') }}" method="get" class="d-flex">
+				<input type="text" name="q" class="form-control me-2" placeholder="Rechercher un livre...">
+				<button type="submit" class="btn btn-primary">Rechercher</button>
+			</form>
+		</div>
+
+		{% if pagination is defined %}
+			{# Version avec pagination #}
+			{% if pagination.items is empty %}
+				<div class="alert alert-info">
+					Aucun livre trouvé.
+				</div>
+			{% else %}
+				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+					{% for book in pagination %}
+						<div class="col">
+							<div class="card h-100">
+								{% if book.thumbnail %}
+									<img src="{{ book.thumbnail }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: contain; padding: 10px;">
+								{% else %}
+									<div class="text-center p-4 bg-light">
+										<i class="bi bi-book" style="font-size: 5rem;"></i>
+									</div>
+								{% endif %}
+								<div class="card-body">
+									<h5 class="card-title">{{ book.title }}</h5>
+									<h6 class="card-subtitle mb-2 text-muted">
+										{% if book.authors %}
+											{{ book.authors|join(', ') }}
+										{% else %}
+											Auteur inconnu
+										{% endif %}
+									</h6>
+									<p class="card-text">
+										{% if book.description|length > 100 %}
+											{{ book.description|slice(0, 100) }}...
+										{% else %}
+											{{ book.description }}
+										{% endif %}
+									</p>
+								</div>
+								<div class="card-footer">
+									<a href="{{ path('app_book_details', {'id': book.id}) }}" class="btn btn-sm btn-primary">Voir détails</a>
+									<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="btn btn-sm btn-primary">Aperçu</a>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+				
+				{# Navigation de pagination #}
+				<div class="d-flex justify-content-center mt-4">
+					{{ knp_pagination_render(pagination) }}
+				</div>
+			{% endif %}
+		{% else %}
+			{# Version avec books (ancienne version) #}
+			{% if books is empty %}
+				<div class="alert alert-info">
+					Aucun livre trouvé.
+				</div>
+			{% else %}
+				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+					{% for book in books %}
+						<div class="col">
+							<div class="card h-100">
+								{% if book.thumbnail %}
+									<img src="{{ book.thumbnail }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: contain; padding: 10px;">
+								{% else %}
+									<div class="text-center p-4 bg-light">
+										<i class="bi bi-book" style="font-size: 5rem;"></i>
+									</div>
+								{% endif %}
+								<div class="card-body">
+									<h5 class="card-title">{{ book.title }}</h5>
+									<h6 class="card-subtitle mb-2 text-muted">
+										{% if book.authors %}
+											{{ book.authors|join(', ') }}
+										{% else %}
+											Auteur inconnu
+										{% endif %}
+									</h6>
+									<p class="card-text">
+										{% if book.description|length > 100 %}
+											{{ book.description|slice(0, 100) }}...
+										{% else %}
+											{{ book.description }}
+										{% endif %}
+									</p>
+								</div>
+								<div class="card-footer">
+									<a href="{{ path('app_book_details', {'id': book.id}) }}" class="btn btn-sm btn-primary">Voir détails</a>
+									<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="btn btn-sm btn-primary">Aperçu</a>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+		{% endif %}
+	</div>
+{% endblock %}

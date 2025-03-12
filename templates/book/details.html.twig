@@ -1,0 +1,79 @@
+{# templates/book/details.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{{ path('app_books_list') }}">Livres</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ book.title }}</li>
+        </ol>
+    </nav>
+    
+    {# Affichage des messages flash #}
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    
+    <div class="card mb-4">
+        <div class="row g-0">
+            <div class="col-md-4 text-center">
+                {% if book.thumbnail %}
+                    <img src="{{ book.thumbnail }}" alt="{{ book.title }}" class="img-fluid p-4" style="max-height: 400px; object-fit: contain;">
+                {% else %}
+                    <div class="p-5 d-flex justify-content-center align-items-center bg-light" style="height: 100%;">
+                        <i class="bi bi-book" style="font-size: 8rem;"></i>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h1 class="card-title">{{ book.title }}</h1>
+                    
+                    {% if book.authors %}
+                        <h5 class="card-subtitle mb-3 text-muted">Par {{ book.authors|join(', ') }}</h5>
+                    {% endif %}
+                    
+                    {% if book.publishedDate %}
+                        <p class="card-text"><strong>Date de publication:</strong> {{ book.publishedDate }}</p>
+                    {% endif %}
+                    
+                    {% if book.publisher %}
+                        <p class="card-text"><strong>Éditeur:</strong> {{ book.publisher }}</p>
+                    {% endif %}
+                    
+                    {% if book.pageCount %}
+                        <p class="card-text"><strong>Nombre de pages:</strong> {{ book.pageCount }}</p>
+                    {% endif %}
+                    
+                    {% if book.categories %}
+                        <p class="card-text"><strong>Catégories:</strong> {{ book.categories|join(', ') }}</p>
+                    {% endif %}
+                    
+                    {% if book.language %}
+                        <p class="card-text"><strong>Langue:</strong> {{ book.language|upper }}</p>
+                    {% endif %}
+                    
+                    {% if book.description %}
+                        <div class="mt-4">
+                            <h5>Description</h5>
+                            <p class="card-text">{{ book.description|nl2br }}</p>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <a href="{{ path('app_book_preview', {'id': book.id}) }}" class="btn btn-sm btn-primary">Aperçu</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
