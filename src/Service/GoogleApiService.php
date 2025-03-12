@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
@@ -13,23 +14,40 @@ class GoogleApiService
     private HttpClientInterface $client;
     private LoggerInterface $logger;
     private string $apiBaseUrl = 'https://www.googleapis.com/books/v1/volumes';
+    private PaginatorInterface $paginator;
 
-    public function __construct(HttpClientInterface $client, LoggerInterface $logger)
+    public function __construct(HttpClientInterface $client, LoggerInterface $logger, PaginatorInterface $paginator)
     {
         $this->client = $client;
         $this->logger = $logger;
+        $this->paginator = $paginator;
     }
 
-    public function fetchAllBooks(int $maxResults = 40, int $startIndex = 0): array
-    {
-        $queryParams = [
-            'q' => '*', // Recherche tous les livres
-            'maxResults' => $maxResults,
-            'startIndex' => $startIndex
-        ];
+    public function fetchAllBooks(int $page = 1, int $limit = 40)
+{
+    // Calculer l'index de départ basé sur la page et la limite
+    $startIndex = ($page - 1) * $limit;
+    
+    $queryParams = [
+        'q' => '*', // Recherche tous les livres
+        'maxResults' => $limit,
+        'startIndex' => $startIndex
+    ];
 
-        return $this->fetchBooksFromApi($queryParams);
-    }
+    $books = $this->fetchBooksFromApi($queryParams);
+    
+    // Créer une collection de livres que KnpPaginator peut paginer
+    $booksCollection = new \Doctrine\Common\Collections\ArrayCollection($books);
+    
+    // Utiliser KnpPaginator pour créer un objet de pagination
+    $pagination = $this->paginator->paginate(
+        $booksCollection,
+        $page,
+        $limit
+    );
+    
+    return $pagination;
+}
 
     public function searchBooks(string $query, int $maxResults = 40): array
     {

@@ -69,9 +69,7 @@
                     {% endif %}
                     
                     <div class="mt-4">
-                        {% if book.previewLink %}
-                            <a href="{{ book.previewLink }}" target="_blank" class="btn btn-primary">Voir l'aperçu Google Books</a>
-                        {% endif %}
+                        <a href="{{ path('app_book_preview', {'id': book.id}) }}" class="btn btn-sm btn-primary">Aperçu</a>
                     </div>
                 </div>
             </div>
