@@ -1,0 +1,20 @@
+<div class="flex items-center space-x-4 mb-4">
+    <!-- Sélecteur de genre -->
+    <form method="GET" action="{{ path('app_books_list') }}" class="flex items-center space-x-2">
+        <label for="genre" class="text-gray-700 font-medium">Genre :</label>
+        <select name="genre" id="genre" class="px-4 py-2 border rounded-lg">
+            <option value="">Tous</option>
+            <option value="Science Fiction" {{ selectedGenre == 'Science Fiction' ? 'selected' : '' }}>Science Fiction</option>
+            <option value="Fantasy" {{ selectedGenre == 'Fantasy' ? 'selected' : '' }}>Fantasy</option>
+            <option value="Thriller" {{ selectedGenre == 'Thriller' ? 'selected' : '' }}>Thriller</option>
+            <option value="Romance" {{ selectedGenre == 'Romance' ? 'selected' : '' }}>Romance</option>
+        </select>
+
+        <!-- Bouton popularité -->
+        <label for="popular" class="text-gray-700 font-medium">Populaire :</label>
+        <input type="checkbox" name="popular" id="popular" class="toggle-checkbox" {{ sortByPopularity ? 'checked' : '' }}>
+
+        <!-- Bouton Appliquer -->
+        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg">Appliquer</button>
+    </form>
+</div>
