@@ -1,3 +1,9 @@
 body {
-    background-color: skyblue;
+    background-color: white;
+}
+
+.font-crimson {
+    font-family: 'Crimson Pro', serif;
+    font-weight: 600;
+    font-size: 2rem;
 }
