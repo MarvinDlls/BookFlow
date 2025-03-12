@@ -56,7 +56,7 @@ final class BookController extends AbstractController
         try {
             $books = $this->googleApiService->searchBooks($query);
 
-            return $this->render('book/search.html.twig', [
+            return $this->render('book/books.html.twig', [
                 'books' => $books,
                 'query' => $query,
                 'title' => 'Recherche: ' . $query
@@ -65,7 +65,7 @@ final class BookController extends AbstractController
             $this->logger->error('Erreur lors de la recherche de livres: ' . $e->getMessage());
             $this->addFlash('error', 'Une erreur est survenue lors de la recherche.');
 
-            return $this->render('book/search.html.twig', [
+            return $this->render('book/books.html.twig', [
                 'books' => [],
                 'query' => $query,
                 'title' => 'Recherche: ' . $query . ' - Erreur'
