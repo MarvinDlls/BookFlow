@@ -86,6 +86,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->is_gpdr = false;
         $this->is_verified = false;
         $this->image = 'default.jpg';
+        $this->roles = ['ROLE_USER'];
         $this->notifications = new ArrayCollection();
         $this->reservations = new ArrayCollection();
         $this->userHistories = new ArrayCollection();
