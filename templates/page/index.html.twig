@@ -161,5 +161,74 @@
         </div>
     </div>
 
-    
+    <div class="container mx-auto max-w-7xl">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-red-800 bg-clip-text text-transparent">
+                Auteurs Populaires du Mois
+            </h2>
+            <div class="h-1 w-20 bg-gradient-to-r from-red-500 to-red-800 mx-auto mb-6 rounded-full"></div>
+            <p class="text-gray-600 text-lg">
+                Découvrez les auteurs les plus appréciés par notre communauté de lecteurs ce mois-ci.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="group">
+                <div class="relative overflow-hidden rounded-xl mb-4">
+                    <img src="https://source.unsplash.com/500x750/?author,writer"
+                         alt="Auteur populaire"
+                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-gray-800">Jean Dupont</h3>
+                    <p class="text-red-600 font-medium">Auteur de "Les Rêves d'Aurore"</p>
+                    <p class="text-gray-600 mt-2">Un écrivain passionné, maître des récits immersifs et captivants.</p>
+                </div>
+            </div>
+            <div class="group">
+                <div class="relative overflow-hidden rounded-xl mb-4">
+                    <img src="https://source.unsplash.com/500x750/?writer,books"
+                         alt="Auteur populaire"
+                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-gray-800">Sophie Martin</h3>
+                    <p class="text-red-600 font-medium">Autrice de "L'Ombre des Mots"</p>
+                    <p class="text-gray-600 mt-2">Une plume poétique qui enchante les lecteurs avec ses histoires touchantes.</p>
+                </div>
+            </div>
+            <div class="group">
+                <div class="relative overflow-hidden rounded-xl mb-4">
+                    <img src="https://source.unsplash.com/500x750/?literature,author"
+                         alt="Auteur populaire"
+                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-gray-800">Marc Lemoine</h3>
+                    <p class="text-red-600 font-medium">Auteur de "L'Énigme du Temps"</p>
+                    <p class="text-gray-600 mt-2">Un expert du suspense et des intrigues palpitantes.</p>
+                </div>
+            </div>
+            <div class="group">
+                <div class="relative overflow-hidden rounded-xl mb-4">
+                    <img src="https://source.unsplash.com/500x750/?novel,storyteller"
+                         alt="Auteur populaire"
+                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-gray-800">Elena Rousseau</h3>
+                    <p class="text-red-600 font-medium">Autrice de "Les Murmures de la Lune"</p>
+                    <p class="text-gray-600 mt-2">Une conteuse qui fait voyager les esprits à travers ses récits envoûtants.</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-20 text-center">
+            <div class="inline-block bg-gradient-to-r from-red-500 to-red-800 p-px rounded-lg">
+                <a href="#"
+                   class="block bg-white hover:bg-gray-50 transition-colors duration-200 rounded-lg px-8 py-4 font-medium text-red-600">
+                    Découvrir plus d'auteurs <span class="ml-2">→</span>
+                </a>
+            </div>
+        </div>
+    </div>
 {% endblock %}
