@@ -23,33 +23,30 @@ class GoogleApiService
         $this->paginator = $paginator;
     }
 
-    public function fetchAllBooks(int $page = 1, int $limit = 40)
-{
-    // Calculer l'index de départ basé sur la page et la limite
-    $startIndex = ($page - 1) * $limit;
-    
-    $queryParams = [
-        'q' => '*', // Recherche tous les livres
-        'maxResults' => $limit,
-        'startIndex' => $startIndex
-    ];
+    public function fetchAllBooks(int $page = 1, int $limit = 40, ?string $genre = null, bool $sortByPopularity = false)
+    {
+        $startIndex = ($page - 1) * $limit;
 
-    $books = $this->fetchBooksFromApi($queryParams);
-    
-    // Créer une collection de livres que KnpPaginator peut paginer
-    $booksCollection = new \Doctrine\Common\Collections\ArrayCollection($books);
-    
-    // Utiliser KnpPaginator pour créer un objet de pagination
-    $pagination = $this->paginator->paginate(
-        $booksCollection,
-        $page,
-        $limit
-    );
-    
-    return $pagination;
-}
+        $queryParams = [
+            'q' => '*', // Recherche tous les livres
+            'maxResults' => $limit,
+            'startIndex' => $startIndex
+        ];
 
-    public function searchBooks(string $query, int $maxResults = 40): array
+        if ($genre) {
+            $queryParams['q'] .= "+subject:{$genre}";
+        }
+
+        $books = $this->fetchBooksFromApi($queryParams);
+
+        if ($sortByPopularity) {
+            usort($books, fn($a, $b) => ($b['ratingsCount'] ?? 0) - ($a['ratingsCount'] ?? 0));
+        }
+
+        return $this->paginator->paginate(new \Doctrine\Common\Collections\ArrayCollection($books), $page, $limit);
+    }
+
+    public function searchBooks(string $query, int $maxResults = 40, ?string $genre = null, bool $sortByPopularity = false): array
     {
         if (empty($query)) {
             return [];
@@ -60,7 +57,17 @@ class GoogleApiService
             'maxResults' => $maxResults
         ];
 
-        return $this->fetchBooksFromApi($queryParams);
+        if ($genre) {
+            $queryParams['q'] .= "+subject:{$genre}";
+        }
+
+        $books = $this->fetchBooksFromApi($queryParams);
+
+        if ($sortByPopularity) {
+            usort($books, fn($a, $b) => ($b['ratingsCount'] ?? 0) - ($a['ratingsCount'] ?? 0));
+        }
+
+        return $books;
     }
 
     public function getBookById(string $id): ?array
