@@ -3,24 +3,23 @@
 {% block title %}Erreur{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card border-danger">
-                    <div class="card-header bg-danger text-white">
-                        <h1 class="h4 mb-0">Une erreur est survenue</h1>
+    <div>
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <h1>Une erreur est survenue</h1>
                     </div>
-                    <div class="card-body">
-                        <div class="alert alert-danger mb-4">
+                    <div>
+                        <div>
                             {{ error }}
                         </div>
                         
-                        <div class="d-flex justify-content-between">
-                            <a href="{{ path('get_books_from_shelf', {'userId': app.request.attributes.get('userId'), 'shelfName': app.request.attributes.get('shelfName')}) }}" 
-                               class="btn btn-primary">
+                        <div>
+                            <a href="{{ path('get_books_from_shelf', {'userId': app.request.attributes.get('userId'), 'shelfName': app.request.attributes.get('shelfName')}) }}" >
                                 Retourner à l'étagère
                             </a>
-                            <button class="btn btn-outline-secondary" onclick="window.history.back()">
+                            <button onclick="window.history.back()">
                                 Retour
                             </button>
                         </div>
