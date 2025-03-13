@@ -23,31 +23,23 @@ class GoogleApiService
         $this->paginator = $paginator;
     }
 
-    public function fetchAllBooks(int $page = 1, int $limit = 40)
-{
-    // Calculer l'index de départ basé sur la page et la limite
-    $startIndex = ($page - 1) * $limit;
-    
-    $queryParams = [
-        'q' => '*', // Recherche tous les livres
-        'maxResults' => $limit,
-        'startIndex' => $startIndex
-    ];
 
-    $books = $this->fetchBooksFromApi($queryParams);
-    
-    // Créer une collection de livres que KnpPaginator peut paginer
-    $booksCollection = new \Doctrine\Common\Collections\ArrayCollection($books);
-    
-    // Utiliser KnpPaginator pour créer un objet de pagination
-    $pagination = $this->paginator->paginate(
-        $booksCollection,
-        $page,
-        $limit
-    );
-    
-    return $pagination;
-}
+
+    public function fetchAllBooks(int $page = 1, int $limit = 20): array
+    {
+        $startIndex = ($page - 1) * $limit;
+
+        $queryParams = [
+            'q' => '*', // Recherche tous les livres
+            'maxResults' => $limit,
+            'startIndex' => $startIndex
+        ];
+
+        // Récupération des livres depuis l'API Google Books
+        $books = $this->fetchBooksFromApi($queryParams);
+
+        return $books; // On retourne un simple tableau, sans pagination
+    }
 
     public function searchBooks(string $query, int $maxResults = 40): array
     {
