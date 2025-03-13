@@ -3,30 +3,30 @@
 {% block title %}Livres de l'étagère {{ shelfName }}{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
+    <div>
         <h1>Livres de l'étagère "{{ shelfName }}" pour l'utilisateur {{ userId }}</h1>
         
         {% if books is empty %}
-            <div class="alert alert-info">
+            <div>
                 Aucun livre trouvé sur cette étagère.
             </div>
         {% else %}
-            <div class="row">
+            <div>
                 {% for book in books %}
-                    <div class="col-md-4 mb-4">
-                        <div class="card h-100">
+                    <div>
+                        <div>
                             {% if book.volumeInfo.imageLinks is defined %}
-                                <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" class="card-img-top" alt="{{ book.volumeInfo.title }}">
+                                <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
                             {% else %}
-                                <div class="card-img-top bg-light text-center py-5">
-                                    <i class="fas fa-book fa-3x"></i>
+                                <div>
+                                    <i></i>
                                 </div>
                             {% endif %}
                             
-                            <div class="card-body">
-                                <h5 class="card-title">{{ book.volumeInfo.title }}</h5>
+                            <div>
+                                <h5>{{ book.volumeInfo.title }}</h5>
                                 {% if book.volumeInfo.authors is defined %}
-                                    <p class="card-text text-muted">
+                                    <p>
                                         {% for author in book.volumeInfo.authors %}
                                             {{ author }}{% if not loop.last %}, {% endif %}
                                         {% endfor %}
@@ -34,15 +34,15 @@
                                 {% endif %}
                                 
                                 {% if book.volumeInfo.description is defined %}
-                                    <p class="card-text">{{ book.volumeInfo.description|slice(0, 150) }}...</p>
+                                    <p>{{ book.volumeInfo.description|slice(0, 150) }}...</p>
                                 {% endif %}
                             </div>
                             
-                            <div class="card-footer">
+                            <div>
                                 <form action="{{ path('remove_book_from_shelf', {'userId': userId, 'shelfName': shelfName}) }}" method="post">
                                     <input type="hidden" name="volumeId" value="{{ book.id }}">
                                     <button type="submit" class="btn btn-danger btn-sm">
-                                        <i class="fas fa-trash-alt"></i> Retirer
+                                        <i></i> Retirer
                                     </button>
                                 </form>
                             </div>
@@ -115,6 +115,7 @@
     </div>
 {% endblock %}
 
+{# Ce script on le mettre dans le fichier book.js à la fin #}
 {% block javascripts %}
     {{ parent() }}
     <script>
