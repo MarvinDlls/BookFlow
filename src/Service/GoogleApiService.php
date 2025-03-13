@@ -19,12 +19,12 @@ class GoogleApiService
     
     private const SHELF_IDS = [
         'favorites' => 0,
-        'purchased' => 1, // corrigé l'orthographe de "purshased"
+        'purchased' => 1,
         'to_read' => 2,
         'reading' => 3,
         'read' => 4,
         'reviewed' => 5,
-        'recently_viewed' => 6, // ajouté underscore pour la cohérence
+        'recently_viewed' => 6, 
         'my_ebooks' => 7
     ];
 
