@@ -36,6 +36,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */
+
+    // Dans src/Repository/UserRepository.php
+    public function findByRole(string $role)
+    {
+        $qb = $this->createQueryBuilder('u');
+        $qb->where('JSON_CONTAINS(u.roles, :role) = 1')
+            ->setParameter('role', '"' . $role . '"');
+
+        return $qb->getQuery()->getResult();
+    }
+
     //    public function findByExampleField($value): array
     //    {
     //        return $this->createQueryBuilder('u')
