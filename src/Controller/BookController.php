@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\GoogleApiService;
+use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -22,19 +23,30 @@ final class BookController extends AbstractController
         $this->logger = $logger;
     }
 
-    #[Route('/', name: 'app_books_list', methods: ['GET'])]
-    public function index(Request $request): Response
+    #[Route('/books', name: 'app_books_list', methods: ['GET'])]
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
         try {
-            // Récupérer les paramètres de pagination de la requête
             $page = $request->query->getInt('page', 1);
             $limit = $request->query->getInt('limit', 40);
 
-            // Utiliser la méthode avec pagination
-            $pagination = $this->googleApiService->fetchAllBooks($page, $limit);
+            // Récupérer la liste des livres (sans pagination)
+            $books = $this->googleApiService->fetchAllBooks($page, $limit);
+
+            // Vérifier si des livres existent
+            if (empty($books)) {
+                $this->addFlash('warning', 'Aucun livre trouvé.');
+            }
+
+            // Appliquer la pagination avec KnpPaginator
+            $pagination = $paginator->paginate(
+                $books, // Doit être un tableau ou un QueryBuilder
+                $page,
+                $limit
+            );
 
             return $this->render('book/books.html.twig', [
-                'pagination' => $pagination,  // CHANGEMENT ICI: 'books' -> 'pagination'
+                'pagination' => $pagination,
                 'title' => 'Liste des livres'
             ]);
         } catch (\Exception $e) {
@@ -47,6 +59,8 @@ final class BookController extends AbstractController
             ]);
         }
     }
+
+
 
     #[Route('/books/search', name: 'app_books_search', methods: ['GET'])]
     public function search(Request $request): Response
