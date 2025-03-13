@@ -3,18 +3,232 @@
 {% block title %}Hello PageController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
+    <section class="bg-white">
+        <div class="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
+            <div class="mr-auto place-self-center lg:col-span-7">
+                <h1 class="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl">
+                    Accédez à votre bibliothèque numérique en un clic
+                </h1>
+                <p class="max-w-2xl mb-6 font-light text-gray-500 lg:mb-8 md:text-lg lg:text-xl">
+                    Explorez un vaste catalogue de livres numériques, empruntez facilement et profitez d’une lecture intuitive où que vous soyez avec BookFlow.
+                </p>
+                <a href="">
+                    <button class="relative inline-block p-px font-semibold leading-6 text-white no-underline bg-red-800 shadow-2xl cursor-pointer group rounded-xl shadow-zinc-900">
+                        <span class="absolute inset-0 overflow-hidden rounded-xl">
+                                        <span class="absolute inset-0 rounded-xl bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(255,255,255,0.7)_0%,rgba(255,255,255,0.2)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span>
+                        </span>
+                        <div class="relative z-10 flex items-center px-6 py-3 space-x-2 rounded-xl bg-red-850/50 ring-1 ring-white/10 ">
+                            <span>Commencer la lecture</span>
+                            {{ ux_icon('line-md:chevron-small-right',{ class: 'h-4 w-4 mr-2' }) }}
+                        </div>
+                        <span class="absolute -bottom-0 left-[1.125rem] h-px w-[calc(100%-2.25rem)] bg-gradient-to-r from-emerald-400/0 via-gray-400/90 to-emerald-400/0 transition-opacity duration-500 group-hover:opacity-40"></span>
+                    </button>
+                </a>
+            </div>
+            <div class="hidden lg:mt-0 lg:col-span-5 lg:flex">
+                <img src="medias/hand.svg"
+                     alt="Mockup BookFlow">
+            </div>
+        </div>
+    </section>
 
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <div class="font-sans bg-white">
+        <div class="flex flex-col items-center relative pt-20">
+            <!-- Texte de fond -->
+            <h1 class="absolute text-6xl md:text-9xl font-semibold text-gray-100 opacity-1">
+                POPULAIRES
+            </h1>
+            <div class="relative flex flex-col items-center mt-5 md:mt-10">
+                <!-- Texte principal -->
+                <h1 class="text-2xl md:text-4xl lg:text-6xl font-semibold text-gray-500">
+                    Découvrez les Livres les Plus Lus
+                </h1>
+                <!-- Bordure décorative -->
+                <div class="md:w-28 w-14 md:h-[4px] h-[2px] bg-red-700 mt-2"></div>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-wrap justify-end mx-auto md:flex-nowrap mt-6 px-20 py-12">
+        <div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
+            <a  href=""
+                    class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
+                    style="background-image: url('https://picsum.photos/600/1500');">
+                <div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
+                    <div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
+                        <p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
+                            Immerse yourself in a seamless experience where every touchpoint anticipates your needs.
+                            Description one. </p>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
+            <article
+                    class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
+                    style="background-image: url('https://i.pinimg.com/564x/34/65/b8/3465b890b11571e2c876ae74dc1b3139.jpg');">
+                <div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
+                    <div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
+                        <p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
+                            Engage with a platform where interaction is intuitive, ensuring your journey is fluid
+                            and responsive. Description two. </p>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
+            <article
+                    class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
+                    style="background-image: url('https://i.pinimg.com/564x/33/d6/54/33d654e8058fdf69e160dcbd2235cdac.jpg');">
+                <div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
+                    <div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
+                        <p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
+                            Discover our commitment to thoughtful design, prioritizing accessibility and user
+                            satisfaction. Description three. </p>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
+            <article
+                    class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
+                    style="background-image: url('https://i.pinimg.com/564x/39/b8/01/39b801afe355e623bcb3928b1c1b046d.jpg');">
+                <div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
+                    <div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
+                        <p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
+                            Experience innovation at every step, with forward-thinking solutions designed to enhance
+                            your daily interactions. Description four. </p>
+                    </div>
+                </div>
+            </article>
+        </div>
+        <div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
+            <article
+                    class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
+                    style="background-image: url('https://i.pinimg.com/564x/2b/b5/48/2bb548dbf4a4c57381a7b7f736b4930b.jpg');">
+                <div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
+                    <div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
+                        <p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
+                            Join us in embracing sustainability, where design and functionality meet eco-conscious
+                            decisions. Description five. </p>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </div>
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/Users/ni/Docs/CODE/CDA/PHP/BookFlow/src/Controller/PageController.php</code></li>
-        <li>Your template at <code>/Users/ni/Docs/CODE/CDA/PHP/BookFlow/templates/page/index.html.twig</code></li>
-    </ul>
-</div>
+
+    <div class="w-full m-auto flex items-center justify-cetner py-20">
+        <div class="w-full flex flex-col justify-center items-center py-20  sm:px-4 px-2">
+            <div class="lg:w-[90%] w-full mx-auto flex flex-col lg:gap-6 lg:flex-row items-center justify-center ">
+                <div class="relative">
+                    <img class="absolute z-20 lg:left-[2rem] -top-4 left-[1rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full"
+                         src="https://images.unsplash.com/photo-1496483648148-47c686dc86a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw3fHxmbG93ZXJ8ZW58MHwwfHx8MTcyMDk0OTQ2MHww&ixlib=rb-4.0.3&q=80&w=1080"
+                         alt="Side Image"/>
+                    <img class="absolute z-20 lg:top-[12rem] sm:top-[11rem] top-[5rem] sm:-left-[3rem] -left-[2rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full"
+                         src="https://images.unsplash.com/photo-1558281033-19cead6981dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxMHx8Zmxvd2VyfGVufDB8MHx8fDE3MjA5NDk0NjB8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                         alt="Side Image 2"/>
+                    <img class="absolute z-20 lg:top-[23rem] sm:top-[20.5rem] top-[10.5rem] left-[2rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full"
+                         src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxmbG93ZXJ8ZW58MHwwfHx8MTcyMDk0OTQ2MHww&ixlib=rb-4.0.3&q=80&w=1080"
+                         alt="Side Image 3"/>
+                    <img
+                            class="rounded-full relative object-cover right-0 lg:w-[30rem] lg:h-[30rem] sm:w-[25rem] sm:h-[25rem] w-[12rem] h-[12rem] outline sm:outline-offset-[.77em] outline-offset-[.37em] outline-red-700"
+                            src="https://images.unsplash.com/photo-1507290439931-a861b5a38200?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxM3x8Zmxvd2VyfGVufDB8MHx8fDE3MjA5NDk0NjB8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                            alt="About us"/>
+                </div>
+                <div class="lg:w-[60%] p-4 w-full h-full shadow-xl shadow-red-700/40 flex flex-col justify-center items-center sm:px-6 px-4 rounded-xl">
+                    <h2 class="text-4xl text-center text-red-800 dark:text-red-700 font-bold px-4 py-1 md:mt-0 mt-10">
+                        À Propos de BookFlow
+                    </h2>
+                    <p class="md:text-3xl text-2xl text-center text-gray-800 font-bold my-5">
+                        Votre Bibliothèque Numérique, Simplifiée.
+                    </p>
+                    <p class="md:text-xl sm:text-lg text-base mt-2 text-justify sm:px-2">
+                        BookFlow est une plateforme innovante qui vous permet d’accéder à une bibliothèque numérique riche et variée.
+                        Que vous soyez passionné de littérature, étudiant ou chercheur, BookFlow vous offre un moyen simple et efficace
+                        d’explorer, d’emprunter et de gérer vos lectures en ligne.
+                        <br><br>
+                        Grâce à une interface intuitive, vous pouvez rechercher vos livres préférés par auteur, genre ou popularité,
+                        et les lire en toute simplicité. Les administrateurs ont également à disposition un tableau de bord complet
+                        pour gérer les utilisateurs et superviser les emprunts.
+                        <br><br>
+                        Plongez dans un monde de connaissances avec BookFlow et laissez-vous emporter par la magie de la lecture numérique !
+                    </p>
+                    <button class="lg:mt-10 mt-6 lg:px-6 px-4 lg:py-4 py-2 bg-red-800 rounded-sm lg:text-xl text-lg text-white font-semibold">
+                        Découvrir BookFlow
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto max-w-7xl">
+        <div class="text-center max-w-3xl mx-auto mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-red-500 to-red-800 bg-clip-text text-transparent">
+                Auteurs Populaires du Mois
+            </h2>
+            <div class="h-1 w-20 bg-gradient-to-r from-red-500 to-red-800 mx-auto mb-6 rounded-full"></div>
+            <p class="text-gray-600 text-lg">
+                Découvrez les auteurs les plus appréciés par notre communauté de lecteurs ce mois-ci.
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="group">
+                <div class="relative overflow-hidden rounded-xl mb-4">
+                    <img src="https://source.unsplash.com/500x750/?author,writer"
+                         alt="Auteur populaire"
+                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-gray-800">Jean Dupont</h3>
+                    <p class="text-red-600 font-medium">Auteur de "Les Rêves d'Aurore"</p>
+                    <p class="text-gray-600 mt-2">Un écrivain passionné, maître des récits immersifs et captivants.</p>
+                </div>
+            </div>
+            <div class="group">
+                <div class="relative overflow-hidden rounded-xl mb-4">
+                    <img src="https://source.unsplash.com/500x750/?writer,books"
+                         alt="Auteur populaire"
+                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-gray-800">Sophie Martin</h3>
+                    <p class="text-red-600 font-medium">Autrice de "L'Ombre des Mots"</p>
+                    <p class="text-gray-600 mt-2">Une plume poétique qui enchante les lecteurs avec ses histoires touchantes.</p>
+                </div>
+            </div>
+            <div class="group">
+                <div class="relative overflow-hidden rounded-xl mb-4">
+                    <img src="https://source.unsplash.com/500x750/?literature,author"
+                         alt="Auteur populaire"
+                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-gray-800">Marc Lemoine</h3>
+                    <p class="text-red-600 font-medium">Auteur de "L'Énigme du Temps"</p>
+                    <p class="text-gray-600 mt-2">Un expert du suspense et des intrigues palpitantes.</p>
+                </div>
+            </div>
+            <div class="group">
+                <div class="relative overflow-hidden rounded-xl mb-4">
+                    <img src="https://source.unsplash.com/500x750/?novel,storyteller"
+                         alt="Auteur populaire"
+                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                </div>
+                <div class="text-center">
+                    <h3 class="text-xl font-bold text-gray-800">Elena Rousseau</h3>
+                    <p class="text-red-600 font-medium">Autrice de "Les Murmures de la Lune"</p>
+                    <p class="text-gray-600 mt-2">Une conteuse qui fait voyager les esprits à travers ses récits envoûtants.</p>
+                </div>
+            </div>
+        </div>
+        <div class="mt-20 text-center">
+            <div class="inline-block bg-gradient-to-r from-red-500 to-red-800 p-px rounded-lg">
+                <a href="#"
+                   class="block bg-white hover:bg-gray-50 transition-colors duration-200 rounded-lg px-8 py-4 font-medium text-red-600">
+                    Découvrir plus d'auteurs <span class="ml-2">→</span>
+                </a>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -2,80 +2,161 @@
 
 namespace App\Controller;
 
-use App\Entity\Book;
-use App\Form\BookType;
-use App\Repository\BookRepository;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\GoogleApiService;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-#[Route('/book')]
 final class BookController extends AbstractController
 {
-    #[Route(name: 'app_book_index', methods: ['GET'])]
-    public function index(BookRepository $bookRepository): Response
+    private GoogleApiService $googleApiService;
+    private LoggerInterface $logger;
+
+    public function __construct(GoogleApiService $googleApiService, LoggerInterface $logger)
     {
-        return $this->render('book/index.html.twig', [
-            'books' => $bookRepository->findAll(),
-        ]);
+        $this->googleApiService = $googleApiService;
+        $this->logger = $logger;
     }
 
-    #[Route('/new', name: 'app_book_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    #[Route('/books', name: 'app_books_list', methods: ['GET'])]
+    public function index(Request $request): Response
     {
-        $book = new Book();
-        $form = $this->createForm(BookType::class, $book);
-        $form->handleRequest($request);
+        try {
+            $page = $request->query->getInt('page', 1);
+            $limit = $request->query->getInt('limit', 40);
+            $genre = $request->query->get('genre'); // Filtre par genre
+            $sortByPopularity = $request->query->getBoolean('popular', false); // Tri par popularité
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($book);
-            $entityManager->flush();
+            $pagination = $this->googleApiService->fetchAllBooks($page, $limit, $genre, $sortByPopularity);
 
-            return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
+            return $this->render('book/books.html.twig', [
+                'pagination' => $pagination,
+                'title' => 'Liste des livres',
+                'selectedGenre' => $genre,
+                'sortByPopularity' => $sortByPopularity
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->error('Erreur lors de la récupération des livres: ' . $e->getMessage());
+            $this->addFlash('error', 'Une erreur est survenue lors de la récupération des livres.');
+
+            return $this->render('book/index.html.twig', [
+                'books' => [],
+                'title' => 'Liste des livres - Erreur'
+            ]);
+        }
+    }
+
+    #[Route('/books/search', name: 'app_books_search', methods: ['GET'])]
+    public function search(Request $request): Response
+    {
+        $query = trim($request->query->get('q', ''));
+        $genre = $request->query->get('genre'); // Ajout du genre
+        $sortByPopularity = $request->query->getBoolean('popular', false); // Ajout du tri
+
+        if ($query === '') {
+            $this->addFlash('warning', 'Veuillez entrer un mot-clé pour rechercher un livre.');
+            return $this->redirectToRoute('app_books_list');
         }
 
-        return $this->render('book/new.html.twig', [
-            'book' => $book,
-            'form' => $form,
-        ]);
+        try {
+            $books = $this->googleApiService->searchBooks($query, 40, $genre, $sortByPopularity);
+
+            return $this->render('book/books.html.twig', [
+                'books' => $books,
+                'query' => $query,
+                'title' => 'Recherche: ' . $query,
+                'selectedGenre' => $genre,
+                'sortByPopularity' => $sortByPopularity
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->error('Erreur lors de la recherche de livres: ' . $e->getMessage());
+            $this->addFlash('error', 'Une erreur est survenue lors de la recherche.');
+
+            return $this->render('book/books.html.twig', [
+                'books' => [],
+                'query' => $query,
+                'title' => 'Recherche: ' . $query . ' - Erreur'
+            ]);
+        }
     }
 
-    #[Route('/{id}', name: 'app_book_show', methods: ['GET'])]
-    public function show(Book $book): Response
+
+    #[Route('/books/{id}', name: 'app_book_details', methods: ['GET'])]
+    public function details(string $id): Response
     {
-        return $this->render('book/show.html.twig', [
-            'book' => $book,
-        ]);
+        try {
+            $book = $this->googleApiService->getBookById($id);
+
+            if (!$book) {
+                throw new \Exception('Livre non trouvé');
+            }
+
+            return $this->render('book/details.html.twig', [
+                'book' => $book,
+                'title' => $book['title'] ?? 'Détails du livre'
+            ]);
+        } catch (\Exception $e) {
+            $this->logger->error("Erreur lors de la récupération du livre ID: {$id}. " . $e->getMessage());
+            $this->addFlash('error', 'Le livre demandé est introuvable.');
+            return $this->redirectToRoute('app_books_list');
+        }
     }
 
-    #[Route('/{id}/edit', name: 'app_book_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Book $book, EntityManagerInterface $entityManager): Response
+    #[Route('/api/books/{id}', name: 'api_book_details', methods: ['GET'])]
+    public function apiBookDetails(string $id): JsonResponse
     {
-        $form = $this->createForm(BookType::class, $book);
-        $form->handleRequest($request);
+        try {
+            $book = $this->googleApiService->getBookById($id);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            if (!$book) {
+                return $this->json(['error' => 'Livre non trouvé'], 404);
+            }
 
-            return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
+            return $this->json($book);
+        } catch (\Exception $e) {
+            $this->logger->error("Erreur API pour le livre ID: {$id}. " . $e->getMessage());
+            return $this->json(['error' => 'Une erreur interne est survenue.'], 500);
+        }
+    }
+
+
+
+    // Dans ton contrôleur
+    #[Route('/book/preview/{id}', name: 'app_book_preview', methods: ['GET'])]
+    public function preview(string $id, HttpClientInterface $httpClient): Response
+    {
+        // Construire l'URL de l'API Google Books
+        $url = 'https://www.googleapis.com/books/v1/volumes/' . $id;
+
+        // Envoyer la requête à l'API
+        $response = $httpClient->request('GET', $url);
+
+        // Récupérer les données JSON
+        $data = $response->toArray();
+
+        // Vérifier si le livre existe
+        if (!isset($data['volumeInfo'])) {
+            throw $this->createNotFoundException('Livre non trouvé');
         }
 
-        return $this->render('book/edit.html.twig', [
-            'book' => $book,
-            'form' => $form,
+        // Extraire les informations du livre
+        $book = [
+            'title' => $data['volumeInfo']['title'] ?? 'Titre inconnu',
+            'authors' => $data['volumeInfo']['authors'] ?? ['Auteur inconnu'],
+            'pageCount' => $data['volumeInfo']['pageCount'] ?? 'Non spécifié',
+            'description' => $data['volumeInfo']['description'] ?? 'Pas de description',
+            'thumbnail' => $data['volumeInfo']['imageLinks']['thumbnail'] ?? 'https://via.placeholder.com/150',
+            'previewLink' => $data['volumeInfo']['previewLink'] ?? '',
+            'id' => $id
+        ];
+
+        // Passer les données à la vue
+        return $this->render('book/preview.html.twig', [
+            'book' => $book
         ]);
-    }
-
-    #[Route('/{id}', name: 'app_book_delete', methods: ['POST'])]
-    public function delete(Request $request, Book $book, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$book->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($book);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_book_index', [], Response::HTTP_SEE_OTHER);
     }
 }
