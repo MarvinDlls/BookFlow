@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Service\GoogleApiService;
+use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,7 +24,8 @@ final class BookController extends AbstractController
     }
 
     #[Route('/books', name: 'app_books_list', methods: ['GET'])]
-    public function index(Request $request): Response
+
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
         try {
             $page = $request->query->getInt('page', 1);
@@ -31,13 +33,23 @@ final class BookController extends AbstractController
             $genre = $request->query->get('genre'); // Filtre par genre
             $sortByPopularity = $request->query->getBoolean('popular', false); // Tri par popularité
 
-            $pagination = $this->googleApiService->fetchAllBooks($page, $limit, $genre, $sortByPopularity);
+            $books = $this->googleApiService->fetchAllBooks($page, $limit, $genre, $sortByPopularity);
 
+            if (empty($books)) {
+                $this->addFlash('warning', 'Aucun livre trouvé.');
+            }
+          
+            $pagination = $paginator->paginate(
+                $books,
+                $page,
+                $limit
+            );
+          
             return $this->render('book/books.html.twig', [
-                'pagination' => $pagination,
-                'title' => 'Liste des livres',
-                'selectedGenre' => $genre,
-                'sortByPopularity' => $sortByPopularity
+              'pagination' => $pagination,
+              'title' => 'Liste des livres',
+              'selectedGenre' => $genre,
+              'sortByPopularity' => $sortByPopularity
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de la récupération des livres: ' . $e->getMessage());
@@ -50,8 +62,10 @@ final class BookController extends AbstractController
         }
     }
 
+
+
     #[Route('/books/search', name: 'app_books_search', methods: ['GET'])]
-    public function search(Request $request): Response
+    public function search(Request $request, PaginatorInterface $paginator): Response
     {
         $query = trim($request->query->get('q', ''));
         $genre = $request->query->get('genre'); // Ajout du genre
@@ -65,8 +79,17 @@ final class BookController extends AbstractController
         try {
             $books = $this->googleApiService->searchBooks($query, 40, $genre, $sortByPopularity);
 
+            $page = $request->query->getInt('page', 1);
+            $limit = $request->query->getInt('limit', 40);
+
+            $pagination = $paginator->paginate(
+                $books,
+                $page,
+                $limit
+            );
+
             return $this->render('book/books.html.twig', [
-                'books' => $books,
+                'pagination' => $pagination,
                 'query' => $query,
                 'title' => 'Recherche: ' . $query,
                 'selectedGenre' => $genre,
@@ -77,9 +100,9 @@ final class BookController extends AbstractController
             $this->addFlash('error', 'Une erreur est survenue lors de la recherche.');
 
             return $this->render('book/books.html.twig', [
-                'books' => [],
+                'pagination' => [],
                 'query' => $query,
-                'title' => 'Recherche: ' . $query . ' - Erreur'
+                'title' => 'Recherche : ' . $query . ' - Erreur'
             ]);
         }
     }

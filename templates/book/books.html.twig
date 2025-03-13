@@ -1,15 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-	{{ title }}
-{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-	<div class="container my-4">
-{% include 'components/filtre.html.twig' %}
-		<h1 class="mb-4">{{ title }}</h1>
 
-		{# Affichage des messages flash #}
+	<div class="container mx-auto p-6">
+		<div class="flex flex-col items-center relative">
+			<h1 class="absolute text-6xl md:text-9xl font-semibold opacity-5  ">
+				CATALOGUE
+			</h1>
+			<div class="relative flex flex-col items-center mt-5 md:mt-10">
+				<h1 class="text-2xl md:text-4xl lg:text-5xl font-semibold">{{ title }}</h1>
+				<div class="md:w-28 w-14 md:h-[4px] h-[2px] bg-red-900 mt-2"></div>
+			</div>
+		</div>
+    {% include 'components/filtre.html.twig' %}
+
 		{% for label, messages in app.flashes %}
 			{% for message in messages %}
 				<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
@@ -19,107 +25,63 @@
 			{% endfor %}
 		{% endfor %}
 
-		{# Formulaire de recherche #}
-		<div class="mb-4">
+		<div class="justify-self-center relative rounded-full overflow-hidden bg-white shadow-xl w-72 m-10">
 			<form action="{{ path('app_books_search') }}" method="get" class="d-flex">
-				<input type="text" name="q" class="form-control me-2" placeholder="Rechercher un livre...">
-				<button type="submit" class="btn btn-primary">Rechercher</button>
+				<input type="text" name="q" class="input bg-transparent outline-none border-none pl-6 pr-10 py-3 w-full font-semibold" placeholder="Rechercher un livre...">
+				<div class="absolute right-2 top-[0.4em]">
+					<button type="submit" class="w-10 h-10 rounded-full bg-red-900 group shadow-xl flex items-center justify-center relative overflow-hidden">
+						{{ ux_icon('line-md:search',{ class: 'text-white relative z-10 h-5 w-5' }) }}
+						<div class="w-full h-full rotate-45 absolute left-[32%] top-[32%] bg-black group-hover:-left-[100%] group-hover:-top-[100%] duration-1000"></div>
+						<div class="w-full h-full -rotate-45 absolute -left-[32%] -top-[32%] group-hover:left-[100%] group-hover:top-[100%] bg-black duration-1000"></div>
+					</button>
+				</div>
 			</form>
 		</div>
 
-		{% if pagination is defined %}
-			{# Version avec pagination #}
-			{% if pagination.items is empty %}
-				<div class="alert alert-info">
-					Aucun livre trouvé.
-				</div>
-			{% else %}
-				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-					{% for book in pagination %}
-						<div class="col">
-							<div class="card h-100">
-								{% if book.thumbnail %}
-									<img src="{{ book.thumbnail }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: contain; padding: 10px;">
-								{% else %}
-									<div class="text-center p-4 bg-light">
-										<i class="bi bi-book" style="font-size: 5rem;"></i>
-									</div>
-								{% endif %}
-								<div class="card-body">
-									<h5 class="card-title">{{ book.title }}</h5>
-									<h6 class="card-subtitle mb-2 text-muted">
-										{% if book.authors %}
-											{{ book.authors|join(', ') }}
-										{% else %}
-											Auteur inconnu
-										{% endif %}
-									</h6>
-									<p class="card-text">
-										{% if book.description|length > 100 %}
-											{{ book.description|slice(0, 100) }}...
-										{% else %}
-											{{ book.description }}
-										{% endif %}
-									</p>
-								</div>
-								<div class="card-footer">
-									<a href="{{ path('app_book_details', {'id': book.id}) }}" class="btn btn-sm btn-primary">Voir détails</a>
-									<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="btn btn-sm btn-primary">Aperçu</a>
-								</div>
-							</div>
-						</div>
-					{% endfor %}
-				</div>
-				
-				{# Navigation de pagination #}
-				<div class="d-flex justify-content-center mt-4">
-					{{ knp_pagination_render(pagination) }}
-				</div>
-			{% endif %}
+		{% if pagination|length == 0 %}
+			<div class="alert alert-info text-center">
+				Aucun livre trouvé.
+			</div>
 		{% else %}
-			{# Version avec books (ancienne version) #}
-			{% if books is empty %}
-				<div class="alert alert-info">
-					Aucun livre trouvé.
-				</div>
-			{% else %}
-				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-					{% for book in books %}
-						<div class="col">
-							<div class="card h-100">
-								{% if book.thumbnail %}
-									<img src="{{ book.thumbnail }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: contain; padding: 10px;">
-								{% else %}
-									<div class="text-center p-4 bg-light">
-										<i class="bi bi-book" style="font-size: 5rem;"></i>
-									</div>
+			<section class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+				{% for book in pagination %}
+					{% if book.thumbnail %}
+						<a href="{{ path('app_book_details', {'id': book.id}) }}" class="w-72 h-[500px]  mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group"
+								 style="background-image: url('{{ book.thumbnail }}');">
+					{% else %}
+						<a class="w-72 h-[500px] mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group">
+					{% endif %}
+						<div class="p-3 bg-black bg-opacity-0 bg-gradient-to-b from-transparent to-black h-full flex flex-wrap flex-col justify-end hover:bg-opacity-75 transform duration-300">
+							<h1 class="text-white text-xl mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
+								{{ book.title }}
+							</h1>
+							<h5 class="text-white mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
+								{% if book.authors %}
+									{{ book.authors|join(', ') }}
 								{% endif %}
-								<div class="card-body">
-									<h5 class="card-title">{{ book.title }}</h5>
-									<h6 class="card-subtitle mb-2 text-muted">
-										{% if book.authors %}
-											{{ book.authors|join(', ') }}
-										{% else %}
-											Auteur inconnu
-										{% endif %}
-									</h6>
-									<p class="card-text">
-										{% if book.description|length > 100 %}
-											{{ book.description|slice(0, 100) }}...
-										{% else %}
-											{{ book.description }}
-										{% endif %}
-									</p>
-								</div>
-								<div class="card-footer">
-									<a href="{{ path('app_book_details', {'id': book.id}) }}" class="btn btn-sm btn-primary">Voir détails</a>
-									<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="btn btn-sm btn-primary">Aperçu</a>
-								</div>
-							</div>
+							</h5>
+
+							<div class="w-16 h-2 bg-red-600 rounded-full mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300"></div>
+
+							<p class="min-h-[60px] opacity-0 text-white text text-sm group-hover:opacity-80 transform duration-500">
+								{{ book.description|length > 90 ? book.description|slice(0, 90) ~ '...' : book.description }}
+							</p>
+{#							<div class="flex flex-wrap justify-center text-white cursor-pointer text-lg font-semibold gap-2 py-2">#}
+{#								<a href="{{ path('app_book_details', {'id': book.id}) }}" class="px-4 hover:border-b-2 hover:border-red-800 rounded-b-md">#}
+{#									Détails#}
+{#								</a>#}
+{#								<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="px-4 hover:border-b-2 hover:border-red-800 rounded-b-md">#}
+{#									Aperçu#}
+{#								</a>#}
+{#							</div>#}
 						</div>
-					{% endfor %}
-				</div>
-			{% endif %}
+					</a>
+				{% endfor %}
+			</section>
+
+			<div class="mt-6 flex justify-center">
+				{{ knp_pagination_render(pagination) }}
+			</div>
 		{% endif %}
 	</div>
 {% endblock %}

@@ -7,3 +7,9 @@ body {
     font-weight: 600;
     font-size: 2rem;
 }
+
+.bookback {
+    box-shadow: rgba(0, 0, 0, 0.5) 0px 5px 4px, rgba(0, 0, 0, 0.4) 0px 7px 13px -3px, rgba(0, 0, 0, 0.3) 0px -3px 0px inset;
+    color: rgba(255, 255, 255, 0);
+}
+

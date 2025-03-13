@@ -40,16 +40,21 @@ class GoogleApiService
         $this->apiKey = $apiKey;
     }
     
-
     public function fetchAllBooks(int $page = 1, int $limit = 40, ?string $genre = null, bool $sortByPopularity = false)
     {
         $startIndex = ($page - 1) * $limit;
 
         $queryParams = [
-            'q' => '*', // Recherche tous les livres
+            'q' => '*',
             'maxResults' => $limit,
             'startIndex' => $startIndex
         ];
+
+        // Récupération des livres depuis l'API Google Books
+        $books = $this->fetchBooksFromApi($queryParams);
+
+        return $books; // On retourne un simple tableau, sans pagination
+    }
 
         if ($this->apiKey) {
             $queryParams['key'] = $this->apiKey;
@@ -143,7 +148,22 @@ class GoogleApiService
                 return [];
             }
 
-            return array_map([$this, 'formatBookData'], $data['items']);
+            $filteredBooks = array_filter($data['items'], function ($book) {
+                $volumeInfo = $book['volumeInfo'] ?? [];
+
+                $description = $volumeInfo['description'] ?? null;
+                $thumbnail = $volumeInfo['imageLinks']['thumbnail'] ?? null;
+                $previewLink = $volumeInfo['previewLink'] ?? null;
+
+                // Vérifier si les valeurs sont réellement utiles
+                $hasValidDescription = $description && $description !== 'Pas de description';
+                $hasValidThumbnail = $thumbnail && $thumbnail !== 'https://via.placeholder.com/150';
+                $hasValidPreview = $previewLink && !str_contains($previewLink, 'output=embed');
+
+                return $hasValidDescription && $hasValidThumbnail && $hasValidPreview;
+            });
+
+            return array_map([$this, 'formatBookData'], $filteredBooks);
         } catch (TransportExceptionInterface | ClientExceptionInterface | ServerExceptionInterface $e) {
             $this->logger->error("Erreur lors de la récupération des livres: " . $e->getMessage());
             return [];
