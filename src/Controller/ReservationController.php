@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Response;
 
 #[Route('/library')]
 class ReservationController extends AbstractController
@@ -19,14 +20,27 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/{userId}/shelf/{shelfName}', name: 'get_books_from_shelf', methods: ['GET'])]
-    public function getBooksFromShelf(string $userId, string $shelfName, Request $request): JsonResponse
+    public function getBooksFromShelf(string $userId, string $shelfName, Request $request): Response
     {
         $maxResults = $request->query->getInt('maxResults', 10);
         $startIndex = $request->query->getInt('startIndex', 0);
 
         try {
             $books = $this->googleApiService->getBooksFromShelf($userId, $shelfName, $maxResults, $startIndex);
-            return $this->json($books);
+
+            if ($request->headers->get('Accept') === 'application/json') {
+                return $this->json($books);
+            }
+
+            // Sinon, renvoyer le template
+            return $this->render('library/books_shelf.html.twig', [
+                'books' => $books['items'] ?? [],
+                'totalItems' => $books['totalItems'] ?? 0,
+                'userId' => $userId,
+                'shelfName' => $shelfName,
+                'maxResults' => $maxResults,
+                'startIndex' => $startIndex
+            ]);
         } catch (\Exception $e) {
             return $this->json(['error' => $e->getMessage()], 400);
         }
