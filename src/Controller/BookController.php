@@ -63,7 +63,7 @@ final class BookController extends AbstractController
 
 
     #[Route('/books/search', name: 'app_books_search', methods: ['GET'])]
-    public function search(Request $request): Response
+    public function search(Request $request, PaginatorInterface $paginator): Response
     {
         $query = trim($request->query->get('q', ''));
 
@@ -73,24 +73,36 @@ final class BookController extends AbstractController
         }
 
         try {
+            // Récupérer les livres de la recherche
             $books = $this->googleApiService->searchBooks($query);
 
+            // Appliquer la pagination
+            $page = $request->query->getInt('page', 1);
+            $limit = $request->query->getInt('limit', 40);
+
+            $pagination = $paginator->paginate(
+                $books,
+                $page,
+                $limit
+            );
+
             return $this->render('book/books.html.twig', [
-                'books' => $books,
+                'pagination' => $pagination,
                 'query' => $query,
-                'title' => 'Recherche: ' . $query
+                'title' => 'Recherche : ' . $query
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de la recherche de livres: ' . $e->getMessage());
             $this->addFlash('error', 'Une erreur est survenue lors de la recherche.');
 
             return $this->render('book/books.html.twig', [
-                'books' => [],
+                'pagination' => [],
                 'query' => $query,
-                'title' => 'Recherche: ' . $query . ' - Erreur'
+                'title' => 'Recherche : ' . $query . ' - Erreur'
             ]);
         }
     }
+
 
     #[Route('/books/{id}', name: 'app_book_details', methods: ['GET'])]
     public function details(string $id): Response
