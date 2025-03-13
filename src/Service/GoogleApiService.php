@@ -54,8 +54,7 @@ class GoogleApiService
         $books = $this->fetchBooksFromApi($queryParams);
 
         return $books; // On retourne un simple tableau, sans pagination
-    }
-
+    
         if ($this->apiKey) {
             $queryParams['key'] = $this->apiKey;
         }
