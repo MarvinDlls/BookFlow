@@ -5,11 +5,11 @@
                     {% include 'components/_partials/logo.html.twig' %}
             </div>
             <div class="flex shrink-1 gap-3">
-                <a class="flex items-center transition-all duration-150 hover:text-red-700" href="{# {{path('app_user_profil') }} #}">
+                <a href="{{ path('app_homepage') }}" class="flex items-center transition-all duration-150 hover:text-red-700" href="{# {{path('app_user_profil') }} #}">
                     {{ ux_icon('line-md:home',{ class: 'h-4 w-4 mr-2' }) }}
                     Accueil
                 </a>
-                <a class="flex items-center transition-all duration-150 hover:text-red-700" href="{# {{path('app_user_profil') }} #}">
+                <a href="{{ path('app_books_list') }}" class="flex items-center transition-all duration-150 hover:text-red-700">
                     {{ ux_icon('line-md:person-search',{ class: 'h-4 w-4 mr-2' }) }}
                     Catalogue
                 </a>
