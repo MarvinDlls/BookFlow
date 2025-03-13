@@ -1,0 +1,93 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Confirmer la suppression{% endblock %}
+
+{% block body %}
+    <div>
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <h1>Confirmer la suppression</h1>
+                    </div>
+                    <div>
+                        <p>Êtes-vous sûr de vouloir retirer ce livre de l'étagère "{{ shelfName }}" ?</p>
+                        
+                        {% if book is defined %}
+                            <div >
+                                <h5>{{ book.volumeInfo.title }}</h5>
+                                {% if book.volumeInfo.authors is defined %}
+                                    <p >
+                                        {% for author in book.volumeInfo.authors %}
+                                            {{ author }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                                <small>ID: {{ book.id }}</small>
+                            </div>
+                        {% endif %}
+                        
+                        <form id="removeBookForm" action="{{ path('remove_book_from_shelf', {'userId': userId, 'shelfName': shelfName}) }}" method="post">
+                            <input type="hidden" name="volumeId" value="{{ volumeId }}">
+                            
+                            <div class="d-flex justify-content-between">
+                                <button type="submit" class="btn btn-danger">Confirmer la suppression</button>
+                                <a href="{{ path('get_books_from_shelf', {'userId': userId, 'shelfName': shelfName}) }}">
+                                    Annuler
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                
+                <div id="responseMessage" class="alert mt-3 d-none"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{# Ce script on le mettre dans le fichier book.js à la fin #}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('removeBookForm');
+            const responseMessage = document.getElementById('responseMessage');
+            
+            // Soumission du formulaire avec AJAX
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    responseMessage.classList.remove('d-none', 'alert-success', 'alert-danger');
+                    
+                    if (data.success) {
+                        responseMessage.classList.add('alert-success');
+                        responseMessage.textContent = 'Le livre a été retiré avec succès!';
+                        
+                        // Redirection après 2 secondes
+                        setTimeout(() => {
+                            window.location.href = '{{ path('get_books_from_shelf', {'userId': userId, 'shelfName': shelfName}) }}';
+                        }, 2000);
+                    } else {
+                        responseMessage.classList.add('alert-danger');
+                        responseMessage.textContent = 'Erreur: ' + (data.error || 'Une erreur est survenue');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    responseMessage.classList.remove('d-none');
+                    responseMessage.classList.add('alert-danger');
+                    responseMessage.textContent = 'Une erreur est survenue lors de la suppression du livre';
+                });
+            });
+        });
+    </script>
+{% endblock %}
