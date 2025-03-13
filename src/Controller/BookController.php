@@ -24,8 +24,7 @@ final class BookController extends AbstractController
     }
 
     #[Route('/books', name: 'app_books_list', methods: ['GET'])]
-
-    public function index(Request $request, PaginatorInterface $paginator): Response
+    public function index(Request $request): Response
     {
         try {
             $page = $request->query->getInt('page', 1);
@@ -39,14 +38,8 @@ final class BookController extends AbstractController
                 $this->addFlash('warning', 'Aucun livre trouvé.');
             }
           
-            $pagination = $paginator->paginate(
-                $books,
-                $page,
-                $limit
-            );
-          
             return $this->render('book/books.html.twig', [
-              'pagination' => $pagination,
+              'pagination' => $books,
               'title' => 'Liste des livres',
               'selectedGenre' => $genre,
               'sortByPopularity' => $sortByPopularity
@@ -62,25 +55,22 @@ final class BookController extends AbstractController
         }
     }
 
-
-
     #[Route('/books/search', name: 'app_books_search', methods: ['GET'])]
     public function search(Request $request, PaginatorInterface $paginator): Response
     {
         $query = trim($request->query->get('q', ''));
-        $genre = $request->query->get('genre'); // Ajout du genre
-        $sortByPopularity = $request->query->getBoolean('popular', false); // Ajout du tri
-
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 40);
+        $startIndex = ($page - 1) * $limit;
+        
         if ($query === '') {
             $this->addFlash('warning', 'Veuillez entrer un mot-clé pour rechercher un livre.');
             return $this->redirectToRoute('app_books_list');
         }
 
         try {
-            $books = $this->googleApiService->searchBooks($query, 40, $genre, $sortByPopularity);
-
-            $page = $request->query->getInt('page', 1);
-            $limit = $request->query->getInt('limit', 40);
+            // Utilisation de la méthode searchBooks avec les paramètres dans le bon ordre
+            $books = $this->googleApiService->searchBooks($query, $limit, $startIndex);
 
             $pagination = $paginator->paginate(
                 $books,
@@ -91,9 +81,7 @@ final class BookController extends AbstractController
             return $this->render('book/books.html.twig', [
                 'pagination' => $pagination,
                 'query' => $query,
-                'title' => 'Recherche: ' . $query,
-                'selectedGenre' => $genre,
-                'sortByPopularity' => $sortByPopularity
+                'title' => 'Recherche: ' . $query
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de la recherche de livres: ' . $e->getMessage());
@@ -106,7 +94,6 @@ final class BookController extends AbstractController
             ]);
         }
     }
-
 
     #[Route('/books/{id}', name: 'app_book_details', methods: ['GET'])]
     public function details(string $id): Response
@@ -146,9 +133,6 @@ final class BookController extends AbstractController
         }
     }
 
-
-
-    // Dans ton contrôleur
     #[Route('/book/preview/{id}', name: 'app_book_preview', methods: ['GET'])]
     public function preview(string $id, HttpClientInterface $httpClient): Response
     {
