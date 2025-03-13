@@ -3,40 +3,40 @@
 {% block title %}Ajouter un livre à l'étagère{% endblock %}
 
 {% block body %}
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h1 class="h4 mb-0">Ajouter un livre à l'étagère "{{ shelfName }}"</h1>
+    <div>
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <h1>Ajouter un livre à l'étagère "{{ shelfName }}"</h1>
                     </div>
-                    <div class="card-body">
+                    <div>
                         <form id="addBookForm" action="{{ path('add_book_to_shelf', {'userId': userId, 'shelfName': shelfName}) }}" method="post">
                             <div class="mb-3">
-                                <label for="volumeId" class="form-label">ID du volume</label>
-                                <input type="text" class="form-control" id="volumeId" name="volumeId" required>
-                                <div class="form-text">
+                                <label for="volumeId">ID du volume</label>
+                                <input type="text" id="volumeId" name="volumeId" required>
+                                <div>
                                     Entrez l'ID du volume Google Books à ajouter
                                 </div>
                             </div>
                             
-                            <div class="mb-3">
-                                <label for="bookSearch" class="form-label">Ou recherchez un livre</label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="bookSearch">
-                                    <button class="btn btn-outline-secondary" type="button" id="searchButton">
-                                        <i class="fas fa-search"></i> Rechercher
+                            <div>
+                                <label for="bookSearch">Ou recherchez un livre</label>
+                                <div>
+                                    <input type="text" id="bookSearch">
+                                    <button type="button" id="searchButton">
+                                        <i></i> Rechercher
                                     </button>
                                 </div>
                             </div>
                             
-                            <div id="searchResults" class="mb-3 d-none">
+                            <div id="searchResults">
                                 <h5>Résultats de recherche</h5>
-                                <div class="list-group" id="resultsList"></div>
+                                <div id="resultsList"></div>
                             </div>
                             
-                            <div class="d-flex justify-content-between">
-                                <button type="submit" class="btn btn-primary">Ajouter à l'étagère</button>
+                            <div>
+                                <button type="submit">Ajouter à l'étagère</button>
                                 <a href="{{ path('get_books_from_shelf', {'userId': userId, 'shelfName': shelfName}) }}" class="btn btn-outline-secondary">
                                     Retour à l'étagère
                                 </a>
@@ -45,12 +45,13 @@
                     </div>
                 </div>
                 
-                <div id="responseMessage" class="alert mt-3 d-none"></div>
+                <div id="responseMessage"></div>
             </div>
         </div>
     </div>
 {% endblock %}
 
+{# Ce script on le mettre dans le fichier book.js à la fin #}
 {% block javascripts %}
     {{ parent() }}
     <script>
