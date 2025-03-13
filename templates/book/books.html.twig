@@ -1,12 +1,10 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-	{{ title }}
-{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}
-	<div class="container my-4">
-		<h1 class="mb-4">{{ title }}</h1>
+	<div class="container mx-auto p-6">
+		<h1 class="text-3xl font-bold text-center mb-6">{{ title }}</h1>
 
 		{# Affichage des messages flash #}
 		{% for label, messages in app.flashes %}
@@ -26,99 +24,51 @@
 			</form>
 		</div>
 
-		{% if pagination is defined %}
-			{# Version avec pagination #}
-			{% if pagination.items is empty %}
-				<div class="alert alert-info">
-					Aucun livre trouvé.
-				</div>
-			{% else %}
-				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-					{% for book in pagination %}
-						<div class="col">
-							<div class="card h-100">
-								{% if book.thumbnail %}
-									<img src="{{ book.thumbnail }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: contain; padding: 10px;">
-								{% else %}
-									<div class="text-center p-4 bg-light">
-										<i class="bi bi-book" style="font-size: 5rem;"></i>
-									</div>
-								{% endif %}
-								<div class="card-body">
-									<h5 class="card-title">{{ book.title }}</h5>
-									<h6 class="card-subtitle mb-2 text-muted">
-										{% if book.authors %}
-											{{ book.authors|join(', ') }}
-										{% else %}
-											Auteur inconnu
-										{% endif %}
-									</h6>
-									<p class="card-text">
-										{% if book.description|length > 100 %}
-											{{ book.description|slice(0, 100) }}...
-										{% else %}
-											{{ book.description }}
-										{% endif %}
-									</p>
-								</div>
-								<div class="card-footer">
-									<a href="{{ path('app_book_details', {'id': book.id}) }}" class="btn btn-sm btn-primary">Voir détails</a>
-									<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="btn btn-sm btn-primary">Aperçu</a>
-								</div>
-							</div>
-						</div>
-					{% endfor %}
-				</div>
-				
-				{# Navigation de pagination #}
-				<div class="d-flex justify-content-center mt-4">
-					{{ knp_pagination_render(pagination) }}
-				</div>
-			{% endif %}
+		{% if pagination|length == 0 %}
+			<div class="alert alert-info text-center">
+				Aucun livre trouvé.
+			</div>
 		{% else %}
-			{# Version avec books (ancienne version) #}
-			{% if books is empty %}
-				<div class="alert alert-info">
-					Aucun livre trouvé.
-				</div>
-			{% else %}
-				<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-					{% for book in books %}
-						<div class="col">
-							<div class="card h-100">
-								{% if book.thumbnail %}
-									<img src="{{ book.thumbnail }}" class="card-img-top" alt="{{ book.title }}" style="height: 200px; object-fit: contain; padding: 10px;">
-								{% else %}
-									<div class="text-center p-4 bg-light">
-										<i class="bi bi-book" style="font-size: 5rem;"></i>
-									</div>
+			<section class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+				{% for book in pagination %}
+					{% if book.thumbnail %}
+						<article class="w-full h-full mx-auto max-w-sm shadow-xl bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group" style="background-image: url('{{ book.thumbnail }}');">
+					{% else %}
+						<article class="w-full h-full mx-auto max-w-sm shadow-xl bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group">
+					{% endif %}
+						<div class="bg-black bg-opacity-20 h-full px-1 flex flex-wrap flex-col justify-end pt-72 hover:bg-opacity-75 transform duration-300">
+							<h1 class="text-white text-2xl mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
+								{{ book.title }}
+							</h1>
+							<h5 class="text-white mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
+								{% if book.authors %}
+									{{ book.authors|join(', ') }}
 								{% endif %}
-								<div class="card-body">
-									<h5 class="card-title">{{ book.title }}</h5>
-									<h6 class="card-subtitle mb-2 text-muted">
-										{% if book.authors %}
-											{{ book.authors|join(', ') }}
-										{% else %}
-											Auteur inconnu
-										{% endif %}
-									</h6>
-									<p class="card-text">
-										{% if book.description|length > 100 %}
-											{{ book.description|slice(0, 100) }}...
-										{% else %}
-											{{ book.description }}
-										{% endif %}
-									</p>
-								</div>
-								<div class="card-footer">
-									<a href="{{ path('app_book_details', {'id': book.id}) }}" class="btn btn-sm btn-primary">Voir détails</a>
-									<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="btn btn-sm btn-primary">Aperçu</a>
-								</div>
+							</h5>
+
+							<div class="w-16 h-2 bg-red-600 rounded-full mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300"></div>
+
+							<p class="opacity-0 text-white text group-hover:opacity-80 transform duration-500">
+								{{ book.description|length > 100 ? book.description|slice(0, 100) ~ '...' : book.description }}
+							</p>
+
+							<div class="flex flex-wrap justify-center text-white cursor-pointer text-lg font-semibold gap-2 py-2">
+								<a href="{{ path('app_book_details', {'id': book.id}) }}" class="px-4 hover:border-b-2 hover:border-red-800 rounded-b-md">
+									Voir détails
+								</a>
+								<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="px-4 hover:border-b-2 hover:border-red-800 rounded-b-md">
+									Aperçu
+								</a>
 							</div>
 						</div>
-					{% endfor %}
-				</div>
-			{% endif %}
+					</article>
+				{% endfor %}
+			</section>
+
+			{# Pagination links #}
+			<div class="mt-6 flex justify-center">
+				{{ knp_pagination_render(pagination) }}
+			</div>
 		{% endif %}
 	</div>
 {% endblock %}
