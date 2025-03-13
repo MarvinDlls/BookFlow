@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Erreur{% endblock %}
+
+{% block body %}
+    <div>
+        <div>
+            <div>
+                <div>
+                    <div>
+                        <h1>Une erreur est survenue</h1>
+                    </div>
+                    <div>
+                        <div>
+                            {{ error }}
+                        </div>
+                        
+                        <div>
+                            <a href="{{ path('get_books_from_shelf', {'userId': app.request.attributes.get('userId'), 'shelfName': app.request.attributes.get('shelfName')}) }}" >
+                                Retourner à l'étagère
+                            </a>
+                            <button onclick="window.history.back()">
+                                Retour
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
