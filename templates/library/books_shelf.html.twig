@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Livres de l'étagère {{ shelfName }}{% endblock %}
+
+{% block body %}
+    <div>
+        <h1>Livres de l'étagère "{{ shelfName }}" pour l'utilisateur {{ userId }}</h1>
+        
+        {% if books is empty %}
+            <div>
+                Aucun livre trouvé sur cette étagère.
+            </div>
+        {% else %}
+            <div>
+                {% for book in books %}
+                    <div>
+                        <div>
+                            {% if book.volumeInfo.imageLinks is defined %}
+                                <img src="{{ book.volumeInfo.imageLinks.thumbnail }}" alt="{{ book.volumeInfo.title }}">
+                            {% else %}
+                                <div>
+                                    <i></i>
+                                </div>
+                            {% endif %}
+                            
+                            <div>
+                                <h5>{{ book.volumeInfo.title }}</h5>
+                                {% if book.volumeInfo.authors is defined %}
+                                    <p>
+                                        {% for author in book.volumeInfo.authors %}
+                                            {{ author }}{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                                
+                                {% if book.volumeInfo.description is defined %}
+                                    <p>{{ book.volumeInfo.description|slice(0, 150) }}...</p>
+                                {% endif %}
+                            </div>
+                            
+                            <div>
+                                <form action="{{ path('remove_book_from_shelf', {'userId': userId, 'shelfName': shelfName}) }}" method="post">
+                                    <input type="hidden" name="volumeId" value="{{ book.id }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i></i> Retirer
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            {# Pagination #}
+            <div class="navigation d-flex justify-content-center mt-4">
+                {% set currentPage = startIndex // maxResults + 1 %}
+                
+                <ul class="pagination">
+                    {% if currentPage > 1 %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ path('get_books_from_shelf', {
+                                'userId': userId, 
+                                'shelfName': shelfName, 
+                                'maxResults': maxResults, 
+                                'startIndex': (currentPage - 2) * maxResults
+                            }) }}">Précédent</a>
+                        </li>
+                    {% endif %}
+                    
+                    <li class="page-item active">
+                        <span class="page-link">{{ currentPage }}</span>
+                    </li>
+                    
+                    <li class="page-item">
+                        <a class="page-link" href="{{ path('get_books_from_shelf', {
+                            'userId': userId, 
+                            'shelfName': shelfName, 
+                            'maxResults': maxResults, 
+                            'startIndex': currentPage * maxResults
+                        }) }}">Suivant</a>
+                    </li>
+                </ul>
+            </div>
+        {% endif %}
+        
+        <div class="mt-4">
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBookModal">
+                <i class="fas fa-plus"></i> Ajouter un livre
+            </a>
+        </div>
+    </div>
+
+    {# Modal pour ajouter un livre #}
+    <div class="modal fade" id="addBookModal" tabindex="-1" aria-labelledby="addBookModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBookModalLabel">Ajouter un livre à l'étagère</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addBookForm" action="{{ path('add_book_to_shelf', {'userId': userId, 'shelfName': shelfName}) }}" method="post">
+                        <div class="mb-3">
+                            <label for="volumeId" class="form-label">ID du volume</label>
+                            <input type="text" class="form-control" id="volumeId" name="volumeId" required>
+                            <div class="form-text">
+                                Entrez l'ID du volume Google Books à ajouter
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Ajouter</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{# Ce script on le mettre dans le fichier book.js à la fin #}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        document.getElementById('addBookForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const formData = new FormData(form);
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.reload();
+                } else {
+                    alert('Erreur: ' + (data.error || 'Une erreur est survenue'));
+                }
+            })
+            .catch(error => {
+                console.error('Erreur:', error);
+                alert('Une erreur est survenue lors de l\'ajout du livre');
+            });
+        });
+    </script>
+{% endblock %}

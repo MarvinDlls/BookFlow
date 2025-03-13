@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}BookFlow - Inscription{% endblock %}
+
+{% block body %}
+    <h1>Inscription</h1>
+	<div class="">
+		{% for flash_error in app.flashes('verify_email_error') %}
+			<div class="" role="alert">{{ flash_error }}</div>
+		{% endfor %}
+
+		{{ form_errors(registrationForm) }}
+
+		<div class="">
+			{{ form(registrationForm) }}
+		</div>
+	</div>
+{% endblock %}
