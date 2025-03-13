@@ -4,9 +4,16 @@
 
 {% block body %}
 	<div class="container mx-auto p-6">
-		<h1 class="text-3xl font-bold text-center mb-6">{{ title }}</h1>
+		<div class="flex flex-col items-center relative">
+			<h1 class="absolute text-6xl md:text-9xl font-semibold opacity-5  ">
+				CATALOGUE
+			</h1>
+			<div class="relative flex flex-col items-center mt-5 md:mt-10">
+				<h1 class="text-2xl md:text-4xl lg:text-5xl font-semibold">{{ title }}</h1>
+				<div class="md:w-28 w-14 md:h-[4px] h-[2px] bg-red-900 mt-2"></div>
+			</div>
+		</div>
 
-		{# Affichage des messages flash #}
 		{% for label, messages in app.flashes %}
 			{% for message in messages %}
 				<div class="alert alert-{{ label }} alert-dismissible fade show" role="alert">
@@ -16,11 +23,16 @@
 			{% endfor %}
 		{% endfor %}
 
-		{# Formulaire de recherche #}
-		<div class="mb-4">
+		<div class="justify-self-center relative rounded-full overflow-hidden bg-white shadow-xl w-72 m-10">
 			<form action="{{ path('app_books_search') }}" method="get" class="d-flex">
-				<input type="text" name="q" class="form-control me-2" placeholder="Rechercher un livre...">
-				<button type="submit" class="btn btn-primary">Rechercher</button>
+				<input type="text" name="q" class="input bg-transparent outline-none border-none pl-6 pr-10 py-3 w-full font-semibold" placeholder="Rechercher un livre...">
+				<div class="absolute right-2 top-[0.4em]">
+					<button type="submit" class="w-10 h-10 rounded-full bg-red-900 group shadow-xl flex items-center justify-center relative overflow-hidden">
+						{{ ux_icon('line-md:search',{ class: 'text-white relative z-10 h-5 w-5' }) }}
+						<div class="w-full h-full rotate-45 absolute left-[32%] top-[32%] bg-black group-hover:-left-[100%] group-hover:-top-[100%] duration-1000"></div>
+						<div class="w-full h-full -rotate-45 absolute -left-[32%] -top-[32%] group-hover:left-[100%] group-hover:top-[100%] bg-black duration-1000"></div>
+					</button>
+				</div>
 			</form>
 		</div>
 
@@ -29,15 +41,16 @@
 				Aucun livre trouvé.
 			</div>
 		{% else %}
-			<section class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+			<section class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
 				{% for book in pagination %}
 					{% if book.thumbnail %}
-						<article class="w-full h-full mx-auto max-w-sm shadow-xl bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group" style="background-image: url('{{ book.thumbnail }}');">
+						<a href="{{ path('app_book_details', {'id': book.id}) }}" class="w-72 h-[500px]  mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group"
+								 style="background-image: url('{{ book.thumbnail }}');">
 					{% else %}
-						<article class="w-full h-full mx-auto max-w-sm shadow-xl bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group">
+						<a class="w-72 h-[500px] mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group">
 					{% endif %}
-						<div class="bg-black bg-opacity-20 h-full px-1 flex flex-wrap flex-col justify-end pt-72 hover:bg-opacity-75 transform duration-300">
-							<h1 class="text-white text-2xl mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
+						<div class="p-3 bg-black bg-opacity-0 bg-gradient-to-b from-transparent to-black h-full flex flex-wrap flex-col justify-end hover:bg-opacity-75 transform duration-300">
+							<h1 class="text-white text-xl mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
 								{{ book.title }}
 							</h1>
 							<h5 class="text-white mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
@@ -48,24 +61,22 @@
 
 							<div class="w-16 h-2 bg-red-600 rounded-full mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300"></div>
 
-							<p class="opacity-0 text-white text group-hover:opacity-80 transform duration-500">
-								{{ book.description|length > 100 ? book.description|slice(0, 100) ~ '...' : book.description }}
+							<p class="min-h-[60px] opacity-0 text-white text text-sm group-hover:opacity-80 transform duration-500">
+								{{ book.description|length > 90 ? book.description|slice(0, 90) ~ '...' : book.description }}
 							</p>
-
-							<div class="flex flex-wrap justify-center text-white cursor-pointer text-lg font-semibold gap-2 py-2">
-								<a href="{{ path('app_book_details', {'id': book.id}) }}" class="px-4 hover:border-b-2 hover:border-red-800 rounded-b-md">
-									Voir détails
-								</a>
-								<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="px-4 hover:border-b-2 hover:border-red-800 rounded-b-md">
-									Aperçu
-								</a>
-							</div>
+{#							<div class="flex flex-wrap justify-center text-white cursor-pointer text-lg font-semibold gap-2 py-2">#}
+{#								<a href="{{ path('app_book_details', {'id': book.id}) }}" class="px-4 hover:border-b-2 hover:border-red-800 rounded-b-md">#}
+{#									Détails#}
+{#								</a>#}
+{#								<a href="{{ path('app_book_preview', {'id': book.id}) }}" class="px-4 hover:border-b-2 hover:border-red-800 rounded-b-md">#}
+{#									Aperçu#}
+{#								</a>#}
+{#							</div>#}
 						</div>
-					</article>
+					</a>
 				{% endfor %}
 			</section>
 
-			{# Pagination links #}
 			<div class="mt-6 flex justify-center">
 				{{ knp_pagination_render(pagination) }}
 			</div>
