@@ -50,11 +50,6 @@ class GoogleApiService
             'startIndex' => $startIndex
         ];
 
-        // Récupération des livres depuis l'API Google Books
-        $books = $this->fetchBooksFromApi($queryParams);
-
-        return $books; // On retourne un simple tableau, sans pagination
-    
         if ($this->apiKey) {
             $queryParams['key'] = $this->apiKey;
         }
@@ -63,6 +58,7 @@ class GoogleApiService
             $queryParams['q'] .= "+subject:{$genre}";
         }
 
+        // Récupération des livres depuis l'API Google Books
         $books = $this->fetchBooksFromApi($queryParams);
 
         if ($sortByPopularity) {
@@ -294,7 +290,7 @@ class GoogleApiService
         }
     }
 
-    public function searchBooks(string $query, int $maxResults = 10, int $startIndex = 0): array
+    public function searchBooks(string $query, int $maxResults = 10, ?int $startIndex = 0): array
     {
         if (empty($query)) {
             return [];
@@ -305,7 +301,7 @@ class GoogleApiService
         $queryParams = [
             'q' => $query,
             'maxResults' => $maxResults,
-            'startIndex' => $startIndex
+            'startIndex' => $startIndex ?? 0
         ];
         
         if ($this->apiKey) {
