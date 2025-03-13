@@ -16,7 +16,7 @@
 			</div>
 			<div class="flex items-center justify-end gap-3">
 				{% if app.user %}
-					<div class="inline-flex items-center justify-center rounded-xl bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+					<div class="inline-flex items-center justify-center rounded-xl bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
 						<a class="flex items-center" href="{# {{path('app_user_profil') }} #}">
 							{{ ux_icon('line-md:login',{ class: 'h-4 w-4 mr-2' }) }}
 							Profil
@@ -29,7 +29,7 @@
 					<a class="hidden items-center justify-center rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 hover:bg-gray-50 sm:inline-flex" href={{path('app_register') }}>
 						Inscription
 					</a>
-					<div class="inline-flex items-center justify-center rounded-xl bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+					<div class="inline-flex items-center justify-center rounded-xl bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
 						<a class="flex items-center" href={{path('app_login') }}>
 							{{ ux_icon('line-md:login',{ class: 'h-4 w-4 mr-2' }) }}
 							Connexion
