@@ -46,4 +46,9 @@
                         <p class="text-gray-600 mb-4">Par <span class="font-medium">{{ book.authors|join(', ') }}</span></p>
                     {% endif %}
 
+                    <div class="mt-6">
+                        <div class="border-b border-gray-200">
+                            <button class="inline-block py-3 px-4 text-red-700 hover:text-red-800 font-medium border-b-2 border-red-600 active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Détails</button>
+                        </div>
+
 {% endblock %}
