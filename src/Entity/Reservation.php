@@ -37,6 +37,9 @@ class Reservation
     #[ORM\JoinColumn(nullable: false)]
     private ?Book $book = null;
 
+    #[ORM\Column(type: "boolean")]
+    private ?bool $isReserved = false;
+
     #[ORM\PrePersist]
     public function setCreatedAtValue()
     {
@@ -135,6 +138,18 @@ class Reservation
     public function setBook(?Book $book): static
     {
         $this->book = $book;
+
+        return $this;
+    }
+
+    public function getIsReserved(): ?bool
+    {
+        return $this->isReserved;
+    }
+
+    public function setIsReserved(bool $isReserved): static
+    {
+        $this->isReserved = $isReserved;
 
         return $this;
     }
