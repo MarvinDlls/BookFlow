@@ -61,6 +61,23 @@ class Book
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'book')]
     private Collection $tags;
 
+    /**
+     * Vérifie si le livre est réservé (statut actif).
+     *
+     * @return bool
+     */
+    public function isReserved(): bool
+    {
+        // Vérifie si le livre a une réservation active (status true)
+        foreach ($this->getReservations() as $reservation) {
+            if ($reservation->isStatus()) {
+                return true; // Le livre est réservé
+            }
+        }
+        
+        return false; // Le livre n'est pas réservé
+    }
+
     public function __construct()
     {
         $this->reservations = new ArrayCollection();
@@ -191,6 +208,19 @@ class Book
     {
         $this->updated_at = $updated_at;
 
+        return $this;
+    }
+
+    private bool $isReserved = false;
+
+    public function getIsReserved(): bool
+    {
+        return $this->isReserved;
+    }
+
+    public function setIsReserved(bool $isReserved): self
+    {
+        $this->isReserved = $isReserved;
         return $this;
     }
 
