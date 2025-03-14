@@ -39,4 +39,11 @@
                     {% endif %}
                 </div>
 
+                <div class="md:w-2/3 p-6">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ book.title }}</h1>
+
+                    {% if book.authors %}
+                        <p class="text-gray-600 mb-4">Par <span class="font-medium">{{ book.authors|join(', ') }}</span></p>
+                    {% endif %}
+
 {% endblock %}
