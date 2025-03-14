@@ -1,0 +1,4 @@
+notification:
+  history_update:
+    subject: "Modification de votre historique"
+    message: "Votre historique a été mis à jour avec l'action suivante : {{ actionType }}."
