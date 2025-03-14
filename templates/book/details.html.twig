@@ -71,6 +71,11 @@
                     <div class="mt-4">
                         <a href="{{ path('app_book_preview', {'id': book.id}) }}" class="btn btn-sm btn-primary">Aperçu</a>
                     </div>
+                    {% if app.user %}
+                        <div class="mt-4">
+                            <a href="{{ path('get_user_reservations', {'id': book.id}) }}" class="btn btn-sm btn-primary">Réserver le livre</a>
+                        </div> 
+                    {% endif %}
                 </div>
             </div>
         </div>
