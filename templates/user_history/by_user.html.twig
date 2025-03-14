@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>{{ title }}</h1>
+
+        <div class="mb-3">
+            <a href="{{ path('app_user_history_admin') }}" class="btn btn-secondary">
+                Retour à l'historique général
+            </a>
+        </div>
+
+        {% if user_histories is empty %}
+            <div class="alert alert-info">
+                Aucun historique disponible pour cet utilisateur.
+            </div>
+        {% else %}
+            <p>Nombre total d'entrées : {{ user_histories|length }}</p>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Livre</th>
+                        <th>Action</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for history in user_histories %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('app_book_details', {'id': history.book.volumeId}) }}">
+                                    {{ history.book.name }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if history.actionType == 'view' %}
+                                    <span class="badge bg-info">Consulté</span>
+                                {% elseif history.actionType == 'borrow' %}
+                                    <span class="badge bg-primary">Emprunté</span>
+                                {% elseif history.actionType == 'return' %}
+                                    <span class="badge bg-success">Retourné</span>
+                                {% elseif history.actionType == 'favorite' %}
+                                    <span class="badge bg-warning">Favoris</span>
+                                {% elseif history.actionType == 'search' %}
+                                    <span class="badge bg-secondary">Recherché</span>
+                                {% else %}
+                                    <span class="badge bg-dark">{{ history.actionType }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ history.createdAt|date('d/m/Y H:i') }}</td>
+                            <td>
+                                <form method="post" action="{{ path('app_user_history_delete', {'id': history.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette entrée?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ history.id) }}">
+                                    <button class="btn btn-sm btn-danger">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
