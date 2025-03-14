@@ -13,4 +13,19 @@
                 <li class="text-gray-700 font-medium truncate">{{ book.title }}</li>
             </ol>
         </nav>
+
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                {% set alertColor = label == 'success' ? 'green' : (label == 'danger' ? 'red' : (label == 'warning' ? 'yellow' : 'red')) %}
+                <div class="mb-6 bg-{{ alertColor }}-50 border-l-4 border-{{ alertColor }}-500 p-4 rounded shadow-sm flex justify-between items-center" role="alert">
+                    <p class="text-{{ alertColor }}-700">{{ message }}</p>
+                    <button type="button" class="text-{{ alertColor }}-700 hover:text-{{ alertColor }}-900" data-bs-dismiss="alert" aria-label="Close">
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endfor %}
+    
 {% endblock %}
