@@ -95,5 +95,16 @@
                                 {% endif %}
                             </div>
 
-
+                            <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
+                                {% if book.description %}
+                                    <div class="prose max-w-none text-gray-700 leading-relaxed">
+                                        {{ book.description|nl2br }}
+                                    </div>
+                                {% else %}
+                                    <p class="text-gray-500 italic">Aucune description disponible pour ce livre.</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+    
 {% endblock %}
