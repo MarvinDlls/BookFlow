@@ -1,0 +1,75 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>{{ title }}</h1>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% if user_histories is empty %}
+            <div class="alert alert-info">
+                Aucun historique disponible.
+            </div>
+        {% else %}
+            <p>Nombre total d'entrées : {{ user_histories|length }}</p>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Utilisateur</th>
+                        <th>Livre</th>
+                        <th>Action</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for history in user_histories %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('app_user_history_by_user', {'user': history.user.id}) }}">
+                                    {{ history.user.username }}
+                                </a>
+                            </td>
+                            <td>
+                                <a href="{{ path('app_user_history_by_book', {'book': history.book.id}) }}">
+                                    {{ history.book.name }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if history.actionType == 'view' %}
+                                    <span class="badge bg-info">Consulté</span>
+                                {% elseif history.actionType == 'borrow' %}
+                                    <span class="badge bg-primary">Emprunté</span>
+                                {% elseif history.actionType == 'return' %}
+                                    <span class="badge bg-success">Retourné</span>
+                                {% elseif history.actionType == 'favorite' %}
+                                    <span class="badge bg-warning">Favoris</span>
+                                {% elseif history.actionType == 'search' %}
+                                    <span class="badge bg-secondary">Recherché</span>
+                                {% else %}
+                                    <span class="badge bg-dark">{{ history.actionType }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ history.createdAt|date('d/m/Y H:i') }}</td>
+                            <td>
+                                <form method="post" action="{{ path('app_user_history_delete', {'id': history.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette entrée?');">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ history.id) }}">
+                                    <button class="btn btn-sm btn-danger">Supprimer</button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
