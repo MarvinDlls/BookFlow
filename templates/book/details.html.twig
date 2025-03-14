@@ -51,4 +51,49 @@
                             <button class="inline-block py-3 px-4 text-red-700 hover:text-red-800 font-medium border-b-2 border-red-600 active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Détails</button>
                         </div>
 
+                        <div class="tab-content pt-4" id="bookTabContent">
+                            <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {% if book.publishedDate %}
+                                        <div class="flex items-center">
+                                            {{ ux_icon('famicons:calendar-outline', { class: 'h-6 w-6 mr-3' }) }}
+                                            <div><span class="text-gray-600 text-sm">Date de publication:</span><br><span class="font-medium">{{ book.publishedDate }}</span></div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if book.publisher %}
+                                        <div class="flex items-center">
+                                            {{ ux_icon('famicons:business-outline', { class: 'h-6 w-6 mr-3' }) }}
+                                            <div><span class="text-gray-600 text-sm">Éditeur:</span><br><span class="font-medium">{{ book.publisher }}</span></div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if book.pageCount %}
+                                        <div class="flex items-center">
+                                            {{ ux_icon('famicons:book-outline', { class: 'h-6 w-6 mr-3' }) }}
+                                            <div><span class="text-gray-600 text-sm">Nombre de pages:</span><br><span class="font-medium">{{ book.pageCount }}</span></div>
+                                        </div>
+                                    {% endif %}
+
+                                    {% if book.language %}
+                                        <div class="flex items-center">
+                                            {{ ux_icon('famicons:language-outline', { class: 'h-6 w-6 mr-3' }) }}
+                                            <div><span class="text-gray-600 text-sm">Langue:</span><br><span class="font-medium">{{ book.language|upper }}</span></div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                {% if book.categories %}
+                                    <div class="mt-6">
+                                        <h3 class="text-sm font-medium text-gray-500 mb-2">Catégories</h3>
+                                        <div class="flex flex-wrap">
+                                            {% for category in book.categories %}
+                                                <span class="bg-red-50 text-red-800 rounded-full px-3 py-1 text-sm mr-2 mb-2">{{ category }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+
+
 {% endblock %}
