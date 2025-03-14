@@ -47,8 +47,16 @@
 			<section class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
 				{% for book in pagination %}
 					{% if book.thumbnail %}
-						<a href="{{ path('app_book_details', {'id': book.id}) }}" class="w-72 h-[500px] mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group"
-						   style="background-image: url('{{ book.thumbnail }}');">
+						<a href="{{ path('app_book_details', {'id': book.id}) }}" onclick="event.preventDefault(); addBookToDatabase({ 
+							id: '{{ book.id|e('js') }}',
+							title: '{{ book.title|e('js') }}', 
+							authors: '{{ book.authors|join(', ')|e('js') }}', 
+							description: '{{ book.description|e('js') }}', 
+							cover: '{{ book.thumbnail|e('js') }}', 
+							popularity: 0 
+						})"
+						class="w-72 h-[500px] mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group"
+						style="background-image: url('{{ book.thumbnail }}');">
 					{% else %}
 						<a class="w-72 h-[500px] mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group">
 					{% endif %}
@@ -77,5 +85,42 @@
 			</div>
 		{% endif %}
 	</div>
+
+{# On mettra ce script dans un fichier js plus tard (la patience est une vertue) #}
+{% block javascripts %}
+<script>
+async function addBookToDatabase(book) {
+    console.log("Données envoyées :", book); 
+
+    try {
+        const response = await fetch('/book/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: book.title,
+                author: book.authors,
+                description: book.description,
+                cover: book.cover,
+                popularity: book.popularity,
+                slug: book.title.toLowerCase().replace(/\s+/g, '-').substring(0, 50),
+            }),
+        });
+
+        const result = await response.json();
+        console.log("Réponse serveur :", result);
+
+        if (result.success) {
+            window.location.href = `/books/${book.id}`;
+        } else {
+            console.error("Erreur lors de l'ajout du livre :", result.message);
+        }
+    } catch (error) {
+        console.error("Erreur réseau :", error);
+    }
+}
+</script>
+{% endblock %}
 {% endblock %}
 

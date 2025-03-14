@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Book;
+use App\Repository\BookRepository;
 use App\Service\GoogleApiService;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -10,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class BookController extends AbstractController
@@ -114,6 +118,32 @@ final class BookController extends AbstractController
             $this->addFlash('error', 'Le livre demandé est introuvable.');
             return $this->redirectToRoute('app_books_list');
         }
+    }
+
+    #[Route('/book/add', name: 'app_book_add', methods: ['POST'])]
+    public function addBook(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!$data || !isset($data['name'], $data['author'], $data['description'], $data['cover'], $data['slug'])) {
+            return new JsonResponse(['success' => false, 'message' => 'Données incomplètes'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $book = new Book();
+        $book->setName($data['name']);
+        $book->setAuthor($data['author']);
+        $book->setDescription($data['description']);
+        $book->setCover($data['cover']);
+        $book->setPopularity($data['popularity'] ?? 0);
+        $book->setSlug($data['slug']);
+        $book->setIsRestricted(false);
+        $book->setCreatedAt(new \DateTimeImmutable()); // Ajoute la date ici ✅
+        $book->setUpdatedAt(new \DateTimeImmutable());
+
+        $entityManager->persist($book);
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true, 'message' => 'Livre ajouté avec succès']);
     }
 
     #[Route('/api/books/{id}', name: 'api_book_details', methods: ['GET'])]

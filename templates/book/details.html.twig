@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}
+	{{ title }}
+{% endblock %}
 
 {% block body %}
     <div class="container mx-auto px-4 py-8 max-w-6xl">
@@ -232,6 +234,11 @@
                         Soumettre votre avis
                     </button>
                 </form>
+                {% if app.user %}
+							<div class="mt-4">
+								<a href="{{ path('app_reservation_new', {'id': book.id}) }}" class="btn btn-sm btn-primary">Réserver le livre</a>
+							</div>
+						{% endif %}
             </div>
         </div>
     </div>
