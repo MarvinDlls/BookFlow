@@ -17,8 +17,8 @@
 			<div class="flex items-center justify-end gap-3">
 				{% if app.user %}
 					<div class="inline-flex items-center justify-center rounded-xl bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-						<a class="flex items-center" href="{# {{path('app_user_profil') }} #}">
-							{{ ux_icon('line-md:login',{ class: 'h-4 w-4 mr-2' }) }}
+						<a class="flex items-center" href="{{path('app_user_profil') }}">
+							{{ ux_icon('line-md:account',{ class: 'h-4 w-4 mr-2' }) }}
 							Profil
 						</a>
 					</div>
