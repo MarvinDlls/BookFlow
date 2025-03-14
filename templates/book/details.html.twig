@@ -121,4 +121,33 @@
             </div>
         </div>
 
+        <div class="mt-12">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Livres similaires</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {% for i in 1..4 %}
+                    <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105">
+                        <div class="h-48 bg-gray-100 flex items-center justify-center">
+                            {{ ux_icon('famicons:book', { class: 'h-12 w-12 text-gray-300' }) }}
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">Titre du livre recommandé {{ i }}</h3>
+                            <p class="text-sm text-gray-500 mb-2">Auteur {{ i }}</p>
+                            <div class="flex items-center">
+                                <div class="flex text-yellow-400">
+                                    {% for j in 1..5 %}
+                                        {% if j <= 4 %}
+                                            {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}
+                                        {% else %}
+                                            {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <span class="text-xs text-gray-500 ml-1">({{ 30 + i * 10 }})</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
 {% endblock %}
