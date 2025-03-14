@@ -43,6 +43,9 @@ class Book
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
 
+    #[ORM\Column(type: "string", length: 255)]
+    private ?string $volumeId = null;
+
     /**
      * @var Collection<int, Reservation>
      */
@@ -190,6 +193,18 @@ class Book
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getVolumeId(): ?string
+    {
+        return $this->volumeId;
+    }
+
+    public function setVolumeId(string $volumeId): self
+    {
+        $this->volumeId = $volumeId;
 
         return $this;
     }
