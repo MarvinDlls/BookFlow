@@ -13,7 +13,6 @@
                 <li class="text-gray-700 font-medium truncate">{{ book.title }}</li>
             </ol>
         </nav>
-
         {% for label, messages in app.flashes %}
             {% for message in messages %}
                 {% set alertColor = label == 'success' ? 'green' : (label == 'danger' ? 'red' : (label == 'warning' ? 'yellow' : 'red')) %}
@@ -27,8 +26,6 @@
                 </div>
             {% endfor %}
         {% endfor %}
-
-
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-xl">
             <div class="md:flex">
                 <div class="md:w-1/3 bg-gray-50 flex justify-center items-center p-6">
@@ -38,19 +35,15 @@
                         {{ ux_icon('famicons:book', { class: 'h-64 w-64 text-gray-300' }) }}
                     {% endif %}
                 </div>
-
                 <div class="md:w-2/3 p-6">
                     <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ book.title }}</h1>
-
                     {% if book.authors %}
                         <p class="text-gray-600 mb-4">Par <span class="font-medium">{{ book.authors|join(', ') }}</span></p>
                     {% endif %}
-
                     <div class="mt-6">
                         <div class="border-b border-gray-200">
                             <button class="inline-block py-3 px-4 text-red-700 hover:text-red-800 font-medium border-b-2 border-red-600 active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Détails</button>
                         </div>
-
                         <div class="tab-content pt-4" id="bookTabContent">
                             <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -60,21 +53,18 @@
                                             <div><span class="text-gray-600 text-sm">Date de publication:</span><br><span class="font-medium">{{ book.publishedDate }}</span></div>
                                         </div>
                                     {% endif %}
-
                                     {% if book.publisher %}
                                         <div class="flex items-center">
                                             {{ ux_icon('famicons:business-outline', { class: 'h-6 w-6 mr-3' }) }}
                                             <div><span class="text-gray-600 text-sm">Éditeur:</span><br><span class="font-medium">{{ book.publisher }}</span></div>
                                         </div>
                                     {% endif %}
-
                                     {% if book.pageCount %}
                                         <div class="flex items-center">
                                             {{ ux_icon('famicons:book-outline', { class: 'h-6 w-6 mr-3' }) }}
                                             <div><span class="text-gray-600 text-sm">Nombre de pages:</span><br><span class="font-medium">{{ book.pageCount }}</span></div>
                                         </div>
                                     {% endif %}
-
                                     {% if book.language %}
                                         <div class="flex items-center">
                                             {{ ux_icon('famicons:language-outline', { class: 'h-6 w-6 mr-3' }) }}
@@ -82,7 +72,6 @@
                                         </div>
                                     {% endif %}
                                 </div>
-
                                 {% if book.categories %}
                                     <div class="mt-6">
                                         <h3 class="text-sm font-medium text-gray-500 mb-2">Catégories</h3>
@@ -94,7 +83,6 @@
                                     </div>
                                 {% endif %}
                             </div>
-
                             <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
                                 {% if book.description %}
                                     <div class="prose max-w-none text-gray-700 leading-relaxed">
@@ -106,7 +94,6 @@
                             </div>
                         </div>
                     </div>
-
                     <div class="mt-8 flex flex-wrap gap-3">
                         <a href="{{ path('app_book_preview', {'id': book.id}) }}" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
                             {{ ux_icon('famicons:eye-outline', { class: 'h-5 w-5 mr-3' }) }}
@@ -120,7 +107,6 @@
                 </div>
             </div>
         </div>
-
         <div class="mt-12">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Livres similaires</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -149,149 +135,147 @@
                 {% endfor %}
             </div>
         </div>
-
         <div class="mt-12">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Avis des lecteurs</h2>
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Avis des lecteurs</h2>
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <div class="flex flex-col md:flex-row">
                     <div class="md:w-1/4 flex flex-col items-center justify-center mb-6 md:mb-0">
                         <div class="text-5xl font-bold text-gray-800">4.2</div>
-                            <div class="flex text-yellow-400 my-2">
-                                {{ ux_icon('famicons:star', { class: 'h-5 w-5 mx-1' }) }}
-                                {{ ux_icon('famicons:star', { class: 'h-5 w-5 mx-1' }) }}
-                                {{ ux_icon('famicons:star', { class: 'h-5 w-5 mx-1' }) }}
-                                {{ ux_icon('famicons:star', { class: 'h-5 w-5 mx-1' }) }}
-                                {{ ux_icon('famicons:star-outline', { class: 'h-5 w-5 mx-1 text-gray-400' }) }}
-                            </div>
-                            <div class="text-sm text-gray-500">Basé sur 87 avis</div>
+                        <div class="flex text-yellow-400 my-2">
+                            {{ ux_icon('famicons:star', { class: 'h-5 w-5 mx-1' }) }}
+                            {{ ux_icon('famicons:star', { class: 'h-5 w-5 mx-1' }) }}
+                            {{ ux_icon('famicons:star', { class: 'h-5 w-5 mx-1' }) }}
+                            {{ ux_icon('famicons:star', { class: 'h-5 w-5 mx-1' }) }}
+                            {{ ux_icon('famicons:star-outline', { class: 'h-5 w-5 mx-1 text-gray-400' }) }}
                         </div>
-                        <div class="md:w-3/4 md:pl-6">
-                            <div class="space-y-2">
-                                {% for i in 5..1 %}
-                                    <div class="flex items-center">
-                                        <span class="text-sm text-gray-600 w-16">{{ i }} étoile{{ i > 1 ? 's' : '' }}</span>
-                                        <div class="w-full h-2 bg-gray-200 rounded-full mx-2">
-                                            {% set width = i == 5 ? 40 : (i == 4 ? 30 : (i == 3 ? 20 : (i == 2 ? 7 : 3))) %}
-                                            <div class="h-2 bg-yellow-400 rounded-full" style="width: {{ width }}%"></div>
-                                        </div>
-                                        <span class="text-sm text-gray-600 w-10">{{ width }} %</span>
+                        <div class="text-sm text-gray-500">Basé sur 87 avis</div>
+                    </div>
+                    <div class="md:w-3/4 md:pl-6">
+                        <div class="space-y-2">
+                            {% for i in 5..1 %}
+                                <div class="flex items-center">
+                                    <span class="text-sm text-gray-600 w-16">{{ i }} étoile{{ i > 1 ? 's' : '' }}</span>
+                                    <div class="w-full h-2 bg-gray-200 rounded-full mx-2">
+                                        {% set width = i == 5 ? 40 : (i == 4 ? 30 : (i == 3 ? 20 : (i == 2 ? 7 : 3))) %}
+                                        <div class="h-2 bg-yellow-400 rounded-full" style="width: {{ width }}%"></div>
                                     </div>
-                                {% endfor %}
-                            </div>
+                                    <span class="text-sm text-gray-600 w-10">{{ width }} %</span>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
-                <div class="space-y-6">
-                    {% for i in 1..3 %}
-                        <div class="bg-white rounded-lg shadow-md p-6">
-                            <div class="flex items-center mb-4">
-                                <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-4">
-                                    <span class="font-medium text-gray-700">{{ ['JD', 'AB', 'MT'][i-1] }}</span>
+            </div>
+            <div class="space-y-6">
+                {% for i in 1..3 %}
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center mb-4">
+                        <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                            <span class="font-medium text-gray-700">{{ ['JD', 'AB', 'MT'][i-1] }}</span>
+                        </div>
+                        <div>
+                            <h3 class="font-medium text-gray-800">{{ ['Jean Dupont', 'Alice Bertrand', 'Marc Tremblay'][i-1] }}</h3>
+                            <div class="flex items-center">
+                                <div class="flex text-yellow-400">
+                                    {% for j in 1..5 %}
+                                        {% if j <= [4, 5, 3][i-1] %}
+                                            {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}
+                                        {% else %}
+                                            {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}
+                                        {% endif %}
+                                    {% endfor %}
                                 </div>
-                                <div>
-                                    <h3 class="font-medium text-gray-800">{{ ['Jean Dupont', 'Alice Bertrand', 'Marc Tremblay'][i-1] }}</h3>
-                                    <div class="flex items-center">
-                                        <div class="flex text-yellow-400">
-                                            {% for j in 1..5 %}
-                                                {% if j <= [4, 5, 3][i-1] %}
-                                                    {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}
-                                                {% else %}
-                                                    {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                        <span class="text-xs text-gray-500 ml-2">{{ ['27 février 2025', '15 mars 2025', '3 février 2025'][i-1] }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <p class="text-gray-700">{{ [
-                                    'Un excellent livre qui m\'a captivé du début à la fin. L\'intrigue est bien construite et les personnages sont attachants. Je le recommande vivement !',
-                                    'Chef-d\'œuvre absolu ! La plume de l\'auteur est magnifique, le style est fluide et les descriptions sont immersives. Une lecture que je n\'oublierai pas de sitôt.',
-                                    'Lecture intéressante mais qui manque parfois de rythme. Certains passages sont superflus et ralentissent l\'histoire. Néanmoins, j\'ai apprécié les personnages et leur évolution.'
-                                ][i-1] }}</p>
-                            <div class="mt-4 flex items-center text-sm text-gray-500">
-                                <button class="flex items-center mr-4 hover:text-red-600">
-                                    {{ ux_icon('famicons:thumbs-up-outline', { class: 'h-4 w-4 mr-1' }) }}
-                                    Utile ({{ [12, 18, 5][i-1] }})
-                                </button>
-                                <button class="flex items-center hover:text-red-600">
-                                    {{ ux_icon('famicons:chatbubble-ellipses-outline', { class: 'h-4 w-4 mr-1' }) }}
-                                    Répondre
-                                </button>
+                                <span class="text-xs text-gray-500 ml-2">{{ ['27 février 2025', '15 mars 2025', '3 février 2025'][i-1] }}</span>
                             </div>
                         </div>
-                    {% endfor %}
-                </div>
-                <div class="mt-8 bg-white rounded-lg shadow-md p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-4">Partagez votre avis</h3>
-                    <form>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 text-sm font-medium mb-2">Votre note</label>
-                            <div class="flex">
-                                {% for i in 1..5 %}
-                                    <button type="button" class="text-gray-300 hover:text-yellow-400 focus:text-yellow-400 focus:outline-none">
-                                        {{ ux_icon('famicons:star', { class: 'h-8 w-8 mx-1' }) }}
-                                    </button>
-                                {% endfor %}
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label for="review-title" class="block text-gray-700 text-sm font-medium mb-2">Titre de votre avis</label>
-                            <input type="text" id="review-title" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Résumez votre expérience en quelques mots">
-                        </div>
-                        <div class="mb-4">
-                            <label for="review-content" class="block text-gray-700 text-sm font-medium mb-2">Votre avis</label>
-                            <textarea id="review-content" rows="5" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Partagez votre expérience de lecture..."></textarea>
-                        </div>
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-colors">
-                            Soumettre votre avis
+                    </div>
+                    <p class="text-gray-700">{{ [
+                            'Un excellent livre qui m\'a captivé du début à la fin. L\'intrigue est bien construite et les personnages sont attachants. Je le recommande vivement !',
+                            'Chef-d\'œuvre absolu ! La plume de l\'auteur est magnifique, le style est fluide et les descriptions sont immersives. Une lecture que je n\'oublierai pas de sitôt.',
+                            'Lecture intéressante mais qui manque parfois de rythme. Certains passages sont superflus et ralentissent l\'histoire. Néanmoins, j\'ai apprécié les personnages et leur évolution.'
+                        ][i-1] }}</p>
+                    <div class="mt-4 flex items-center text-sm text-gray-500">
+                        <button class="flex items-center mr-4 hover:text-red-600">
+                            {{ ux_icon('famicons:thumbs-up-outline', { class: 'h-4 w-4 mr-1' }) }}
+                            Utile ({{ [12, 18, 5][i-1] }})
                         </button>
-                    </form>
+                        <button class="flex items-center hover:text-red-600">
+                            {{ ux_icon('famicons:chatbubble-ellipses-outline', { class: 'h-4 w-4 mr-1' }) }}
+                            Répondre
+                        </button>
+                    </div>
                 </div>
+                {% endfor %}
+            </div>
+            <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Partagez votre avis</h3>
+                <form>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-medium mb-2">Votre note</label>
+                        <div class="flex">
+                            {% for i in 1..5 %}
+                                <button type="button" class="text-gray-300 hover:text-yellow-400 focus:text-yellow-400 focus:outline-none">
+                                    {{ ux_icon('famicons:star', { class: 'h-8 w-8 mx-1' }) }}
+                                </button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="review-title" class="block text-gray-700 text-sm font-medium mb-2">Titre de votre avis</label>
+                        <input type="text" id="review-title" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Résumez votre expérience en quelques mots">
+                    </div>
+                    <div class="mb-4">
+                        <label for="review-content" class="block text-gray-700 text-sm font-medium mb-2">Votre avis</label>
+                        <textarea id="review-content" rows="5" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500" placeholder="Partagez votre expérience de lecture..."></textarea>
+                    </div>
+                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-lg transition-colors">
+                        Soumettre votre avis
+                    </button>
+                </form>
             </div>
         </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const tabs = document.querySelectorAll('#bookTabs button');
-                const tabPanes = document.querySelectorAll('.tab-pane');
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('#bookTabs button');
+            const tabPanes = document.querySelectorAll('.tab-pane');
 
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', function() {
-                        tabs.forEach(t => {
-                            t.classList.remove('text-red-600', 'border-red-600', 'active');
-                            t.classList.add('text-gray-500', 'border-transparent');
-                            t.setAttribute('aria-selected', 'false');
-                        });
-
-                        tabPanes.forEach(pane => {
-                            pane.classList.remove('show', 'active');
-                        });
-
-                        this.classList.remove('text-gray-500', 'border-transparent');
-                        this.classList.add('text-red-600', 'border-red-600', 'active');
-                        this.setAttribute('aria-selected', 'true');
-
-                        const targetId = this.getAttribute('data-bs-target').substring(1);
-                        const targetPane = document.getElementById(targetId);
-                        targetPane.classList.add('show', 'active');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    tabs.forEach(t => {
+                        t.classList.remove('text-red-600', 'border-red-600', 'active');
+                        t.classList.add('text-gray-500', 'border-transparent');
+                        t.setAttribute('aria-selected', 'false');
                     });
-                });
 
-                const ratingStars = document.querySelectorAll('form button svg');
-                ratingStars.forEach((star, index) => {
-                    star.parentElement.addEventListener('click', function() {
-                        ratingStars.forEach((s, i) => {
-                            if (i <= index) {
-                                s.parentElement.classList.remove('text-gray-300');
-                                s.parentElement.classList.add('text-yellow-400');
-                            } else {
-                                s.parentElement.classList.remove('text-yellow-400');
-                                s.parentElement.classList.add('text-gray-300');
-                            }
-                        });
+                    tabPanes.forEach(pane => {
+                        pane.classList.remove('show', 'active');
+                    });
+
+                    this.classList.remove('text-gray-500', 'border-transparent');
+                    this.classList.add('text-red-600', 'border-red-600', 'active');
+                    this.setAttribute('aria-selected', 'true');
+
+                    const targetId = this.getAttribute('data-bs-target').substring(1);
+                    const targetPane = document.getElementById(targetId);
+                    targetPane.classList.add('show', 'active');
+                });
+            });
+
+            const ratingStars = document.querySelectorAll('form button svg');
+            ratingStars.forEach((star, index) => {
+                star.parentElement.addEventListener('click', function() {
+                    ratingStars.forEach((s, i) => {
+                        if (i <= index) {
+                            s.parentElement.classList.remove('text-gray-300');
+                            s.parentElement.classList.add('text-yellow-400');
+                        } else {
+                            s.parentElement.classList.remove('text-yellow-400');
+                            s.parentElement.classList.add('text-gray-300');
+                        }
                     });
                 });
             });
-        </script>
-
+        });
+    </script>
 {% endblock %}
