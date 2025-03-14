@@ -21,7 +21,7 @@ class ReservationController extends AbstractController
     #[Route('/{userId}/shelf/{shelfName}', name: 'get_books_from_shelf', methods: ['GET'])]
     public function getBooksFromShelf(string $userId, string $shelfName, Request $request): Response
     {
-        $maxResults = $request->query->getInt('maxResults', 10);
+        $maxResults = $request->query->getInt('maxResults', 5);
         $startIndex = $request->query->getInt('startIndex', 0);
 
         try {
