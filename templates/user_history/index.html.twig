@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>{{ title }}</h1>
+
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="d-flex justify-content-between mb-3">
+            <div>
+                <p>Votre historique contient {{ user_histories|length }} entrées.</p>
+            </div>
+            <div>
+                <form method="post" action="{{ path('app_user_history_clear') }}" onsubmit="return confirm('Êtes-vous sûr de vouloir effacer tout votre historique?');">
+                    <input type="hidden" name="_token" value="{{ csrf_token('clear_history') }}">
+                    <button class="btn btn-danger">Effacer mon historique</button>
+                </form>
+            </div>
+        </div>
+
+        {% if user_histories is empty %}
+            <div class="alert alert-info">
+                Votre historique est vide.
+            </div>
+        {% else %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Livre</th>
+                        <th>Action</th>
+                        <th>Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for history in user_histories %}
+                        <tr>
+                            <td>
+                                <a href="{{ path('app_book_details', {'id': history.book.volumeId}) }}">
+                                    {{ history.book.name }}
+                                </a>
+                            </td>
+                            <td>
+                                {% if history.actionType == 'view' %}
+                                    <span class="badge bg-info">Consulté</span>
+                                {% elseif history.actionType == 'borrow' %}
+                                    <span class="badge bg-primary">Emprunté</span>
+                                {% elseif history.actionType == 'return' %}
+                                    <span class="badge bg-success">Retourné</span>
+                                {% elseif history.actionType == 'favorite' %}
+                                    <span class="badge bg-warning">Favoris</span>
+                                {% elseif history.actionType == 'search' %}
+                                    <span class="badge bg-secondary">Recherché</span>
+                                {% else %}
+                                    <span class="badge bg-dark">{{ history.actionType }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ history.createdAt|date('d/m/Y H:i') }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
