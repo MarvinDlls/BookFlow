@@ -245,7 +245,8 @@
             </div>
         </div>
     </div>
-    <script>
+    {% block javascripts %}
+        <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('#bookTabs button');
             const tabPanes = document.querySelectorAll('.tab-pane');
@@ -288,4 +289,5 @@
             });
         });
     </script>
+    {% endblock %}
 {% endblock %}

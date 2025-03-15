@@ -15,7 +15,7 @@ class Reservation
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?User $user = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
@@ -34,11 +34,8 @@ class Reservation
     private ?\DateTimeImmutable $updated_at = null;
 
     #[ORM\ManyToOne(inversedBy: 'reservations')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Book $book = null;
-
-    #[ORM\Column(type: "boolean")]
-    private ?bool $isReserved = false;
 
     #[ORM\PrePersist]
     public function setCreatedAtValue()
@@ -82,7 +79,7 @@ class Reservation
         return $this;
     }
 
-    public function isStatus(): ?bool
+    public function getStatus(): ?bool
     {
         return $this->status;
     }
@@ -142,15 +139,5 @@ class Reservation
         return $this;
     }
 
-    public function getIsReserved(): ?bool
-    {
-        return $this->isReserved;
-    }
 
-    public function setIsReserved(bool $isReserved): static
-    {
-        $this->isReserved = $isReserved;
-
-        return $this;
-    }
 }

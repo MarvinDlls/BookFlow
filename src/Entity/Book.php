@@ -31,7 +31,7 @@ class Book
     #[ORM\Column]
     private ?int $popularity = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
     #[ORM\Column]
@@ -42,6 +42,9 @@ class Book
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
+
+    #[ORM\Column(options: ["default" => false])]
+    private bool $isReserved = false;
 
     /**
      * @var Collection<int, Reservation>
@@ -70,7 +73,7 @@ class Book
     {
         // Vérifie si le livre a une réservation active (status true)
         foreach ($this->getReservations() as $reservation) {
-            if ($reservation->isStatus()) {
+            if ($reservation->getStatus()) {
                 return true; // Le livre est réservé
             }
         }
@@ -210,8 +213,6 @@ class Book
 
         return $this;
     }
-
-    private bool $isReserved = false;
 
     public function getIsReserved(): bool
     {
