@@ -40,16 +40,27 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/new/{id}', name: 'app_reservation_new', methods: ['GET', 'POST'])]
-    public function new(Book $book, Request $request): Response
+    public function new(Request $request, $id): Response
     {
+        $id = (int) $id;
+        // Récupérer le livre explicitement par ID
+        $book = $this->entityManager->getRepository(Book::class)->find($id);
+
+        if (!$book) {
+            $this->addFlash('error', 'Livre non trouvé dans la base de données.');
+            // Rediriger vers la liste des livres ou la page précédente
+            $referer = $request->headers->get('referer');
+            return $this->redirect($referer ?: $this->generateUrl('app_books_list'));
+        }
+
         $user = $this->getUser();
 
-        // Vérifier si l'utilisateur a déjà 5 réservations actives
+        // Vérifications des réservations existantes et des restrictions
         $activeReservations = $this->reservationRepository->findActiveByUser($user);
 
         if (count($activeReservations) >= 5) {
             $this->addFlash('error', 'Vous avez déjà atteint le maximum de 5 réservations.');
-            return $this->redirectToRoute('app_books_list');
+            return $this->redirectToRoute('app_book_details', ['id' => $book->getId()]);
         }
 
         $existingReservation = $this->reservationRepository->findOneBy([
@@ -69,10 +80,7 @@ class ReservationController extends AbstractController
             return $this->redirectToRoute('app_book_details', ['id' => $book->getId()]);
         }
 
-        if (!$book) {
-            throw $this->createNotFoundException('Livre non trouvé.');
-        }
-
+        // Créer la réservation
         $reservation = new Reservation();
         $reservation->setUser($user);
         $reservation->setBook($book);
@@ -89,7 +97,8 @@ class ReservationController extends AbstractController
 
         $this->addFlash('success', 'Votre réservation du livre "' . $book->getName() . '" a été enregistrée avec succès.');
 
-        return $this->redirectToRoute('app_reservation_index');
+        // Rediriger vers la page de détails du livre
+        return $this->redirectToRoute('app_book_details', ['id' => $book->getId()]);
     }
 
     #[Route('/{id}/cancel', name: 'app_reservation_cancel', methods: ['GET', 'POST'])]
