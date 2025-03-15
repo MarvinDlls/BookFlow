@@ -3,16 +3,91 @@
 {% block title %}BookFlow - Inscription{% endblock %}
 
 {% block body %}
-    <h1>Inscription</h1>
-	<div class="">
-		{% for flash_error in app.flashes('verify_email_error') %}
-			<div class="" role="alert">{{ flash_error }}</div>
-		{% endfor %}
-
-		{{ form_errors(registrationForm) }}
-
-		<div class="">
-			{{ form(registrationForm) }}
+	{% if form_errors(registrationForm) %}
+		<div class="alert alert-danger">
+			<ul>
+				{% for error in form_errors(registrationForm) %}
+					<li>{{ error }}</li>
+				{% endfor %}
+			</ul>
 		</div>
+	{% endif %}
+
+	<div class="h-screen grid justify-center items-center">
+		<form name="registration" method="post" class="grid gap-6">
+			<div class="flex flex-col items-center relative">
+				<h1 class="absolute text-6xl md:text-9xl font-crimson font-semibold text-gray-100 opacity-1">
+					BOOKFLOW
+				</h1>
+				<div class="relative flex flex-col items-center mt-5 md:mt-10">
+					<h1 class="text-2xl md:text-4xl lg:text-6xl font-semibold text-gray-500">Bienvenue parmi nous !</h1>
+					<div class="md:w-28 w-14 md:h-[4px] h-[2px] bg-red-800 mt-2"></div>
+				</div>
+			</div>
+			<div class="w-full flex gap-3">
+				<div class="w-full">
+					<label class="form-label required" for="registration_firstname">Votre nom</label>
+					<input type="text" id="registration_firstname" name="registration[firstname]" required="required" maxlength="80" placeholder="Entrez votre nom" class="capitalize shadow-2xl p-3 w-full outline-none focus:border-solid focus:border-[1px] border-red-800 placeholder:text-black">
+					{{ form_errors(registrationForm.firstname) }}
+				</div>
+				<div class="w-full">
+					<label class="form-label required" for="registration_lastname">Votre prénom</label>
+					<input type="text" id="registration_lastname" name="registration[lastname]" required="required" maxlength="80" placeholder="Entrez votre prénom" class="p-3 capitalize shadow-2xl w-full placeholder:text-black outline-none focus:border-solid focus:border-[1px] border-red-800">
+					{{ form_errors(registrationForm.lastname) }}
+				</div>
+			</div>
+			<div>
+				<label class="form-label required" for="registration_username">Nom d'utilisateur</label>
+				<input type="text" id="registration_username" name="registration[username]" required="required" maxlength="80" placeholder="Choisissez un nom d'utilisateur" class="p-3 shadow-2xl w-full placeholder:text-black outline-none focus:border-solid border-red-800 focus:border-[1px]">
+				{{ form_errors(registrationForm.username) }}
+			</div>
+			<div class="grid gap-6 w-full">
+				<div>
+					<label class="form-label required" for="registration_email">Votre adresse e-mail</label>
+					<input type="email" id="registration_email" name="registration[email]" required="required" placeholder="exemple@exemple.com" class="p-3 shadow-2xl w-full placeholder:text-black outline-none focus:border-solid border-red-800 focus:border-[1px]">
+					{{ form_errors(registrationForm.email) }}
+				</div>
+				<div class="grid gap-6 w-full">
+					<div class="grid gap-6 w-full">
+						<div>
+							{{ form_label(registrationForm.plainPassword.first) }}
+							{{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'p-3 shadow-2xl w-full placeholder:text-black outline-none focus:border-solid focus:border-[1px] border-red-800'}}) }}
+							{{ form_errors(registrationForm.plainPassword.first) }}
+						</div>
+						<div>
+							{{ form_label(registrationForm.plainPassword.second) }}
+							{{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'p-3 shadow-2xl w-full placeholder:text-black outline-none focus:border-solid focus:border-[1px] border-red-800'}}) }}
+							{{ form_errors(registrationForm.plainPassword.second) }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="flex gap-6 justify-around">
+				<div class="relative flex items-center gap-2">
+					<label class="text-sm" for="registration_isTerms">J'accepte les termes</label>
+					<label for="registration_isTerms" class="relative flex size-6 items-center justify-center overflow-hidden rounded-full bg-gradient-to-tr from-red-900 via-red-800 to-orange-600 p-1 transition-all duration-200 hover:scale-110">
+						<input type="checkbox" id="registration_isTerms" name="registration[isTerms]" required="required" class="peer hidden" value="1">
+						<label for="registration_isTerms" class="size-full rounded-full bg-black peer-checked:size-0"></label>
+						<div class="absolute left-[0.5rem] h-[2px] w-[10px] -translate-y-4 translate-x-4 rotate-[-41deg] rounded-sm bg-white duration-300 peer-checked:translate-x-[0.02rem] peer-checked:translate-y-0"></div>
+						<div class="absolute left-1 top-2 h-[2px] w-[6px] -translate-x-4 -translate-y-4 rotate-[45deg] rounded-sm bg-white duration-300 peer-checked:translate-x-[0.1rem] peer-checked:translate-y-1"></div>
+					</label>
+					{{ form_errors(registrationForm.isTerms) }}
+				</div>
+				<div class="relative flex items-center gap-2">
+					<label class="text-sm" for="registration_isGpdr">J'accepte la politique de confidentialité</label>
+					<label for="registration_isGpdr" class="relative flex size-6 items-center justify-center overflow-hidden rounded-full bg-gradient-to-tr from-red-900 via-red-800 to-orange-600 p-1 transition-all duration-200 hover:scale-110">
+						<input type="checkbox" id="registration_isGpdr" name="registration[isGpdr]" required="required" class="peer hidden" value="1">
+						<label for="registration_isGpdr" class="size-full rounded-full bg-black peer-checked:size-0"></label>
+						<div class="absolute left-[0.5rem] h-[2px] w-[10px] -translate-y-4 translate-x-4 rotate-[-41deg] rounded-sm bg-white duration-300 peer-checked:translate-x-[0.02rem] peer-checked:translate-y-0"></div>
+						<div class="absolute left-1 top-2 h-[2px] w-[6px] -translate-x-4 -translate-y-4 rotate-[45deg] rounded-sm bg-white duration-300 peer-checked:translate-x-[0.1rem] peer-checked:translate-y-1"></div>
+					</label>
+					{{ form_errors(registrationForm.isGpdr) }}
+				</div>
+			</div>
+			<button class="outline-none glass shadow-2xl w-full p-3 bg-[#ffffff42] hover:border-red-800 hover:border-solid hover:border-[1px] hover:text-red-800 font-bold" type="submit">
+				S'inscrire
+			</button>
+			{{ form_row(registrationForm._token) }}
+		</form>
 	</div>
 {% endblock %}

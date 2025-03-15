@@ -2,13 +2,18 @@
 
 namespace App\Controller;
 
+use App\Entity\Book;
+use App\Repository\BookRepository;
 use App\Service\GoogleApiService;
+use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class BookController extends AbstractController
@@ -31,13 +36,17 @@ final class BookController extends AbstractController
             $genre = $request->query->get('genre'); // Filtre par genre
             $sortByPopularity = $request->query->getBoolean('popular', false); // Tri par popularité
 
-            $pagination = $this->googleApiService->fetchAllBooks($page, $limit, $genre, $sortByPopularity);
+            $books = $this->googleApiService->fetchAllBooks($page, $limit, $genre, $sortByPopularity);
 
+            if (empty($books)) {
+                $this->addFlash('warning', 'Aucun livre trouvé.');
+            }
+          
             return $this->render('book/books.html.twig', [
-                'pagination' => $pagination,
-                'title' => 'Liste des livres',
-                'selectedGenre' => $genre,
-                'sortByPopularity' => $sortByPopularity
+              'pagination' => $books,
+              'title' => 'Liste des livres',
+              'selectedGenre' => $genre,
+              'sortByPopularity' => $sortByPopularity
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de la récupération des livres: ' . $e->getMessage());
@@ -51,39 +60,44 @@ final class BookController extends AbstractController
     }
 
     #[Route('/books/search', name: 'app_books_search', methods: ['GET'])]
-    public function search(Request $request): Response
+    public function search(Request $request, PaginatorInterface $paginator): Response
     {
         $query = trim($request->query->get('q', ''));
-        $genre = $request->query->get('genre'); // Ajout du genre
-        $sortByPopularity = $request->query->getBoolean('popular', false); // Ajout du tri
-
+        $page = $request->query->getInt('page', 1);
+        $limit = $request->query->getInt('limit', 40);
+        $startIndex = ($page - 1) * $limit;
+        
         if ($query === '') {
             $this->addFlash('warning', 'Veuillez entrer un mot-clé pour rechercher un livre.');
             return $this->redirectToRoute('app_books_list');
         }
 
         try {
-            $books = $this->googleApiService->searchBooks($query, 40, $genre, $sortByPopularity);
+            // Utilisation de la méthode searchBooks avec les paramètres dans le bon ordre
+            $books = $this->googleApiService->searchBooks($query, $limit, $startIndex);
+
+            $pagination = $paginator->paginate(
+                $books,
+                $page,
+                $limit
+            );
 
             return $this->render('book/books.html.twig', [
-                'books' => $books,
+                'pagination' => $pagination,
                 'query' => $query,
-                'title' => 'Recherche: ' . $query,
-                'selectedGenre' => $genre,
-                'sortByPopularity' => $sortByPopularity
+                'title' => 'Recherche: ' . $query
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de la recherche de livres: ' . $e->getMessage());
             $this->addFlash('error', 'Une erreur est survenue lors de la recherche.');
 
             return $this->render('book/books.html.twig', [
-                'books' => [],
+                'pagination' => [],
                 'query' => $query,
-                'title' => 'Recherche: ' . $query . ' - Erreur'
+                'title' => 'Recherche : ' . $query . ' - Erreur'
             ]);
         }
     }
-
 
     #[Route('/books/{id}', name: 'app_book_details', methods: ['GET'])]
     public function details(string $id): Response
@@ -106,6 +120,32 @@ final class BookController extends AbstractController
         }
     }
 
+    #[Route('/book/add', name: 'app_book_add', methods: ['POST'])]
+    public function addBook(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (!$data || !isset($data['name'], $data['author'], $data['description'], $data['cover'], $data['slug'])) {
+            return new JsonResponse(['success' => false, 'message' => 'Données incomplètes'], Response::HTTP_BAD_REQUEST);
+        }
+
+        $book = new Book();
+        $book->setName($data['name']);
+        $book->setAuthor($data['author']);
+        $book->setDescription($data['description']);
+        $book->setCover($data['cover']);
+        $book->setPopularity($data['popularity'] ?? 0);
+        $book->setSlug($data['slug']);
+        $book->setIsRestricted(false);
+        $book->setCreatedAt(new \DateTimeImmutable()); // Ajoute la date ici ✅
+        $book->setUpdatedAt(new \DateTimeImmutable());
+
+        $entityManager->persist($book);
+        $entityManager->flush();
+
+        return new JsonResponse(['success' => true, 'message' => 'Livre ajouté avec succès']);
+    }
+
     #[Route('/api/books/{id}', name: 'api_book_details', methods: ['GET'])]
     public function apiBookDetails(string $id): JsonResponse
     {
@@ -123,9 +163,6 @@ final class BookController extends AbstractController
         }
     }
 
-
-
-    // Dans ton contrôleur
     #[Route('/book/preview/{id}', name: 'app_book_preview', methods: ['GET'])]
     public function preview(string $id, HttpClientInterface $httpClient): Response
     {

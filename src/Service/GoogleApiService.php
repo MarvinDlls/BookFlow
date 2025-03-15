@@ -40,13 +40,12 @@ class GoogleApiService
         $this->apiKey = $apiKey;
     }
     
-
     public function fetchAllBooks(int $page = 1, int $limit = 40, ?string $genre = null, bool $sortByPopularity = false)
     {
         $startIndex = ($page - 1) * $limit;
 
         $queryParams = [
-            'q' => '*', // Recherche tous les livres
+            'q' => '*',
             'maxResults' => $limit,
             'startIndex' => $startIndex
         ];
@@ -59,6 +58,7 @@ class GoogleApiService
             $queryParams['q'] .= "+subject:{$genre}";
         }
 
+        // Récupération des livres depuis l'API Google Books
         $books = $this->fetchBooksFromApi($queryParams);
 
         if ($sortByPopularity) {
@@ -143,7 +143,22 @@ class GoogleApiService
                 return [];
             }
 
-            return array_map([$this, 'formatBookData'], $data['items']);
+            $filteredBooks = array_filter($data['items'], function ($book) {
+                $volumeInfo = $book['volumeInfo'] ?? [];
+
+                $description = $volumeInfo['description'] ?? null;
+                $thumbnail = $volumeInfo['imageLinks']['thumbnail'] ?? null;
+                $previewLink = $volumeInfo['previewLink'] ?? null;
+
+                // Vérifier si les valeurs sont réellement utiles
+                $hasValidDescription = $description && $description !== 'Pas de description';
+                $hasValidThumbnail = $thumbnail && $thumbnail !== 'https://via.placeholder.com/150';
+                $hasValidPreview = $previewLink && !str_contains($previewLink, 'output=embed');
+
+                return $hasValidDescription && $hasValidThumbnail && $hasValidPreview;
+            });
+
+            return array_map([$this, 'formatBookData'], $filteredBooks);
         } catch (TransportExceptionInterface | ClientExceptionInterface | ServerExceptionInterface $e) {
             $this->logger->error("Erreur lors de la récupération des livres: " . $e->getMessage());
             return [];
@@ -171,111 +186,111 @@ class GoogleApiService
         ];
     }
 
-    public function getBooksFromShelf(string $userId, string $shelfName, int $maxResults = 10, int $startIndex = 0): array
-    {
-        if (!array_key_exists($shelfName, self::SHELF_IDS)) {
-            throw new \Exception("Étagère inconnue: $shelfName");
-        }
+    // public function getBooksFromShelf(string $userId, string $shelfName, int $maxResults = 10, int $startIndex = 0): array
+    // {
+    //     if (!array_key_exists($shelfName, self::SHELF_IDS)) {
+    //         throw new \Exception("Étagère inconnue: $shelfName");
+    //     }
 
-        $shelfId = self::SHELF_IDS[$shelfName];
-        $url = "https://www.googleapis.com/books/v1/users/{$userId}/bookshelves/{$shelfId}/volumes";
+    //     $shelfId = self::SHELF_IDS[$shelfName];
+    //     $url = "https://www.googleapis.com/books/v1/users/{$userId}/bookshelves/{$shelfId}/volumes";
         
-        $queryParams = [
-            'maxResults' => $maxResults,
-            'startIndex' => $startIndex
-        ];
+    //     $queryParams = [
+    //         'maxResults' => $maxResults,
+    //         'startIndex' => $startIndex
+    //     ];
         
-        if ($this->apiKey) {
-            $queryParams['key'] = $this->apiKey;
-        }
+    //     if ($this->apiKey) {
+    //         $queryParams['key'] = $this->apiKey;
+    //     }
         
-        try {
-            $response = $this->client->request('GET', $url, [
-                'query' => $queryParams,
-                'timeout' => 10
-            ]);
+    //     try {
+    //         $response = $this->client->request('GET', $url, [
+    //             'query' => $queryParams,
+    //             'timeout' => 10
+    //         ]);
 
-            if ($response->getStatusCode() !== 200) {
-                throw new \Exception("Erreur lors de la récupération des livres de l'étagère: " . $response->getStatusCode());
-            }
+    //         if ($response->getStatusCode() !== 200) {
+    //             throw new \Exception("Erreur lors de la récupération des livres de l'étagère: " . $response->getStatusCode());
+    //         }
 
-            $data = json_decode($response->getContent(), true);
+    //         $data = json_decode($response->getContent(), true);
             
-            if (!isset($data['items'])) {
-                return [];
-            }
+    //         if (!isset($data['items'])) {
+    //             return [];
+    //         }
             
-            return array_map([$this, 'formatBookData'], $data['items']);
+    //         return array_map([$this, 'formatBookData'], $data['items']);
             
-        } catch (\Exception $e) {
-            $this->logger->error("Erreur lors de la récupération des livres de l'étagère: " . $e->getMessage());
-            return [];
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         $this->logger->error("Erreur lors de la récupération des livres de l'étagère: " . $e->getMessage());
+    //         return [];
+    //     }
+    // }
 
-    public function addBookToShelf(string $userId, string $shelfName, string $volumeId): bool
-    {
-        if (!array_key_exists($shelfName, self::SHELF_IDS)) {
-            throw new \Exception("Étagère inconnue: $shelfName");
-        }
+    // public function addBookToShelf(string $userId, string $shelfName, string $volumeId): bool
+    // {
+    //     if (!array_key_exists($shelfName, self::SHELF_IDS)) {
+    //         throw new \Exception("Étagère inconnue: $shelfName");
+    //     }
 
-        $shelfId = self::SHELF_IDS[$shelfName];
-        $url = "https://www.googleapis.com/books/v1/users/{$userId}/bookshelves/{$shelfId}/addVolume";
+    //     $shelfId = self::SHELF_IDS[$shelfName];
+    //     $url = "https://www.googleapis.com/books/v1/users/{$userId}/bookshelves/{$shelfId}/addVolume";
         
-        $queryParams = [
-            'volumeId' => $volumeId
-        ];
+    //     $queryParams = [
+    //         'volumeId' => $volumeId
+    //     ];
         
-        if ($this->apiKey) {
-            $queryParams['key'] = $this->apiKey;
-        }
+    //     if ($this->apiKey) {
+    //         $queryParams['key'] = $this->apiKey;
+    //     }
         
-        try {
-            $response = $this->client->request('POST', $url, [
-                'query' => $queryParams,
-                'timeout' => 10
-            ]);
+    //     try {
+    //         $response = $this->client->request('POST', $url, [
+    //             'query' => $queryParams,
+    //             'timeout' => 10
+    //         ]);
 
-            return $response->getStatusCode() === 204;
+    //         return $response->getStatusCode() === 204;
             
-        } catch (\Exception $e) {
-            $this->logger->error("Erreur lors de l'ajout du livre à l'étagère: " . $e->getMessage());
-            return false;
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         $this->logger->error("Erreur lors de l'ajout du livre à l'étagère: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
 
-    public function removeBookFromShelf(string $userId, string $shelfName, string $volumeId): bool
-    {
-        if (!array_key_exists($shelfName, self::SHELF_IDS)) {
-            throw new \Exception("Étagère inconnue: $shelfName");
-        }
+    // public function removeBookFromShelf(string $userId, string $shelfName, string $volumeId): bool
+    // {
+    //     if (!array_key_exists($shelfName, self::SHELF_IDS)) {
+    //         throw new \Exception("Étagère inconnue: $shelfName");
+    //     }
 
-        $shelfId = self::SHELF_IDS[$shelfName];
-        $url = "https://www.googleapis.com/books/v1/users/{$userId}/bookshelves/{$shelfId}/removeVolume";
+    //     $shelfId = self::SHELF_IDS[$shelfName];
+    //     $url = "https://www.googleapis.com/books/v1/users/{$userId}/bookshelves/{$shelfId}/removeVolume";
         
-        $queryParams = [
-            'volumeId' => $volumeId
-        ];
+    //     $queryParams = [
+    //         'volumeId' => $volumeId
+    //     ];
         
-        if ($this->apiKey) {
-            $queryParams['key'] = $this->apiKey;
-        }
+    //     if ($this->apiKey) {
+    //         $queryParams['key'] = $this->apiKey;
+    //     }
         
-        try {
-            $response = $this->client->request('POST', $url, [
-                'query' => $queryParams,
-                'timeout' => 10
-            ]);
+    //     try {
+    //         $response = $this->client->request('POST', $url, [
+    //             'query' => $queryParams,
+    //             'timeout' => 10
+    //         ]);
 
-            return $response->getStatusCode() === 204;
+    //         return $response->getStatusCode() === 204;
             
-        } catch (\Exception $e) {
-            $this->logger->error("Erreur lors du retrait du livre de l'étagère: " . $e->getMessage());
-            return false;
-        }
-    }
+    //     } catch (\Exception $e) {
+    //         $this->logger->error("Erreur lors du retrait du livre de l'étagère: " . $e->getMessage());
+    //         return false;
+    //     }
+    // }
 
-    public function searchBooks(string $query, int $maxResults = 10, int $startIndex = 0): array
+    public function searchBooks(string $query, int $maxResults = 10, ?int $startIndex = 0): array
     {
         if (empty($query)) {
             return [];
@@ -286,7 +301,7 @@ class GoogleApiService
         $queryParams = [
             'q' => $query,
             'maxResults' => $maxResults,
-            'startIndex' => $startIndex
+            'startIndex' => $startIndex ?? 0
         ];
         
         if ($this->apiKey) {

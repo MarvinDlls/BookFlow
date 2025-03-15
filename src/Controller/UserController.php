@@ -2,80 +2,81 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\UserType;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+    use App\Form\UserType;
+    use App\Service\UploaderService;
+    use Doctrine\ORM\EntityManagerInterface;
+    use Symfony\Component\HttpFoundation\Request;
+    use Symfony\Component\HttpFoundation\Response;
+    use Symfony\Component\Routing\Attribute\Route;
+    use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+    use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-#[Route('/user')]
+#[Route(path: '/profil', name: 'app_user_')]
 final class UserController extends AbstractController
 {
-    #[Route(name: 'app_user_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
-    {
+    public function __construct(private EntityManagerInterface $em) {}
+
+    #[Route(name: 'profil', methods: ['GET', 'POST'])]
+    public function index(
+        Request $request,
+        UploaderService $us,
+        UserPasswordHasherInterface $uphi
+    ): Response {
+
+        $user = $this->getUser();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $pwd = $uphi->isPasswordValid($user, $form->get('password')->getData());
+            if ($pwd) {
+                $image = $form->get('image')->getData();
+                if ($image != null) {
+                    $user->setImage(
+                        $us->uploadFile($image, $user->getImage())
+                    );
+                }
+
+                $this->em->persist($user);
+                $this->em->flush();
+
+                // Redirection avec flash message
+                $this->addFlash('success', 'Votre profil à été mis à jour');
+            } else {
+                $this->addFlash('error', 'Une erreur est survenue');
+            }
+
+            return $this->redirectToRoute('app_user_profil');
+        }
+
+        if (!$user->isVerified()) {
+            $this->addFlash('warning', 'Validez votre email !');
+        }
+
+//        if ($user->getSubscription() !== null) {
+//            $subs = $user->getSubscription();
+//            $now = new \DateTime();
+//
+//            $remove = false;
+//
+//            if (!$subs->isActive()) {
+//                $dateMax = (clone $subs->getCreatedAt())->modify('+20 minutes');
+//                $remove = $now > $dateMax;
+//            } else {
+//                $subsEnd = (clone $subs->getUpdatedAt())->modify('+1 month');
+//
+//                $remove = $now > $subsEnd;
+//            }
+//
+//            if ($remove) {
+//                $this->em->remove($subs);
+//                $this->em->flush();
+//            }
+//        }
+
         return $this->render('user/index.html.twig', [
-            'users' => $userRepository->findAll(),
+            'userForm' => $form,
+            'user' => $user
         ]);
-    }
-
-    #[Route('/new', name: 'app_user_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('user/new.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_user_show', methods: ['GET'])]
-    public function show(User $user): Response
-    {
-        return $this->render('user/show.html.twig', [
-            'user' => $user,
-        ]);
-    }
-
-    #[Route('/{id}/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->render('user/edit.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_user_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, EntityManagerInterface $entityManager): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->getPayload()->getString('_token'))) {
-            $entityManager->remove($user);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_user_index', [], Response::HTTP_SEE_OTHER);
     }
 }
