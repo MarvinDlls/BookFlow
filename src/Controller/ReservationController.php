@@ -61,7 +61,7 @@ class ReservationController extends AbstractController
 
         if (count($activeReservations) >= 5) {
             $this->addFlash('error', 'Vous avez déjà atteint le maximum de 5 réservations.');
-            return $this->redirectToRoute('app_book_details', ['id' => $book->getId()]);
+            return $this->redirectToRoute('app_reservation_index');
         }
 
         $existingReservation = $entityManager->getRepository(Reservation::class)->findOneBy([
@@ -72,13 +72,13 @@ class ReservationController extends AbstractController
 
         if ($existingReservation) {
             $this->addFlash('warning', 'Vous avez déjà réservé ce livre.');
-            return $this->redirectToRoute('app_book_details', ['id' => $book->getId()]);
+            return $this->redirectToRoute('app_reservation_index');
         }
 
         // Vérifier si le livre est restreint
         if ($book->isRestricted() && !$this->isGranted('ROLE_PREMIUM')) {
             $this->addFlash('error', 'Ce livre est réservé aux membres premium.');
-            return $this->redirectToRoute('app_book_details', ['id' => $book->getId()]);
+            return $this->redirectToRoute('app_books_list');
         }
 
         // Créer une nouvelle réservation
@@ -98,8 +98,8 @@ class ReservationController extends AbstractController
 
         $this->addFlash('success', 'Votre réservation du livre "' . $book->getName() . '" a été enregistrée avec succès.');
 
-        // Rediriger vers la page de détails du livre
-        return $this->redirectToRoute('app_book_details', ['id' => $book->getId()]);
+        // Rediriger vers la liste des réservations plutôt que vers les détails du livre
+        return $this->redirectToRoute('app_reservation_index');
     }
 
     #[Route('/{id}/cancel', name: 'app_reservation_cancel', methods: ['GET', 'POST'])]
