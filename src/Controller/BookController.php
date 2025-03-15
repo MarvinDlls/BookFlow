@@ -41,12 +41,12 @@ final class BookController extends AbstractController
             if (empty($books)) {
                 $this->addFlash('warning', 'Aucun livre trouvé.');
             }
-          
+
             return $this->render('book/books.html.twig', [
-              'pagination' => $books,
-              'title' => 'Liste des livres',
-              'selectedGenre' => $genre,
-              'sortByPopularity' => $sortByPopularity
+                'pagination' => $books,
+                'title' => 'Liste des livres',
+                'selectedGenre' => $genre,
+                'sortByPopularity' => $sortByPopularity
             ]);
         } catch (\Exception $e) {
             $this->logger->error('Erreur lors de la récupération des livres: ' . $e->getMessage());
@@ -66,7 +66,7 @@ final class BookController extends AbstractController
         $page = $request->query->getInt('page', 1);
         $limit = $request->query->getInt('limit', 40);
         $startIndex = ($page - 1) * $limit;
-        
+
         if ($query === '') {
             $this->addFlash('warning', 'Veuillez entrer un mot-clé pour rechercher un livre.');
             return $this->redirectToRoute('app_books_list');
@@ -100,18 +100,52 @@ final class BookController extends AbstractController
     }
 
     #[Route('/books/{id}', name: 'app_book_details', methods: ['GET'])]
-    public function details(string $id): Response
+    public function details(string $id, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
         try {
-            $book = $this->googleApiService->getBookById($id);
+            // 1. Récupérer les détails du livre depuis l'API Google
+            $googleBook = $this->googleApiService->getBookById($id);
 
-            if (!$book) {
-                throw new \Exception('Livre non trouvé');
+            if (!$googleBook) {
+                throw new \Exception('Livre non trouvé dans Google Books API');
             }
 
+            // 2. Créer un slug à partir du titre pour vérifier si le livre existe déjà
+            $baseSlug = $slugger->slug($googleBook['title'] ?? 'livre')->lower();
+
+            // 3. Vérifier si le livre existe déjà dans la base de données locale
+            $localBook = $entityManager->getRepository(Book::class)->findOneBy(['slug' => $baseSlug]);
+
+            // 4. Si le livre n'existe pas dans la base de données locale, l'ajouter
+            if (!$localBook) {
+                $localBook = new Book();
+                $localBook->setName($googleBook['title'] ?? 'Sans titre');
+                $localBook->setAuthor(implode(', ', $googleBook['authors'] ?? ['Auteur inconnu']));
+                $localBook->setDescription($googleBook['description'] ?? 'Pas de description disponible');
+                $localBook->setCover($googleBook['thumbnail'] ?? '');
+                $localBook->setPopularity(0);
+
+                // Générer un slug unique si nécessaire
+                $slug = (string) $baseSlug;
+                $counter = 1;
+                while ($entityManager->getRepository(Book::class)->findOneBy(['slug' => $slug])) {
+                    $slug = $baseSlug . '-' . $counter++;
+                }
+
+                $localBook->setSlug($slug);
+                $localBook->setIsRestricted(false);
+                $localBook->setCreatedAt(new \DateTimeImmutable());
+                $localBook->setUpdatedAt(new \DateTimeImmutable());
+
+                $entityManager->persist($localBook);
+                $entityManager->flush();
+            }
+
+            // 5. Passer à la fois les données Google ET l'ID local à la vue
             return $this->render('book/details.html.twig', [
-                'book' => $book,
-                'title' => $book['title'] ?? 'Détails du livre'
+                'book' => $googleBook,
+                'localBook' => $localBook, // Passer l'objet complet
+                'title' => $googleBook['title'] ?? 'Détails du livre'
             ]);
         } catch (\Exception $e) {
             $this->logger->error("Erreur lors de la récupération du livre ID: {$id}. " . $e->getMessage());
@@ -121,12 +155,22 @@ final class BookController extends AbstractController
     }
 
     #[Route('/book/add', name: 'app_book_add', methods: ['POST'])]
-    public function addBook(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    public function addBook(Request $request, EntityManagerInterface $entityManager, BookRepository $bookRepository, SluggerInterface $slugger): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
 
-        if (!$data || !isset($data['name'], $data['author'], $data['description'], $data['cover'], $data['slug'])) {
+        if (!$data || !isset($data['name'], $data['author'], $data['description'], $data['cover'])) {
             return new JsonResponse(['success' => false, 'message' => 'Données incomplètes'], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Générer un slug à partir du nom si aucun n'est fourni
+        $baseSlug = $data['slug'] ?? $slugger->slug($data['name'])->lower();
+        $slug = (string) $baseSlug;
+
+        // S'assurer que le slug est unique
+        $counter = 1;
+        while ($bookRepository->findOneBy(['slug' => $slug])) {
+            $slug = $baseSlug . '-' . $counter++;
         }
 
         $book = new Book();
@@ -135,15 +179,15 @@ final class BookController extends AbstractController
         $book->setDescription($data['description']);
         $book->setCover($data['cover']);
         $book->setPopularity($data['popularity'] ?? 0);
-        $book->setSlug($data['slug']);
+        $book->setSlug($slug); // Utiliser le slug unique
         $book->setIsRestricted(false);
-        $book->setCreatedAt(new \DateTimeImmutable()); // Ajoute la date ici ✅
+        $book->setCreatedAt(new \DateTimeImmutable());
         $book->setUpdatedAt(new \DateTimeImmutable());
 
         $entityManager->persist($book);
         $entityManager->flush();
 
-        return new JsonResponse(['success' => true, 'message' => 'Livre ajouté avec succès']);
+        return new JsonResponse(['success' => true, 'message' => 'Livre ajouté avec succès', 'slug' => $slug]);
     }
 
     #[Route('/api/books/{id}', name: 'api_book_details', methods: ['GET'])]
