@@ -42,6 +42,7 @@ class ReservationController extends AbstractController
     #[Route('/new/{id}', name: 'app_reservation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, $id, EntityManagerInterface $entityManager): Response
     {
+        // TODO : Vérifier si le lien des livres est correct
         $id = (int) $id;
 
         // Récupérer le livre par son ID
@@ -67,7 +68,6 @@ class ReservationController extends AbstractController
         $existingReservation = $entityManager->getRepository(Reservation::class)->findOneBy([
             'user' => $user,
             'book' => $book,
-            'status' => true
         ]);
 
         if ($existingReservation) {
@@ -86,7 +86,6 @@ class ReservationController extends AbstractController
         $reservation->setUser($user);
         $reservation->setBook($book);
         $reservation->setReservationDate(new \DateTime());
-        $reservation->setStatus(true); // La réservation est active
         $reservation->setExpirationDate(new \DateTimeImmutable('+7 days'));
         $reservation->setCreatedAt(new \DateTimeImmutable());
         $reservation->setUpdatedAt(new \DateTimeImmutable());
@@ -116,7 +115,7 @@ class ReservationController extends AbstractController
             return $this->redirectToRoute('app_reservation_index');
         }
 
-        $reservation->setStatus(false);
+        $reservation->setStatus("annule");
 
         $book = $reservation->getBook();
         $book->setIsReserved(false);
