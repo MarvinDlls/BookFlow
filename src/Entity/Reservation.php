@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\ReservationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ReservationRepository::class)]
 class Reservation
@@ -22,7 +23,8 @@ class Reservation
     private ?\DateTimeInterface $reservation_date = null;
 
     #[ORM\Column]
-    private ?bool $status = null;
+    #[Assert\Choice(['en_attente', 'reserve', 'annule', 'termine'])]
+    private ?string $status = 'en_attente';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $expiration_date = null;
@@ -79,12 +81,12 @@ class Reservation
         return $this;
     }
 
-    public function getStatus(): ?bool
+    public function getStatus(): ?string
     {
         return $this->status;
     }
 
-    public function setStatus(bool $status): static
+    public function setStatus(string $status): static
     {
         $this->status = $status;
 
