@@ -27,7 +27,7 @@ class ReservationController extends AbstractController
         $this->reservationRepository = $reservationRepository;
     }
 
-    #[Route('/', name: 'app_reservation_index', methods: ['GET'])]
+    #[Route('', name: 'app_reservation_index', methods: ['GET'])]
     public function index(): Response
     {
         $user = $this->getUser();
