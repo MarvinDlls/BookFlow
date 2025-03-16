@@ -1,43 +1,99 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Reservation index{% endblock %}
+{% block title %}Mes réservations{% endblock %}
 
 {% block body %}
-    <h1>Reservation index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Reservation_date</th>
-                <th>Status</th>
-                <th>Expiration_date</th>
-                <th>Created_at</th>
-                <th>Updated_at</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for reservation in reservations %}
-            <tr>
-                <td>{{ reservation.id }}</td>
-                <td>{{ reservation.reservationDate ? reservation.reservationDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ reservation.status ? 'Yes' : 'No' }}</td>
-                <td>{{ reservation.expirationDate ? reservation.expirationDate|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ reservation.createdAt ? reservation.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ reservation.updatedAt ? reservation.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>
-                    <a href="{{ path('app_reservation_show', {'id': reservation.id}) }}">show</a>
-                    <a href="{{ path('app_reservation_edit', {'id': reservation.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="7">no records found</td>
-            </tr>
+    <div class="container my-4">
+        <h1>Mes réservations</h1>
+        
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
         {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_reservation_new') }}">Create new</a>
+        
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+        
+        {% if reservations|length > 0 %}
+            <div class="alert alert-info">
+                Vous avez {{ reservations|filter(r => r.status)|length }} réservation(s) active(s) sur 5 maximum.
+            </div>
+            
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Livre</th>
+                        <th>Auteur</th>
+                        <th>Date de réservation</th>
+                        <th>Date d'expiration</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if app.user %}
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('app_book_details', {'id': reservation.book.id}) }}">
+                                        {{ reservation.book.name }}
+                                    </a>
+                                </td>
+                                <td>{{ reservation.book.author }}</td>
+                                <td>{{ reservation.reservationDate|date('d/m/Y') }}</td>
+                                <td>{{ reservation.expirationDate|date('d/m/Y') }}</td>
+                                <td>
+                                    {% if reservation.status %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Annulée</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.status %}
+                                        <a href="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" 
+                                           class="btn btn-sm btn-warning" 
+                                           onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">
+                                            Annuler
+                                        </a>
+                                        
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" 
+                                               class="btn btn-sm btn-info">
+                                                Prolonger
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" 
+                                               class="btn btn-sm btn-info">
+                                                Demande de prolongation
+                                            </a>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" 
+                                               class="btn btn-sm btn-info">
+                                                Prolonger
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="alert alert-info">
+                Vous n'avez aucune réservation pour le moment.
+            </div>
+        {% endif %}
+        
+        <a href="{{ path('app_books_list') }}" class="btn btn-primary">
+            Parcourir les livres
+        </a>
+    </div>
 {% endblock %}

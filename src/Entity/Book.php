@@ -31,7 +31,7 @@ class Book
     #[ORM\Column]
     private ?int $popularity = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
     #[ORM\Column]
@@ -42,6 +42,9 @@ class Book
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
+
+    #[ORM\Column(options: ["default" => false])]
+    private bool $isReserved = false;
 
     /**
      * @var Collection<int, Reservation>
@@ -60,6 +63,23 @@ class Book
      */
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'book')]
     private Collection $tags;
+
+    /**
+     * Vérifie si le livre est réservé (statut actif).
+     *
+     * @return bool
+     */
+    public function isReserved(): bool
+    {
+        // Vérifie si le livre a une réservation active (status true)
+        foreach ($this->getReservations() as $reservation) {
+            if ($reservation->getStatus()) {
+                return true; // Le livre est réservé
+            }
+        }
+        
+        return false; // Le livre n'est pas réservé
+    }
 
     public function __construct()
     {
@@ -191,6 +211,17 @@ class Book
     {
         $this->updated_at = $updated_at;
 
+        return $this;
+    }
+
+    public function getIsReserved(): bool
+    {
+        return $this->isReserved;
+    }
+
+    public function setIsReserved(bool $isReserved): self
+    {
+        $this->isReserved = $isReserved;
         return $this;
     }
 

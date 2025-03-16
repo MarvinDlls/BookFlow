@@ -1,6 +1,8 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block title %}
+	{{ title }}
+{% endblock %}
 
 {% block body %}
     <div class="container mx-auto px-4 py-8 max-w-6xl">
@@ -103,6 +105,14 @@
                             {{ ux_icon('famicons:heart-circle', { class: 'h-5 w-5 mr-3' }) }}
                             Ajouter aux favoris
                         </button>
+                        {% if app.user %}
+							<div class="mt-4">
+                                <button type="button" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
+                                    {{ ux_icon('famicons:heart-circle', { class: 'h-5 w-5 mr-3' }) }}
+                                    <a href="{{ path('app_reservation_new', {'id': localBook.id}) }}" class="btn btn-sm btn-primary">Réserver le livre</a>
+                                </button>
+							</div>
+						{% endif %}
                     </div>
                 </div>
             </div>
@@ -235,7 +245,8 @@
             </div>
         </div>
     </div>
-    <script>
+    {% block javascripts %}
+        <script>
         document.addEventListener('DOMContentLoaded', function() {
             const tabs = document.querySelectorAll('#bookTabs button');
             const tabPanes = document.querySelectorAll('.tab-pane');
@@ -278,4 +289,5 @@
             });
         });
     </script>
+    {% endblock %}
 {% endblock %}
