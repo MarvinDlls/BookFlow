@@ -13,6 +13,12 @@
 					{{ ux_icon('line-md:person-search',{ class: 'h-4 w-4 mr-2' }) }}
 					Catalogue
 				</a>
+				{% if app.user %}
+				<a class="flex items-center transition-all duration-150 hover:text-red-700" href="{{ path('app_reservation_index') }}">
+					{{ ux_icon('line-md:file-document-plus',{ class: 'h-4 w-4 mr-2' }) }}
+					Mes réservations
+				</a>
+				{% endif %}
 			</div>
 			<div class="flex items-center justify-end gap-3">
 				{% if app.user %}
