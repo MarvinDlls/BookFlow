@@ -129,24 +129,21 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/extend/{id}', name: 'app_reservation_extend', methods: ['GET', 'POST'])]
-    public function extend(Reservation $reservation): Response
-    {
-        $user = $this->getUser();
-
-        $this->denyAccessUnlessGranted('RESERVATION_MANAGE', $reservation);
-
-        if (!$reservation->getStatus()) {
-            $this->addFlash('error', 'Cette réservation n\'est plus active.');
-            return $this->redirectToRoute('app_reservation_index');
-        }
-
-        $newExpirationDate = new \DateTimeImmutable($reservation->getExpirationDate()->format('Y-m-d H:i:s') . ' +7 days');
-        $reservation->setExpirationDate($newExpirationDate);
-
-        $this->entityManager->flush();
-
-        $this->addFlash('success', 'Votre réservation a été prolongée avec succès.');
-
+#[IsGranted('ROLE_ADMIN')]
+public function extend(Reservation $reservation): Response
+{
+    if (!$reservation->getStatus()) {
+        $this->addFlash('error', 'Cette réservation n\'est plus active.');
         return $this->redirectToRoute('app_reservation_index');
     }
+
+    $newExpirationDate = new \DateTimeImmutable($reservation->getExpirationDate()->format('Y-m-d H:i:s') . ' +7 days');
+    $reservation->setExpirationDate($newExpirationDate);
+
+    $this->entityManager->flush();
+
+    $this->addFlash('success', 'La réservation a été prolongée avec succès.');
+
+    return $this->redirectToRoute('app_reservation_index');
+}
 }
