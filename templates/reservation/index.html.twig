@@ -35,39 +35,55 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for reservation in reservations %}
-                        <tr>
-                            <td>
-                                <a href="{{ path('app_book_details', {'id': reservation.book.id}) }}">
-                                    {{ reservation.book.name }}
-                                </a>
-                            </td>
-                            <td>{{ reservation.book.author }}</td>
-                            <td>{{ reservation.reservationDate|date('d/m/Y') }}</td>
-                            <td>{{ reservation.expirationDate|date('d/m/Y') }}</td>
-                            <td>
-                                {% if reservation.status %}
-                                    <span class="badge bg-success">Active</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">Annulée</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if reservation.status %}
-                                    <a href="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" 
-                                       class="btn btn-sm btn-warning" 
-                                       onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">
-                                        Annuler
+                    {% if app.user %}
+                        {% for reservation in reservations %}
+                            <tr>
+                                <td>
+                                    <a href="{{ path('app_book_details', {'id': reservation.book.id}) }}">
+                                        {{ reservation.book.name }}
                                     </a>
-                                    
-                                    <a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" 
-                                       class="btn btn-sm btn-info">
-                                        Prolonger
-                                    </a>
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
+                                </td>
+                                <td>{{ reservation.book.author }}</td>
+                                <td>{{ reservation.reservationDate|date('d/m/Y') }}</td>
+                                <td>{{ reservation.expirationDate|date('d/m/Y') }}</td>
+                                <td>
+                                    {% if reservation.status %}
+                                        <span class="badge bg-success">Active</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Annulée</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if reservation.status %}
+                                        <a href="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" 
+                                           class="btn btn-sm btn-warning" 
+                                           onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">
+                                            Annuler
+                                        </a>
+                                        
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" 
+                                               class="btn btn-sm btn-info">
+                                                Prolonger
+                                            </a>
+                                        {% else %}
+                                            <a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" 
+                                               class="btn btn-sm btn-info">
+                                                Demande de prolongation
+                                            </a>
+                                        {% endif %}
+                                    {% else %}
+                                        {% if is_granted('ROLE_ADMIN') %}
+                                            <a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" 
+                                               class="btn btn-sm btn-info">
+                                                Prolonger
+                                            </a>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% endif %}
                 </tbody>
             </table>
         {% else %}
