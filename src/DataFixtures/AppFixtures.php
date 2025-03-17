@@ -53,8 +53,7 @@ class AppFixtures extends Fixture
 
             $manager->persist($book);
         }
-
-
+        
         $manager->flush();
     }
 }
