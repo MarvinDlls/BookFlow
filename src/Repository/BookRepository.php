@@ -16,13 +16,24 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
-    public function save(Book $book, bool $flush = true): void
-{
-    $this->_em->persist($book);
-    if ($flush) {
-        $this->_em->flush();
+    public function search(string $query, int $maxResults = 10, ?int $startIndex = 0): array
+    {
+        return $this->createQueryBuilder('b')
+            ->where('b.name LIKE :query OR b.author LIKE :query OR b.description LIKE :query')
+            ->setParameter('query', '%' . $query . '%')
+            ->setMaxResults($maxResults)
+            ->setFirstResult($startIndex)
+            ->getQuery()
+            ->getResult();
     }
-}
+
+    public function save(Book $book, bool $flush = true): void
+    {
+        $this->_em->persist($book);
+        if ($flush) {
+            $this->_em->flush();
+        }
+    }
 
 
     //    /**
