@@ -49,7 +49,7 @@ class Tag
     /**
      * @return Collection<int, Book>
      */
-    public function getBook(): Collection
+    public function getBooks(): Collection
     {
         return $this->books;
     }
@@ -58,6 +58,7 @@ class Tag
     {
         if (!$this->books->contains($book)) {
             $this->books->add($book);
+            $book->addTag($this);
         }
 
         return $this;
@@ -65,7 +66,9 @@ class Tag
 
     public function removeBook(Book $book): static
     {
-        $this->books->removeElement($book);
+       if ($this->books->removeElement($book)) {
+            $book->removeTag($this);
+       }
 
         return $this;
     }

@@ -27,10 +27,11 @@ final class BookController extends AbstractController
         try {
             $page = $request->query->getInt('page', 1);
             $limit = $request->query->getInt('limit', 40);
-            $genre = $request->query->get('genre'); // Filtre par genre
-            $sortByPopularity = $request->query->getBoolean('popular', false); // Tri par popularité
+            $tagId = $request->query->getInt('tag', 0); // Récupérer l'ID du tag plutôt que le nom
+            $sortByPopularity = $request->query->getBoolean('popular', false);
 
-            $books = $this->bookService->fetchAllBooks($page, $limit, $genre, $sortByPopularity);
+            $books = $this->bookService->fetchAllBooks($page, $limit, $tagId, $sortByPopularity);
+            $tags = $this->bookService->getAllTags(); // Récupérer tous les tags (objets complets)
 
             if (empty($books)) {
                 $this->addFlash('warning', 'Aucun livre trouvé.');
@@ -39,8 +40,9 @@ final class BookController extends AbstractController
             return $this->render('book/books.html.twig', [
                 'pagination' => $books,
                 'title' => 'Liste des livres',
-                'selectedGenre' => $genre,
-                'sortByPopularity' => $sortByPopularity
+                'selectedTagId' => $tagId,
+                'sortByPopularity' => $sortByPopularity,
+                'tags' => $tags
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', 'Une erreur est survenue lors de la récupération des livres.');
