@@ -33,19 +33,25 @@ class ReservationController extends AbstractController
         $user = $this->getUser();
 
         $reservations = $this->reservationRepository->findBy(['user' => $user], ['reservation_date' => 'DESC']);
-
         $now = new \DateTimeImmutable();
         foreach ($reservations as $reservation) {
-            if ($reservation->getExpirationDate() <= $now) {
-                $reservation->setStatus('termine');
+            $book = $reservation->getBook();
+            $reservationDate = $reservation->getReservationDate();
+            $expirationDate = $reservation->getExpirationDate();
 
-                $book = $reservation->getBook();
-                $book->setIsReserved(false);
+            $interval = $reservationDate->diff($expirationDate);
+
+            if ($interval->days === 3 && $expirationDate > $now) {
+                $this->addFlash('warning', 'Votre réservation du livre "' . $book->getName() . '" va expirer dans 3 jours.');
+            }
+
+            if ($expirationDate <= $now) {
+                $reservation->setStatus('termine');
+                $book->setIsReserved(false); // Libère le livre
             }
         }
 
         $this->entityManager->flush();
-
 
         return $this->render('reservation/index.html.twig', [
             'reservations' => $reservations,
