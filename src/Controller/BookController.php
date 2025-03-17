@@ -148,7 +148,7 @@ final class BookController extends AbstractController
         $pdf->SetTitle($bookTitle);
 
         // Désactiver l'impression et la copie du texte
-        $pdf->SetProtection([], '', '', 1);
+        $pdf->SetProtection(['print', 'modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-high'], '', '', 1);
 
         // Ouvrir le fichier PDF original
         $pageCountOriginal = $pdf->setSourceFile($pdfPath);
@@ -159,16 +159,36 @@ final class BookController extends AbstractController
         // Ajouter chaque page au nouveau PDF
         for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
             $templateId = $pdf->importPage($pageNumber);
-            $pdf->AddPage();
+            $size = $pdf->getTemplateSize($templateId);
+            $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
             $pdf->useTemplate($templateId);
 
             // Ajouter un filigrane après avoir ajouté chaque page
+            // Définir la police et la couleur du filigrane
             $pdf->SetFont('helvetica', 'B', 50);
             $pdf->SetTextColor(200, 200, 200);
             $pdf->SetAlpha(0.6);
-            $pdf->Rotate(50, 100, 200);
-            $pdf->Text(75, 125, 'PRÉVISUALISATION');
-            $pdf->Rotate(0);
+
+            $watermarkText = 'PRÉVISUALISATION';
+
+            $horizontalCount = 1;
+            $verticalCount = 4;
+
+            $xSpacing = $size['width'] / $horizontalCount;
+            $ySpacing = $size['height'] / $verticalCount;
+
+            for ($i = 0; $i < $horizontalCount; $i++) {
+                for ($j = 0; $j < $verticalCount; $j++) {
+                    $x = $i * $xSpacing + 25;
+                    $y = $j * $ySpacing + 25;
+
+                    $pdf->StartTransform();
+                    $pdf->Rotate(35, $x, $y);
+                    $pdf->Text($x + 5, $y - 5, $watermarkText);
+                    $pdf->StopTransform();
+                }
+            }
+
             $pdf->SetAlpha(1);
         }
 
