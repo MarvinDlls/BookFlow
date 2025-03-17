@@ -34,6 +34,19 @@ class ReservationController extends AbstractController
 
         $reservations = $this->reservationRepository->findBy(['user' => $user], ['reservation_date' => 'DESC']);
 
+        $now = new \DateTimeImmutable();
+        foreach ($reservations as $reservation) {
+            if ($reservation->getExpirationDate() <= $now) {
+                $reservation->setStatus('termine');
+
+                $book = $reservation->getBook();
+                $book->setIsReserved(false);
+            }
+        }
+
+        $this->entityManager->flush();
+
+
         return $this->render('reservation/index.html.twig', [
             'reservations' => $reservations,
         ]);
@@ -128,21 +141,18 @@ class ReservationController extends AbstractController
     }
 
     #[Route('/extend/{id}', name: 'app_reservation_extend', methods: ['GET', 'POST'])]
-#[IsGranted('ROLE_ADMIN')]
-public function extend(Reservation $reservation): Response
-{
-    if (!$reservation->getStatus()) {
-        $this->addFlash('error', 'Cette réservation n\'est plus active.');
+    public function extend(Reservation $reservation): Response
+    {
+        if (!$reservation->getStatus()) {
+            $this->addFlash('error', 'Cette réservation n\'est plus active.');
+            return $this->redirectToRoute('app_reservation_index');
+        }
+
+        $reservation->setStatus("prolongation");
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'La demande de prolongation de réservation a été envoyée avec succès.');
+
         return $this->redirectToRoute('app_reservation_index');
     }
-
-    $newExpirationDate = new \DateTimeImmutable($reservation->getExpirationDate()->format('Y-m-d H:i:s') . ' +7 days');
-    $reservation->setExpirationDate($newExpirationDate);
-
-    $this->entityManager->flush();
-
-    $this->addFlash('success', 'La réservation a été prolongée avec succès.');
-
-    return $this->redirectToRoute('app_reservation_index');
-}
 }
