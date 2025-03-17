@@ -64,6 +64,9 @@ class Book
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'book')]
     private Collection $tags;
 
+    #[ORM\Column(length: 255)]
+    private ?string $pdfFile = null;
+
     /**
      * Vérifie si le livre est réservé (statut actif).
      *
@@ -308,6 +311,18 @@ class Book
         if ($this->tags->removeElement($tag)) {
             $tag->removeBook($this);
         }
+
+        return $this;
+    }
+
+    public function getPdfFile(): ?string
+    {
+        return $this->pdfFile;
+    }
+
+    public function setPdfFile(string $pdfFile): self
+    {
+        $this->pdfFile = $pdfFile;
 
         return $this;
     }
