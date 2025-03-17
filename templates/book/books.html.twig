@@ -36,7 +36,6 @@
 			</form>
 		</div>
 
-		<!-- Déplacement du filtre ici -->
 		{% include 'components/filtre.html.twig' %}
 
 		{% if pagination|length == 0 %}
@@ -46,28 +45,15 @@
 		{% else %}
 			<section class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
 				{% for book in pagination %}
-					{% if book.thumbnail %}
-						<a href="{{ path('app_book_details', {'id': book.id}) }}" onclick="event.preventDefault(); addBookToDatabase({ 
-							id: '{{ book.id|e('js') }}',
-							title: '{{ book.title|e('js') }}', 
-							authors: '{{ book.authors|join(', ')|e('js') }}', 
-							description: '{{ book.description|e('js') }}', 
-							cover: '{{ book.thumbnail|e('js') }}', 
-							popularity: 0 
-						})"
-						class="w-72 h-[500px] mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group"
-						style="background-image: url('{{ book.thumbnail }}');">
-					{% else %}
-						<a class="w-72 h-[500px] mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group">
-					{% endif %}
+					<a href="{{ path('app_book_details', {'id': book.id}) }}"
+					   class="w-72 h-[500px] mx-auto max-w-sm bookback bg-cover bg-center min-h-150 transform duration-500 hover:-translate-y-2 cursor-pointer group"
+					   style="background-image: url('{{ book.cover }}');">
 						<div class="p-3 bg-black bg-opacity-0 bg-gradient-to-b from-transparent to-black h-full flex flex-wrap flex-col justify-end hover:bg-opacity-75 transform duration-300">
 							<h1 class="text-white text-xl mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
-								{{ book.title }}
+								{{ book.name }}
 							</h1>
 							<h5 class="text-white mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
-								{% if book.authors %}
-									{{ book.authors|join(', ') }}
-								{% endif %}
+								{{ book.author }}
 							</h5>
 
 							<div class="w-16 h-2 bg-red-600 rounded-full mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300"></div>
@@ -90,7 +76,7 @@
 {% block javascripts %}
 <script>
 async function addBookToDatabase(book) {
-    console.log("Données envoyées :", book); 
+    console.log("Données envoyées :", book);
 
     try {
         const response = await fetch('/book/add', {
