@@ -15,7 +15,7 @@
 				<a href="">
 					<button class="relative inline-block p-px font-semibold leading-6 text-white no-underline bg-red-800 shadow-2xl cursor-pointer group rounded-xl shadow-zinc-900">
 						<span class="absolute inset-0 overflow-hidden rounded-xl">
-							<span class="absolute inset-0 rounded-xl bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(255,255,255,0.7)_0%,rgba(255,255,255,0.2)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100"></span>
+							<span class="absolute inset-0 rounded-xl bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(255,255,255,0.7)_0%,rgba(255,255,255,0.2)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-50"></span>
 						</span>
 						<a href="{{ path('app_books_list') }}">
 							<div class="relative z-10 flex items-center px-6 py-3 space-x-2 rounded-xl bg-red-850/50 ring-1 ring-white/10 ">
@@ -36,86 +36,47 @@
 
 	<div class="font-sans bg-white">
 		<div class="flex flex-col items-center relative pt-20">
-			<!-- Texte de fond -->
 			<h1 class="absolute text-6xl md:text-9xl font-semibold text-gray-100 opacity-1">
 				POPULAIRES
 			</h1>
 			<div class="relative flex flex-col items-center mt-5 md:mt-10">
-				<!-- Texte principal -->
 				<h1 class="text-2xl md:text-4xl lg:text-6xl font-semibold text-gray-500">
 					Découvrez les Livres les Plus Lus
 				</h1>
-				<!-- Bordure décorative -->
 				<div class="md:w-28 w-14 md:h-[4px] h-[2px] bg-red-700 mt-2"></div>
 			</div>
 		</div>
 	</div>
-	<div class="flex flex-wrap justify-end mx-auto md:flex-nowrap mt-6 px-20 py-12">
-		<div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
-			<a  href=""
-                class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
-                style="background-image: url('https://picsum.photos/600/1500');">
-				<div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
-					<div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
-						<p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
-							Immerse yourself in a seamless experience where every touchpoint anticipates your needs.
-							Description one. </p>
+	<div class="flex flex-wrap justify-between md:flex-nowrap mt-6 px-20 py-12">
+		{% for book in popularBooks %}
+			<div class="relative flex flex-col m-1 transition ease-in-out duration-500 delay-150 transform md:hover:-translate-x-10 md:hover:-translate-y-8 shrink-0">
+				<article class="rounded-3xl overflow-hidden bg-cover min-w-60 ring-2 ring-inset ring-white/50 bg-center min-h-150 relative transform duration-500 group"
+						style="background-image: url('{{ book.volumeInfo.imageLinks.thumbnail ?? 'https://via.placeholder.com/600x1500' }}');">
+					<div class="relative h-full group-hover:bg-opacity-0 min-h-150 flex flex-wrap flex-col pt-[20rem] transform duration-500">
+						<div class="group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col">
+							<p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500">
+								{{ book.volumeInfo.title|default('Sans titre')|slice(0, 150) ~ '...' }}
+							</p>
+						</div>
 					</div>
+				</article>
+			</div>
+		{% else %}
+			<p class="text-gray-600 text-center col-span-full">Aucun livre populaire trouvé.</p>
+		{% endfor %}
+	</div>
+	<div class="flex flex-col items-center relative">
+		<button class="justify-self-center relative inline-block p-px font-semibold leading-6 text-white no-underline bg-red-800 shadow-lg cursor-pointer group rounded-xl shadow-zinc-300 hover:scale-105 transition duration-300 ease-in-out">
+							<span class="absolute inset-0 overflow-hidden rounded-xl">
+								<span class="absolute inset-0 rounded-xl bg-[image:radial-gradient(75%_100%_at_50%_0%,rgba(255,255,255,0.7)_0%,rgba(255,255,255,0.2)_75%)] opacity-0 transition-opacity duration-500 group-hover:opacity-25"></span>
+							</span>
+			<a href="{{ path('app_books_list') }}">
+				<div class="relative z-10 flex items-center px-6 py-3 space-x-2 rounded-xl bg-red-850/50 ring-1 ring-white/10 ">
+					<span>Accédez au catalogue</span>
+					{{ ux_icon('line-md:chevron-small-right',{ class: 'h-4 w-4 mr-2' }) }}
 				</div>
 			</a>
-		</div>
-		<div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
-			<article
-            class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
-            style="background-image: url('https://i.pinimg.com/564x/34/65/b8/3465b890b11571e2c876ae74dc1b3139.jpg');">
-				<div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
-					<div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
-						<p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
-							Engage with a platform where interaction is intuitive, ensuring your journey is fluid
-							and responsive. Description two. </p>
-					</div>
-				</div>
-			</article>
-		</div>
-		<div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
-            <article
-                    class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
-                    style="background-image: url('https://i.pinimg.com/564x/33/d6/54/33d654e8058fdf69e160dcbd2235cdac.jpg');">
-				<div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
-					<div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
-						<p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
-							Discover our commitment to thoughtful design, prioritizing accessibility and user
-                            satisfaction. Description three. </p>
-					</div>
-				</div>
-			</article>
-		</div>
-		<div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
-            <article
-                    class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
-                    style="background-image: url('https://i.pinimg.com/564x/39/b8/01/39b801afe355e623bcb3928b1c1b046d.jpg');">
-				<div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
-					<div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
-						<p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
-							Experience innovation at every step, with forward-thinking solutions designed to enhance
-                            your daily interactions. Description four. </p>
-					</div>
-				</div>
-			</article>
-		</div>
-		<div class="relative flex flex-col items-start m-1 transition  ease-in-out duration-500  delay-150 transform  md:w-96 md:-ml-32 md:hover:-translate-x-32 md:hover:-translate-y-8 shrink-0 ">
-            <article
-                    class="mx-auto   rounded-3xl overflow-hidden  bg-cover ring-2 ring-inset ring-white/50 bg-center min-h-150 relative   transform duration-500   group"
-                    style="background-image: url('https://i.pinimg.com/564x/2b/b5/48/2bb548dbf4a4c57381a7b7f736b4930b.jpg');">
-				<div class=" relative h-full  group-hover:bg-opacity-0 min-h-150  flex flex-wrap flex-col pt-[20rem]  transform duration-500">
-					<div class=" group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col ">
-						<p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500 ">
-							Join us in embracing sustainability, where design and functionality meet eco-conscious
-                            decisions. Description five. </p>
-					</div>
-				</div>
-			</article>
-		</div>
+		</button>
 	</div>
 
 
@@ -123,19 +84,10 @@
 		<div class="w-full flex flex-col justify-center items-center py-20  sm:px-4 px-2">
 			<div class="lg:w-[90%] w-full mx-auto flex flex-col lg:gap-6 lg:flex-row items-center justify-center ">
 				<div class="relative">
-                    <img class="absolute z-20 lg:left-[2rem] -top-4 left-[1rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full"
-                         src="https://images.unsplash.com/photo-1496483648148-47c686dc86a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw3fHxmbG93ZXJ8ZW58MHwwfHx8MTcyMDk0OTQ2MHww&ixlib=rb-4.0.3&q=80&w=1080"
-                         alt="Side Image"/>
-                    <img class="absolute z-20 lg:top-[12rem] sm:top-[11rem] top-[5rem] sm:-left-[3rem] -left-[2rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full"
-                         src="https://images.unsplash.com/photo-1558281033-19cead6981dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxMHx8Zmxvd2VyfGVufDB8MHx8fDE3MjA5NDk0NjB8MA&ixlib=rb-4.0.3&q=80&w=1080"
-                         alt="Side Image 2"/>
-                    <img class="absolute z-20 lg:top-[23rem] sm:top-[20.5rem] top-[10.5rem] left-[2rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full"
-                         src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxfHxmbG93ZXJ8ZW58MHwwfHx8MTcyMDk0OTQ2MHww&ixlib=rb-4.0.3&q=80&w=1080"
-                         alt="Side Image 3"/>
-                    <img
-                            class="rounded-full relative object-cover right-0 lg:w-[30rem] lg:h-[30rem] sm:w-[25rem] sm:h-[25rem] w-[12rem] h-[12rem] outline sm:outline-offset-[.77em] outline-offset-[.37em] outline-red-700"
-                            src="https://images.unsplash.com/photo-1507290439931-a861b5a38200?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHwxM3x8Zmxvd2VyfGVufDB8MHx8fDE3MjA5NDk0NjB8MA&ixlib=rb-4.0.3&q=80&w=1080"
-                            alt="About us"/>
+{#                    <img class="object-cover absolute z-20 lg:left-[2rem] -top-4 left-[1rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full" src="medias/book4.svg" alt="Side Image"/>#}
+{#                    <img class="object-cover absolute z-20 lg:top-[12rem] sm:top-[11rem] top-[5rem] sm:-left-[3rem] -left-[2rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full" src="medias/book3.svg" alt="Side Image 2"/>#}
+{#                    <img class="object-cover absolute z-20 lg:top-[23rem] sm:top-[20.5rem] top-[10.5rem] left-[2rem] lg:w-[8rem] lg:h-[8rem] sm:w-[6rem] sm:h-[6rem] w-[3rem] h-[3rem] rounded-full" src="medias/book2.svg" alt="Side Image 3"/>#}
+                    <img class="object-cover object-right rounded-full relative object-cover right-0 lg:w-[30rem] lg:h-[30rem] sm:w-[25rem] sm:h-[25rem] w-[12rem] h-[12rem] outline sm:outline-offset-[.77em] outline-offset-[.37em] outline-red-700" src="medias/library.svg" alt="About us"/>
 				</div>
 				<div class="lg:w-[60%] p-4 w-full h-full shadow-xl shadow-red-700/40 flex flex-col justify-center items-center sm:px-6 px-4 rounded-xl">
 					<h2 class="text-4xl text-center text-red-800 dark:text-red-700 font-bold px-4 py-1 md:mt-0 mt-10">
@@ -177,9 +129,7 @@
 		<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
 			<div class="group">
 				<div class="relative overflow-hidden rounded-xl mb-4">
-                    <img src="https://source.unsplash.com/500x750/?author,writer"
-                         alt="Auteur populaire"
-                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                    <img src="https://picsum.photos/600/1000" alt="Auteur populaire" class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
 				</div>
 				<div class="text-center">
 					<h3 class="text-xl font-bold text-gray-800">Jean Dupont</h3>
@@ -189,9 +139,7 @@
 			</div>
 			<div class="group">
 				<div class="relative overflow-hidden rounded-xl mb-4">
-                    <img src="https://source.unsplash.com/500x750/?writer,books"
-                         alt="Auteur populaire"
-                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                    <img src="https://picsum.photos/600/1000" alt="Auteur populaire" class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
 
 				</div>
 				<div class="text-center">
@@ -202,9 +150,7 @@
 			</div>
 			<div class="group">
 				<div class="relative overflow-hidden rounded-xl mb-4">
-                    <img src="https://source.unsplash.com/500x750/?literature,author"
-                         alt="Auteur populaire"
-                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                    <img src="https://picsum.photos/600/1000" alt="Auteur populaire" class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
 				</div>
 				<div class="text-center">
 					<h3 class="text-xl font-bold text-gray-800">Marc Lemoine</h3>
@@ -214,9 +160,7 @@
 			</div>
 			<div class="group">
 				<div class="relative overflow-hidden rounded-xl mb-4">
-                    <img src="https://source.unsplash.com/500x750/?novel,storyteller"
-                         alt="Auteur populaire"
-                         class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
+                    <img src="https://picsum.photos/600/1000" alt="Auteur populaire" class="w-full aspect-[3/4] object-cover object-center transform group-hover:scale-105 transition duration-300 ease-in-out">
 				</div>
 				<div class="text-center">
 					<h3 class="text-xl font-bold text-gray-800">Elena Rousseau</h3>

@@ -340,4 +340,84 @@ class GoogleApiService
         
         return $this->getBookById($volumeId);
     }
+
+    public function fetchPopularBooks(int $maxResults = 5): array
+    {
+//        $queryParams = [
+//            'q' => '*', // Recherche tous les livres
+//            'orderBy' => 'relevance', // Trie par pertinence (ou 'newest' pour les plus récents)
+//            'maxResults' => $maxResults, // Nombre de résultats à retourner
+//        ];
+//
+//        if ($this->apiKey) {
+//            $queryParams['key'] = $this->apiKey;
+//        }
+//
+//        // Récupération des livres depuis l'API Google Books
+//        $apiResponse = $this->fetchBooksFromApi($queryParams);
+//        $books = $apiResponse['items'] ?? [];
+//
+//        // Trie les livres par nombre de notes (ratingsCount)
+//        usort($books, fn($a, $b) => ($b['volumeInfo']['ratingsCount'] ?? 0) - ($a['volumeInfo']['ratingsCount'] ?? 0));
+//
+//        // Retourne les 5 premiers livres
+//        return array_slice($books, 0, $maxResults);
+        return [
+            [
+                'id' => '1',
+                'volumeInfo' => [
+                    'title' => 'Livre de test 1',
+                    'authors' => ['Auteur 1'],
+                    'description' => 'Description du livre 1',
+                    'imageLinks' => ['thumbnail' => 'https://picsum.photos/600/900'],
+                    'previewLink' => 'https://example.com',
+                    'ratingsCount' => 100,
+                ],
+            ],
+            [
+                'id' => '2',
+                'volumeInfo' => [
+                    'title' => 'Livre de test 2',
+                    'authors' => ['Auteur 2'],
+                    'description' => 'Description du livre 2',
+                    'imageLinks' => ['thumbnail' => 'https://picsum.photos/600/900'],
+                    'previewLink' => 'https://example.com',
+                    'ratingsCount' => 50,
+                ],
+            ],
+            [
+                'id' => '3',
+                'volumeInfo' => [
+                    'title' => 'Livre de test 3',
+                    'authors' => ['Auteur 3'],
+                    'description' => 'Description du livre 3',
+                    'imageLinks' => ['thumbnail' => 'https://picsum.photos/600/900'],
+                    'previewLink' => 'https://example.com',
+                    'ratingsCount' => 50,
+                ],
+            ],
+            [
+                'id' => '4',
+                'volumeInfo' => [
+                    'title' => 'Livre de test 4',
+                    'authors' => ['Auteur 4'],
+                    'description' => 'Description du livre 4',
+                    'imageLinks' => ['thumbnail' => 'https://picsum.photos/600/900'],
+                    'previewLink' => 'https://example.com',
+                    'ratingsCount' => 50,
+                ],
+            ],
+            [
+                'id' => '5',
+                'volumeInfo' => [
+                    'title' => 'Livre de test 5',
+                    'authors' => ['Auteur 5'],
+                    'description' => 'Description du livre 5',
+                    'imageLinks' => ['thumbnail' => 'https://picsum.photos/600/900'],
+                    'previewLink' => 'https://example.com',
+                    'ratingsCount' => 50,
+                ],
+            ],
+        ];
+    }
 }
