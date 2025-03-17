@@ -30,25 +30,26 @@ class BookService
     /**
      * Récupère tous les livres.
      */
-    public function fetchAllBooks(int $page = 1, int $limit = 40, ?int $tagId = null, bool $sortByPopularity = false)
-    {
-        $queryBuilder = $this->bookRepository->createQueryBuilder('b');
-    
-        if ($tagId > 0) {
-            $queryBuilder->join('b.tags', 't')
-                        ->andWhere('t.id = :tagId')
-                        ->setParameter('tagId', $tagId);
-        }
-    
-        if ($sortByPopularity) {
-            $queryBuilder->orderBy('b.popularity', 'DESC');
-        }
-    
-        $query = $queryBuilder->getQuery();
-    
-        // Pagination
-        return $this->paginator->paginate($query, $page, $limit);
+    public function fetchAllBooks(int $page, int $limit, int $tagId, bool $sortByPopularity)
+{
+    $queryBuilder = $this->entityManager->getRepository(Book::class)->createQueryBuilder('b');
+
+    if ($tagId > 0) {
+        $queryBuilder
+            ->innerJoin('b.tags', 't')
+            ->andWhere('t.id = :tagId')
+            ->setParameter('tagId', $tagId);
     }
+
+    if ($sortByPopularity) {
+        $queryBuilder->orderBy('b.popularity', 'DESC');
+    } else {
+        $queryBuilder->orderBy('b.name', 'ASC');
+    }
+
+
+    return $this->paginator->paginate($queryBuilder, $page, $limit);
+}
 
     /**
      * Recherche des livres par mot-clé.
