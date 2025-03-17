@@ -66,6 +66,16 @@
 											{{ ux_icon('line-md:check-all',{ class: 'h-4 w-4 mr-1' }) }}
 											Terminée
 										</span>
+									{% elseif reservation.status == 'prolongation' %}
+										<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-green-500 to-green-700 text-white shadow-md hover:shadow-lg transition-shadow">
+											{{ ux_icon('line-md:check-all',{ class: 'h-4 w-4 mr-1' }) }}
+											Prolongation
+										</span>
+									{% elseif reservation.status == 'prolonge' %}
+										<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-green-500 to-green-700 text-white shadow-md hover:shadow-lg transition-shadow">
+											{{ ux_icon('line-md:check-all',{ class: 'h-4 w-4 mr-1' }) }}
+											Prolongée
+										</span>
 									{% elseif reservation.status == 'annule' %}
 										<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-gray-500 to-gray-700 text-white shadow-md hover:shadow-lg transition-shadow">
 											{{ ux_icon('line-md:close-circle',{ class: 'h-4 w-4 mr-1' }) }}
@@ -80,32 +90,15 @@
 								<a href="{{ path('app_reservation_cancel', {'id': reservation.id}) }}" class="inline-flex items-center px-4 py-2 text-sm bg-gradient-to-r from-red-600 to-red-800 text-white rounded-full hover:from-red-700 hover:to-red-900 shadow-md hover:shadow-lg transition-all" onclick="return confirm('Êtes-vous sûr de vouloir annuler cette réservation ?')">
 									Annuler
 								</a>
-								{% if is_granted('ROLE_ADMIN') %}
+
 									<a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" class="inline-flex items-center px-4 py-2 text-sm bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-full hover:from-blue-700 hover:to-blue-900 shadow-md hover:shadow-lg transition-all">
-										Prolonger
-									</a>
-								{% else %}
-									<a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" class="inline-flex items-center px-4 py-2 text-sm bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-full hover:from-blue-700 hover:to-blue-900 shadow-md hover:shadow-lg transition-all">
-										Prolongation
-									</a>
-								{% endif %}
-							{% else %}
-								{% if is_granted('ROLE_ADMIN') %}
-									<a href="{{ path('app_reservation_extend', {'id': reservation.id}) }}" class="inline-flex items-center px-4 py-2 text-sm bg-gradient-to-r from-blue-600 to-blue-800 text-white rounded-full hover:from-blue-700 hover:to-blue-900 shadow-md hover:shadow-lg transition-all">
-										Prolonger
-									</a>
-								{% endif %}
+									Prolongation
+								</a>
 							{% endif %}
 						</td>
 					</tbody>
-				</tr>
-			{% endfor %}
-		</tbody>
-	</table>
-</div>{% else %}
-<div class="bg-gray-100 border border-gray-200 text-gray-700 px-4 py-3 rounded mb-6 text-center shadow-lg transform transition-transform hover:scale-105">
-	Vous n'avez aucune réservation pour le moment.
-</div>{% endif %}<div class="mt-8 text-center">
-<a href="{{ path('app_books_list') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-800 to-red-900 text-white rounded-lg shadow-lg hover:from-red-900 hover:to-red-950 hover:shadow-xl transition-all">
-	Parcourir les livres
-</a></div></div>{% endblock %}
+				</td>
+			</tbody>
+		</tr>
+	{% endfor %}
+</tbody></table></div>{% else %}<div class="bg-gray-100 border border-gray-200 text-gray-700 px-4 py-3 rounded mb-6 text-center shadow-lg transform transition-transform hover:scale-105">Vous n'avez aucune réservation pour le moment.</div>{% endif %}<div class="mt-8 text-center"><a href="{{ path('app_books_list') }}" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-red-800 to-red-900 text-white rounded-lg shadow-lg hover:from-red-900 hover:to-red-950 hover:shadow-xl transition-all">Parcourir les livres</a></div></div>{% endblock %}
