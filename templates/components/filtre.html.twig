@@ -1,53 +1,11 @@
 <div class="flex relative items-center space-x-4 mb-8 p-6 justify-center bg-white rounded-lg shadow-lg">
 	<form method="GET" action="{{ path('app_books_list') }}" class="flex items-center space-x-4">
 		<div class="flex items-center space-x-2 flex-1">
-			<label for="genre" class="text-gray-700 font-medium">Genre :</label>
-			<select name="genre" id="genre" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all w-full max-w-xs">
-				<option value="">TOUS</option>
-				<option value="BUSINESS & ECONOMICS" {{ selectedGenre is defined and selectedGenre == 'BUSINESS & ECONOMICS' ? 'selected' : '' }}>AFFAIRES & ÉCONOMIE</option>
-				<option value="PETS" {{ selectedGenre is defined and selectedGenre == 'PETS' ? 'selected' : '' }}>ANIMAUX DE COMPAGNIE</option>
-				<option value="ANTIQUES & COLLECTIBLES" {{ selectedGenre is defined and selectedGenre == 'ANTIQUES & COLLECTIBLES' ? 'selected' : '' }}>ANTIQUITÉS & COLLECTIONS</option>
-				<option value="ARCHITECTURE" {{ selectedGenre is defined and selectedGenre == 'ARCHITECTURE' ? 'selected' : '' }}>ARCHITECTURE</option>
-				<option value="Art" {{ selectedGenre is defined and selectedGenre == 'Art' ? 'selected' : '' }}>ART</option>
-				<option value="LANGUAGE ARTS & DISCIPLINES" {{ selectedGenre is defined and selectedGenre == 'LANGUAGE ARTS & DISCIPLINES' ? 'selected' : '' }}>ARTS DU LANGAGE & DISCIPLINES</option>
-				<option value="COMICS & GRAPHIC NOVELS" {{ selectedGenre is defined and selectedGenre == 'COMICS & GRAPHIC NOVELS' ? 'selected' : '' }}>BANDES DESSINÉES & ROMANS GRAPHIQUES</option>
-				<option value="BIBLES" {{ selectedGenre is defined and selectedGenre == 'BIBLES' ? 'selected' : '' }}>BIBLES</option>
-				<option value="BIOGRAPHY & AUTOBIOGRAPHY" {{ selectedGenre is defined and selectedGenre == 'BIOGRAPHY & AUTOBIOGRAPHY' ? 'selected' : '' }}>BIOGRAPHIES & MÉMOIRES</option>
-				<option value="DESIGN" {{ selectedGenre is defined and selectedGenre == 'DESIGN' ? 'selected' : '' }}>DESIGN</option>
-				<option value="SELF-HELP" {{ selectedGenre is defined and selectedGenre == 'SELF-HELP' ? 'selected' : '' }}>DÉVELOPPEMENT PERSONNEL</option>
-				<option value="JUVENILE NONFICTION" {{ selectedGenre is defined and selectedGenre == 'JUVENILE NONFICTION' ? 'selected' : '' }}>DOCUMENTAIRES JEUNESSE</option>
-				<option value="LAW" {{ selectedGenre is defined and selectedGenre == 'LAW' ? 'selected' : '' }}>DROIT</option>
-				<option value="COOKING" {{ selectedGenre is defined and selectedGenre == 'COOKING' ? 'selected' : '' }}>CUISINE</option>
-				<option value="LITERARY CRITICISM" {{ selectedGenre is defined and selectedGenre == 'LITERARY CRITICISM' ? 'selected' : '' }}>CRITIQUE LITTÉRAIRE</option>
-				<option value="EDUCATION" {{ selectedGenre is defined and selectedGenre == 'EDUCATION' ? 'selected' : '' }}>ÉDUCATION</option>
-				<option value="LANGUAGE STUDY" {{ selectedGenre is defined and selectedGenre == 'LANGUAGE STUDY' ? 'selected' : '' }}>ÉTUDE DES LANGUES</option>
-				<option value="FAMILY & RELATIONSHIPS" {{ selectedGenre is defined and selectedGenre == 'FAMILY & RELATIONSHIPS' ? 'selected' : '' }}>FAMILLE & RELATIONS</option>
-				<option value="Fantasy" {{ selectedGenre is defined and selectedGenre == 'Fantasy' ? 'selected' : '' }}>FANTASY</option>
-				<option value="Fiction" {{ selectedGenre is defined and selectedGenre == 'Fiction' ? 'selected' : '' }}>FICTION</option>
-				<option value="HISTORY" {{ selectedGenre is defined and selectedGenre == 'HISTORY' ? 'selected' : '' }}>HISTOIRE</option>
-				<option value="HUMOR" {{ selectedGenre is defined and selectedGenre =='HUMOR' ? 'selected' : '' }}>HUMOUR</option>
-				<option value="COMPUTERS" {{ selectedGenre is defined and selectedGenre == 'COMPUTERS' ? 'selected' : '' }}>INFORMATIQUE</option>
-				<option value="GARDENING" {{ selectedGenre is defined and selectedGenre == 'GARDENING' ? 'selected' : '' }}>JARDINAGE</option>
-				<option value="GAMES & ACTIVITIES" {{ selectedGenre is defined and selectedGenre == 'GAMES & ACTIVITIES' ? 'selected' : '' }}>JEUX & ACTIVITÉS</option>
-				<option value="CRAFTS & HOBBIES" {{ selectedGenre is defined and selectedGenre == 'CRAFTS & HOBBIES' ? 'selected' : '' }}>LOISIRS CRÉATIFS</option>
-				<option value="MATHEMATICS" {{ selectedGenre is defined and selectedGenre == 'MATHEMATICS' ? 'selected' : '' }}>MATHÉMATIQUES</option>
-				<option value="MEDICAL" {{ selectedGenre is defined and selectedGenre == 'MEDICAL' ? 'selected' : '' }}>MÉDECINE</option>
-				<option value="MUSIC" {{ selectedGenre is defined and selectedGenre == 'MUSIC' ? 'selected' : '' }}>MUSIQUE</option>
-				<option value="NATURE" {{ selectedGenre is defined and selectedGenre == 'NATURE' ? 'selected' : '' }}>NATURE</option>
-				<option value="PHILOSOPHY" {{ selectedGenre is defined and selectedGenre =='PHILOSOPHY' ? 'selected' : '' }}>PHILOSOPHIE</option>
-				<option value="PHOTOGRAPHY" {{ selectedGenre is defined and selectedGenre == 'PHOTOGRAPHY' ? 'selected' : '' }}>PHOTOGRAPHIE</option>
-				<option value="POETRY" {{ selectedGenre is defined and selectedGenre == 'POETRY' ? 'selected' : '' }}>POÉSIE</option>
-				<option value="PSYCHOLOGY" {{ selectedGenre is defined and selectedGenre == 'PSYCHOLOGY' ? 'selected' : '' }}>PSYCHOLOGIE</option>
-				<option value="REFERENCE" {{ selectedGenre is defined and selectedGenre == 'REFERENCE' ? 'selected' : '' }}>RÉFÉRENCE</option>
-				<option value="RELIGION" {{ selectedGenre is defined and selectedGenre == 'RELIGION' ? 'selected' : '' }}>RELIGION</option>
-				<option value="Science" {{ selectedGenre is defined and selectedGenre == 'Science' ? 'selected' : '' }}>SCIENCE</option>
-				<option value="HEALTH & FITNESS" {{ selectedGenre is defined and selectedGenre == 'HEALTH & FITNESS' ? 'selected' : '' }}>SANTÉ & FITNESS</option>
-				<option value="Science Fiction" {{ selectedGenre is defined and selectedGenre == 'Science Fiction' ? 'selected' : '' }}>SCIENCE FICTION</option>
-				<option value="SPORTS & RECREATION" {{ selectedGenre is defined and selectedGenre == 'SPORTS & RECREATION' ? 'selected' : '' }}>SPORTS & LOISIRS</option>
-				<option value="TECHNOLOGY & ENGINEERING" {{ selectedGenre is defined and selectedGenre == 'TECHNOLOGY & ENGINEERING' ? 'selected' : '' }}>TECHNOLOGIE & INGÉNIERIE</option>
-				<option value="DRAMA" {{ selectedGenre is defined and selectedGenre == 'DRAMA' ? 'selected' : '' }}>THÉÂTRE</option>
-				<option value="TRANSPORTATION" {{ selectedGenre is defined and selectedGenre == 'TRANSPORTATION' ? 'selected' : '' }}>TRANSPORTS</option>
-				<option value="TRAVEL" {{ selectedGenre is defined and selectedGenre == 'TRAVEL' ? 'selected' : '' }}>VOYAGES</option>
+			<select name="tag" id="tagName" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all w-full max-w-xs">
+				<option value="0">TOUS</option>
+				{% for tag in tags %}
+					<option value="{{ tag.id }}" {{ selectedTagId is defined and selectedTagId == tag.id ? 'selected' : '' }}>{{ tag.name }}</option>
+				{% endfor %}
 			</select>
 		</div>
 
@@ -59,6 +17,5 @@
 		<button type="submit" class="px-6 py-2 bg-gradient-to-r from-red-600 to-red-800 text-white rounded-lg shadow-md hover:from-red-700 hover:to-red-900 hover:shadow-lg transition-all">
 			Appliquer
 		</button>
-
 	</form>
 </div>
