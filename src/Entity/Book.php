@@ -61,7 +61,8 @@ class Book
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'book')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'books')]
+    #[ORM\JoinTable(name: 'book_tag')]
     private Collection $tags;
 
     #[ORM\Column(length: 255)]
