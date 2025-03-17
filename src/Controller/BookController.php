@@ -22,36 +22,36 @@ final class BookController extends AbstractController
     }
 
     #[Route('/books', name: 'app_books_list', methods: ['GET'])]
-public function index(Request $request): Response
-{
-    try {
-        $page = $request->query->getInt('page', 1);
-        $limit = $request->query->getInt('limit', 40);
-        $tagId = $request->query->getInt('tag', 0); // Récupérer l'ID du tag plutôt que le nom
-        $sortByPopularity = $request->query->getBoolean('popular', false);
+    public function index(Request $request): Response
+    {
+        try {
+            $page = $request->query->getInt('page', 1);
+            $limit = $request->query->getInt('limit', 40);
+            $tagId = $request->query->getInt('tag', 0); // Récupérer l'ID du tag plutôt que le nom
+            $sortByPopularity = $request->query->getBoolean('popular', false);
 
-        $books = $this->bookService->fetchAllBooks($page, $limit, $tagId, $sortByPopularity);
-        $tags = $this->bookService->getAllTags(); // Récupérer tous les tags (objets complets)
+            $books = $this->bookService->fetchAllBooks($page, $limit, $tagId, $sortByPopularity);
+            $tags = $this->bookService->getAllTags(); // Récupérer tous les tags (objets complets)
 
-        if (empty($books)) {
-            $this->addFlash('warning', 'Aucun livre trouvé.');
+            if (empty($books)) {
+                $this->addFlash('warning', 'Aucun livre trouvé.');
+            }
+
+            return $this->render('book/books.html.twig', [
+                'pagination' => $books,
+                'title' => 'Liste des livres',
+                'selectedTagId' => $tagId,
+                'sortByPopularity' => $sortByPopularity,
+                'tags' => $tags
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de la récupération des livres.');
+            return $this->render('book/index.html.twig', [
+                'books' => [],
+                'title' => 'Liste des livres - Erreur'
+            ]);
         }
-
-        return $this->render('book/books.html.twig', [
-            'pagination' => $books,
-            'title' => 'Liste des livres',
-            'selectedTagId' => $tagId,
-            'sortByPopularity' => $sortByPopularity,
-            'tags' => $tags
-        ]);
-    } catch (\Exception $e) {
-        $this->addFlash('error', 'Une erreur est survenue lors de la récupération des livres.');
-        return $this->render('book/index.html.twig', [
-            'books' => [],
-            'title' => 'Liste des livres - Erreur'
-        ]);
     }
-}
 
     #[Route('/books/search', name: 'app_books_search', methods: ['GET'])]
     public function search(Request $request, PaginatorInterface $paginator): Response
