@@ -2,17 +2,48 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Book;
-use App\Entity\Tag;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
+use App\Entity\Tag;
+use App\Entity\Book;
+use App\Entity\User;
+use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
 
 class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
         $faker = Factory::create('fr_FR');
+
+        $user = new User();
+        $user->setEmail('admin@admin.fr');
+        $user->setRoles(['ROLE_ADMIN']);
+        $user->setPassword('$2y$13$TwahBDrP8dCyB8JybLCNQ.IbvLY0mMcLHRsmW77pCanBHZ.S/kdau'); // passwordAdmin
+        $user->setFirstname('Admin');
+        $user->setLastname('Admin');
+        $user->setUsername('admin');
+        $user->setImage('default.jpg');
+        $user->setIsVerified(true);
+        $user->setIsTerms(true);
+        $user->setIsGpdr(true);
+        $user->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-2 years', 'now')));
+        $user->setUpdatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween($user->getCreatedAt()->format('Y-m-d H:i:s'), 'now')));
+        $manager->persist($user);
+
+        $user = new User();
+        $user->setEmail('user@user.fr');
+        $user->setRoles(['ROLE_USER']);
+        $user->setPassword('$2y$13$rlbC/thW.VOfN9.6F24zdeB7rOTag9TdJV28u3GGQ5k87.HBBo9z.'); // password1234
+        $user->setFirstname('User');
+        $user->setLastname('User');
+        $user->setUsername('user');
+        $user->setImage('default.jpg');
+        $user->setIsVerified(true);
+        $user->setIsTerms(true);
+        $user->setIsGpdr(true);
+        $user->setCreatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween('-2 years', 'now')));
+        $user->setUpdatedAt(\DateTimeImmutable::createFromMutable($faker->dateTimeBetween($user->getCreatedAt()->format('Y-m-d H:i:s'), 'now')));
+        $manager->persist($user);
 
         $tagNames = [
             'Romance', 'Science-Fiction', 'Policier', 'Fantasy', 'Historique',
@@ -53,7 +84,7 @@ class AppFixtures extends Fixture
 
             $manager->persist($book);
         }
-        
+
         $manager->flush();
     }
 }
