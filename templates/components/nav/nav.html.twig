@@ -13,20 +13,26 @@
 					{{ ux_icon('line-md:person-search',{ class: 'h-4 w-4 mr-2' }) }}
 					Catalogue
 				</a>
-				{% if app.user %}
-				<a class="flex items-center transition-all duration-150 hover:text-red-700" href="{{ path('app_reservation_index') }}">
-					{{ ux_icon('line-md:file-document-plus',{ class: 'h-4 w-4 mr-2' }) }}
-					Mes réservations
-				</a>
+				{% if app.user.roles[0] == "ROLE_USER" %}
+					<a class="flex items-center transition-all duration-150 hover:text-red-700" href="{{ path('app_reservation_index') }}">
+						{{ ux_icon('line-md:file-document-plus',{ class: 'h-4 w-4 mr-2' }) }}
+						Mes réservations
+					</a>
 				{% endif %}
 			</div>
 			<div class="flex items-center justify-end gap-3">
-				{% if app.user %}
+				{% if app.user  %}
 					<div class="inline-flex items-center justify-center rounded-xl bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
-						<a class="flex items-center" href="{{path('app_user_profil') }}">
+						{% if app.user.roles[0] == "ROLE_ADMIN" %}
+						<a class="flex items-center" href="/admin">
 							{{ ux_icon('line-md:account',{ class: 'h-4 w-4 mr-2' }) }}
 							Profil
 						</a>
+						{% else %}
+						<a class="flex items-center" href="{{path('app_user_profil') }}">
+							{{ ux_icon('line-md:account',{ class: 'h-4 w-4 mr-2' }) }}
+							Profil
+						{% endif %}
 					</div>
 					<a class="hidden items-center justify-center rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 hover:bg-gray-50 sm:inline-flex" href={{path('app_logout') }}>
 						Déconnexion
@@ -46,4 +52,3 @@
 		</div>
 	</div>
 </header>
-
