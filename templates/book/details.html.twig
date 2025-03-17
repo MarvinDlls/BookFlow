@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-	{{ title }}
+    {{ book.name }}
 {% endblock %}
 
 {% block body %}
@@ -12,7 +12,7 @@
                     <a href="{{ path('app_books_list') }}" class="text-red-800 hover:text-red-900 transition">Livres</a>
                     {{ ux_icon('line-md:chevron-right', { class: 'ml-3 h-4 w-4' }) }}
                 </li>
-                <li class="text-gray-700 font-medium truncate">{{ book.title }}</li>
+                <li class="text-gray-700 font-medium truncate">{{ book.name }}</li>
             </ol>
         </nav>
         {% for label, messages in app.flashes %}
@@ -31,17 +31,11 @@
         <div class="bg-white rounded-2xl shadow-lg overflow-hidden transition-transform duration-300 hover:shadow-xl">
             <div class="md:flex">
                 <div class="md:w-1/3 bg-gray-50 flex justify-center items-center p-6">
-                    {% if book.thumbnail %}
-                        <img src="{{ book.thumbnail }}" alt="{{ book.title }}" class="w-full object-contain rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105">
-                    {% else %}
-                        {{ ux_icon('famicons:book', { class: 'h-64 w-64 text-gray-300' }) }}
-                    {% endif %}
+                    <img src="{{ book.cover }}" alt="{{ book.name }}" class="w-full object-contain rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105">
                 </div>
                 <div class="md:w-2/3 p-6">
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ book.title }}</h1>
-                    {% if book.authors %}
-                        <p class="text-gray-600 mb-4">Par <span class="font-medium">{{ book.authors|join(', ') }}</span></p>
-                    {% endif %}
+                    <h1 class="text-3xl font-bold text-gray-800 mb-2">{{ book.name }}</h1>
+                    <p class="text-gray-600 mb-4">Par <span class="font-medium">{{ book.author }}</span></p>
                     <div class="mt-6">
                         <div class="border-b border-gray-200">
                             <button class="inline-block py-3 px-4 text-red-700 hover:text-red-800 font-medium border-b-2 border-red-600 active" id="details-tab" data-bs-toggle="tab" data-bs-target="#details" type="button" role="tab" aria-controls="details" aria-selected="true">Détails</button>
@@ -49,43 +43,27 @@
                         <div class="tab-content pt-4" id="bookTabContent">
                             <div class="tab-pane fade show active" id="details" role="tabpanel" aria-labelledby="details-tab">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    {% if book.publishedDate %}
-                                        <div class="flex items-center">
-                                            {{ ux_icon('famicons:calendar-outline', { class: 'h-6 w-6 mr-3' }) }}
-                                            <div><span class="text-gray-600 text-sm">Date de publication:</span><br><span class="font-medium">{{ book.publishedDate }}</span></div>
-                                        </div>
-                                    {% endif %}
-                                    {% if book.publisher %}
-                                        <div class="flex items-center">
-                                            {{ ux_icon('famicons:business-outline', { class: 'h-6 w-6 mr-3' }) }}
-                                            <div><span class="text-gray-600 text-sm">Éditeur:</span><br><span class="font-medium">{{ book.publisher }}</span></div>
-                                        </div>
-                                    {% endif %}
-                                    {% if book.pageCount %}
-                                        <div class="flex items-center">
-                                            {{ ux_icon('famicons:book-outline', { class: 'h-6 w-6 mr-3' }) }}
-                                            <div><span class="text-gray-600 text-sm">Nombre de pages:</span><br><span class="font-medium">{{ book.pageCount }}</span></div>
-                                        </div>
-                                    {% endif %}
-                                    {% if book.language %}
-                                        <div class="flex items-center">
-                                            {{ ux_icon('famicons:language-outline', { class: 'h-6 w-6 mr-3' }) }}
-                                            <div><span class="text-gray-600 text-sm">Langue:</span><br><span class="font-medium">{{ book.language|upper }}</span></div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                                {% if book.categories %}
-                                    <div class="mt-6">
-                                        <h3 class="text-sm font-medium text-gray-500 mb-2">Catégories</h3>
-                                        <div class="flex flex-wrap">
-                                            {% for category in book.categories %}
-                                                <span class="bg-red-50 text-red-800 rounded-full px-3 py-1 text-sm mr-2 mb-2">{{ category }}</span>
-                                            {% endfor %}
-                                        </div>
+                                    <div class="flex items-center">
+                                        {{ ux_icon('famicons:calendar-outline', { class: 'h-6 w-6 mr-3' }) }}
+                                        <div><span class="text-gray-600 text-sm">Date de création:</span><br><span class="font-medium">{{ book.createdAt|date('d/m/Y') }}</span></div>
                                     </div>
-                                {% endif %}
+                                    <div class="flex items-center">
+                                        {{ ux_icon('famicons:book-outline', { class: 'h-6 w-6 mr-3' }) }}
+                                        <div><span class="text-gray-600 text-sm">Niveau de popularité:</span><br><span class="font-medium">{{ book.popularity }}</span></div>
+                                    </div>
+                                </div>
+{#                                {% if book.tags|length > 0 %}#}
+{#                                    <div class="mt-6">#}
+{#                                        <h3 class="text-sm font-medium text-gray-500 mb-2">Catégories</h3>#}
+{#                                        <div class="flex flex-wrap">#}
+{#                                            {% for tag in book.tags %}#}
+{#                                                <span class="bg-red-50 text-red-800 rounded-full px-3 py-1 text-sm mr-2 mb-2">{{ tag.name }}</span>#}
+{#                                            {% endfor %}#}
+{#                                        </div>#}
+{#                                    </div>#}
+{#                                {% endif %}#}
                             </div>
-                            <div class="tab-pane fade" id="description" role="tabpanel" aria-labelledby="description-tab">
+                            <div class="tab-pane fade mt-6" id="description" role="tabpanel" aria-labelledby="description-tab">
                                 {% if book.description %}
                                     <div class="prose max-w-none text-gray-700 leading-relaxed">
                                         {{ book.description|nl2br }}
@@ -106,13 +84,13 @@
                             Ajouter aux favoris
                         </button>
                         {% if app.user %}
-							<div class="mt-4">
+                            <div class="mt-4">
                                 <button type="button" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
                                     {{ ux_icon('famicons:heart-circle', { class: 'h-5 w-5 mr-3' }) }}
-                                    <a href="{{ path('app_reservation_new', {'id': localBook.id}) }}" class="btn btn-sm btn-primary">Réserver le livre</a>
+                                    <a href="{{ path('app_reservation_new', {'id': book.id}) }}" class="btn btn-sm btn-primary">Réserver le livre</a>
                                 </button>
-							</div>
-						{% endif %}
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -120,29 +98,29 @@
         <div class="mt-12">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Livres similaires</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {% for i in 1..4 %}
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105">
-                        <div class="h-48 bg-gray-100 flex items-center justify-center">
-                            {{ ux_icon('famicons:book', { class: 'h-12 w-12 text-gray-300' }) }}
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">Titre du livre recommandé {{ i }}</h3>
-                            <p class="text-sm text-gray-500 mb-2">Auteur {{ i }}</p>
-                            <div class="flex items-center">
-                                <div class="flex text-yellow-400">
-                                    {% for j in 1..5 %}
-                                        {% if j <= 4 %}
-                                            {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}
-                                        {% else %}
-                                            {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}
-                                        {% endif %}
-                                    {% endfor %}
-                                </div>
-                                <span class="text-xs text-gray-500 ml-1">({{ 30 + i * 10 }})</span>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+{#                {% for similarBook in similarBooks %}#}
+{#                    <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105">#}
+{#                        <div class="h-48 bg-gray-100 flex items-center justify-center">#}
+{#                            <img src="{{ similarBook.cover }}" alt="{{ similarBook.name }}" class="w-full object-contain rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105">#}
+{#                        </div>#}
+{#                        <div class="p-4">#}
+{#                            <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">{{ similarBook.name }}</h3>#}
+{#                            <p class="text-sm text-gray-500 mb-2">{{ similarBook.author }}</p>#}
+{#                            <div class="flex items-center">#}
+{#                                <div class="flex text-yellow-400">#}
+{#                                    {% for j in 1..5 %}#}
+{#                                        {% if j <= similarBook.popularity // 20 %}#}
+{#                                            {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}#}
+{#                                        {% else %}#}
+{#                                            {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}#}
+{#                                        {% endif %}#}
+{#                                    {% endfor %}#}
+{#                                </div>#}
+{#                                <span class="text-xs text-gray-500 ml-1">({{ similarBook.popularity }})</span>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                    </div>#}
+{#                {% endfor %}#}
             </div>
         </div>
         <div class="mt-12">
@@ -178,43 +156,43 @@
             </div>
             <div class="space-y-6">
                 {% for i in 1..3 %}
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex items-center mb-4">
-                        <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-4">
-                            <span class="font-medium text-gray-700">{{ ['JD', 'AB', 'MT'][i-1] }}</span>
-                        </div>
-                        <div>
-                            <h3 class="font-medium text-gray-800">{{ ['Jean Dupont', 'Alice Bertrand', 'Marc Tremblay'][i-1] }}</h3>
-                            <div class="flex items-center">
-                                <div class="flex text-yellow-400">
-                                    {% for j in 1..5 %}
-                                        {% if j <= [4, 5, 3][i-1] %}
-                                            {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}
-                                        {% else %}
-                                            {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}
-                                        {% endif %}
-                                    {% endfor %}
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+                                <span class="font-medium text-gray-700">{{ ['JD', 'AB', 'MT'][i-1] }}</span>
+                            </div>
+                            <div>
+                                <h3 class="font-medium text-gray-800">{{ ['Jean Dupont', 'Alice Bertrand', 'Marc Tremblay'][i-1] }}</h3>
+                                <div class="flex items-center">
+                                    <div class="flex text-yellow-400">
+                                        {% for j in 1..5 %}
+                                            {% if j <= [4, 5, 3][i-1] %}
+                                                {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}
+                                            {% else %}
+                                                {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <span class="text-xs text-gray-500 ml-2">{{ ['27 février 2025', '15 mars 2025', '3 février 2025'][i-1] }}</span>
                                 </div>
-                                <span class="text-xs text-gray-500 ml-2">{{ ['27 février 2025', '15 mars 2025', '3 février 2025'][i-1] }}</span>
                             </div>
                         </div>
+                        <p class="text-gray-700">{{ [
+                                'Un excellent livre qui m\'a captivé du début à la fin. L\'intrigue est bien construite et les personnages sont attachants. Je le recommande vivement !',
+                                'Chef-d\'œuvre absolu ! La plume de l\'auteur est magnifique, le style est fluide et les descriptions sont immersives. Une lecture que je n\'oublierai pas de sitôt.',
+                                'Lecture intéressante mais qui manque parfois de rythme. Certains passages sont superflus et ralentissent l\'histoire. Néanmoins, j\'ai apprécié les personnages et leur évolution.'
+                            ][i-1] }}</p>
+                        <div class="mt-4 flex items-center text-sm text-gray-500">
+                            <button class="flex items-center mr-4 hover:text-red-600">
+                                {{ ux_icon('famicons:thumbs-up-outline', { class: 'h-4 w-4 mr-1' }) }}
+                                Utile ({{ [12, 18, 5][i-1] }})
+                            </button>
+                            <button class="flex items-center hover:text-red-600">
+                                {{ ux_icon('famicons:chatbubble-ellipses-outline', { class: 'h-4 w-4 mr-1' }) }}
+                                Répondre
+                            </button>
+                        </div>
                     </div>
-                    <p class="text-gray-700">{{ [
-                            'Un excellent livre qui m\'a captivé du début à la fin. L\'intrigue est bien construite et les personnages sont attachants. Je le recommande vivement !',
-                            'Chef-d\'œuvre absolu ! La plume de l\'auteur est magnifique, le style est fluide et les descriptions sont immersives. Une lecture que je n\'oublierai pas de sitôt.',
-                            'Lecture intéressante mais qui manque parfois de rythme. Certains passages sont superflus et ralentissent l\'histoire. Néanmoins, j\'ai apprécié les personnages et leur évolution.'
-                        ][i-1] }}</p>
-                    <div class="mt-4 flex items-center text-sm text-gray-500">
-                        <button class="flex items-center mr-4 hover:text-red-600">
-                            {{ ux_icon('famicons:thumbs-up-outline', { class: 'h-4 w-4 mr-1' }) }}
-                            Utile ({{ [12, 18, 5][i-1] }})
-                        </button>
-                        <button class="flex items-center hover:text-red-600">
-                            {{ ux_icon('famicons:chatbubble-ellipses-outline', { class: 'h-4 w-4 mr-1' }) }}
-                            Répondre
-                        </button>
-                    </div>
-                </div>
                 {% endfor %}
             </div>
             <div class="mt-8 bg-white rounded-lg shadow-md p-6">
@@ -247,47 +225,47 @@
     </div>
     {% block javascripts %}
         <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const tabs = document.querySelectorAll('#bookTabs button');
-            const tabPanes = document.querySelectorAll('.tab-pane');
+            document.addEventListener('DOMContentLoaded', function() {
+                const tabs = document.querySelectorAll('#bookTabs button');
+                const tabPanes = document.querySelectorAll('.tab-pane');
 
-            tabs.forEach(tab => {
-                tab.addEventListener('click', function() {
-                    tabs.forEach(t => {
-                        t.classList.remove('text-red-600', 'border-red-600', 'active');
-                        t.classList.add('text-gray-500', 'border-transparent');
-                        t.setAttribute('aria-selected', 'false');
-                    });
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        tabs.forEach(t => {
+                            t.classList.remove('text-red-600', 'border-red-600', 'active');
+                            t.classList.add('text-gray-500', 'border-transparent');
+                            t.setAttribute('aria-selected', 'false');
+                        });
 
-                    tabPanes.forEach(pane => {
-                        pane.classList.remove('show', 'active');
-                    });
+                        tabPanes.forEach(pane => {
+                            pane.classList.remove('show', 'active');
+                        });
 
-                    this.classList.remove('text-gray-500', 'border-transparent');
-                    this.classList.add('text-red-600', 'border-red-600', 'active');
-                    this.setAttribute('aria-selected', 'true');
+                        this.classList.remove('text-gray-500', 'border-transparent');
+                        this.classList.add('text-red-600', 'border-red-600', 'active');
+                        this.setAttribute('aria-selected', 'true');
 
-                    const targetId = this.getAttribute('data-bs-target').substring(1);
-                    const targetPane = document.getElementById(targetId);
-                    targetPane.classList.add('show', 'active');
-                });
-            });
-
-            const ratingStars = document.querySelectorAll('form button svg');
-            ratingStars.forEach((star, index) => {
-                star.parentElement.addEventListener('click', function() {
-                    ratingStars.forEach((s, i) => {
-                        if (i <= index) {
-                            s.parentElement.classList.remove('text-gray-300');
-                            s.parentElement.classList.add('text-yellow-400');
-                        } else {
-                            s.parentElement.classList.remove('text-yellow-400');
-                            s.parentElement.classList.add('text-gray-300');
-                        }
+                        const targetId = this.getAttribute('data-bs-target').substring(1);
+                        const targetPane = document.getElementById(targetId);
+                        targetPane.classList.add('show', 'active');
                     });
                 });
+
+                const ratingStars = document.querySelectorAll('form button svg');
+                ratingStars.forEach((star, index) => {
+                    star.parentElement.addEventListener('click', function() {
+                        ratingStars.forEach((s, i) => {
+                            if (i <= index) {
+                                s.parentElement.classList.remove('text-gray-300');
+                                s.parentElement.classList.add('text-yellow-400');
+                            } else {
+                                s.parentElement.classList.remove('text-yellow-400');
+                                s.parentElement.classList.add('text-gray-300');
+                            }
+                        });
+                    });
+                });
             });
-        });
-    </script>
+        </script>
     {% endblock %}
 {% endblock %}

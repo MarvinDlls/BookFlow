@@ -48,22 +48,22 @@
 		</div>
 	</div>
 	<div class="flex flex-wrap justify-between md:flex-nowrap mt-6 px-20 py-12">
-		{% for book in popularBooks %}
-			<div class="relative flex flex-col m-1 transition ease-in-out duration-500 delay-150 transform md:hover:-translate-x-10 md:hover:-translate-y-8 shrink-0">
-				<article class="rounded-3xl overflow-hidden bg-cover min-w-60 ring-2 ring-inset ring-white/50 bg-center min-h-150 relative transform duration-500 group"
-						style="background-image: url('{{ book.volumeInfo.imageLinks.thumbnail ?? 'https://via.placeholder.com/600x1500' }}');">
-					<div class="relative h-full group-hover:bg-opacity-0 min-h-150 flex flex-wrap flex-col pt-[20rem] transform duration-500">
-						<div class="group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col">
-							<p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500">
-								{{ book.volumeInfo.title|default('Sans titre')|slice(0, 150) ~ '...' }}
-							</p>
-						</div>
-					</div>
-				</article>
-			</div>
-		{% else %}
-			<p class="text-gray-600 text-center col-span-full">Aucun livre populaire trouvé.</p>
-		{% endfor %}
+{#		{% for book in popularBooks %}#}
+{#			<div class="relative flex flex-col m-1 transition ease-in-out duration-500 delay-150 transform md:hover:-translate-x-10 md:hover:-translate-y-8 shrink-0">#}
+{#				<article class="rounded-3xl overflow-hidden bg-cover min-w-60 ring-2 ring-inset ring-white/50 bg-center min-h-150 relative transform duration-500 group"#}
+{#						style="background-image: url('{{ book.volumeInfo.imageLinks.thumbnail ?? 'https://via.placeholder.com/600x1500' }}');">#}
+{#					<div class="relative h-full group-hover:bg-opacity-0 min-h-150 flex flex-wrap flex-col pt-[20rem] transform duration-500">#}
+{#						<div class="group-hover:bg-black/30 duration-500 group-hover:backdrop-blur p-8 lg:p-10 h-full justify-end flex flex-col">#}
+{#							<p class="opacity-0 text-white text-sm 2xl:text-lg group-hover:opacity-80 transform duration-500">#}
+{#								{{ book.volumeInfo.title|default('Sans titre')|slice(0, 150) ~ '...' }}#}
+{#							</p>#}
+{#						</div>#}
+{#					</div>#}
+{#				</article>#}
+{#			</div>#}
+{#		{% else %}#}
+{#			<p class="text-gray-600 text-center col-span-full">Aucun livre populaire trouvé.</p>#}
+{#		{% endfor %}#}
 	</div>
 	<div class="flex flex-col items-center relative">
 		<button class="justify-self-center relative inline-block p-px font-semibold leading-6 text-white no-underline bg-red-800 shadow-lg cursor-pointer group rounded-xl shadow-zinc-300 hover:scale-105 transition duration-300 ease-in-out">
