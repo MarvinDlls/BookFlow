@@ -4,21 +4,25 @@ namespace App\Service;
 
 use App\Entity\Book;
 use App\Repository\BookRepository;
+use App\Repository\TagRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Doctrine\ORM\EntityManagerInterface;
 
 class BookService
 {
     private BookRepository $bookRepository;
+    private TagRepository $tagRepository;
     private PaginatorInterface $paginator;
     private EntityManagerInterface $entityManager;
 
     public function __construct(
         BookRepository $bookRepository,
+        TagRepository $tagRepository,
         PaginatorInterface $paginator,
         EntityManagerInterface $entityManager
     ) {
         $this->bookRepository = $bookRepository;
+        $this->tagRepository = $tagRepository;
         $this->paginator = $paginator;
         $this->entityManager = $entityManager;
     }
@@ -26,21 +30,22 @@ class BookService
     /**
      * Récupère tous les livres.
      */
-    public function fetchAllBooks(int $page = 1, int $limit = 40, ?string $genre = null, bool $sortByPopularity = false)
+    public function fetchAllBooks(int $page = 1, int $limit = 40, ?int $tagId = null, bool $sortByPopularity = false)
     {
         $queryBuilder = $this->bookRepository->createQueryBuilder('b');
-
-        if ($genre) {
-            $queryBuilder->andWhere('b.categories LIKE :genre')
-                ->setParameter('genre', '%' . $genre . '%');
+    
+        if ($tagId > 0) {
+            $queryBuilder->join('b.tags', 't')
+                        ->andWhere('t.id = :tagId')
+                        ->setParameter('tagId', $tagId);
         }
-
+    
         if ($sortByPopularity) {
             $queryBuilder->orderBy('b.popularity', 'DESC');
         }
-
+    
         $query = $queryBuilder->getQuery();
-
+    
         // Pagination
         return $this->paginator->paginate($query, $page, $limit);
     }
@@ -94,5 +99,13 @@ class BookService
         $this->entityManager->flush();
 
         return $book;
+    }
+
+    /**
+     * Sélectionne un Tag depuis la base de données.
+     */
+    public function getAllTags(): array
+    {
+        return $this->tagRepository->findAll();
     }
 }
