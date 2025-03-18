@@ -213,8 +213,10 @@ final class BookController extends AbstractController
         }
 
         $response = new StreamedResponse(function () use ($pdfPath) {
-            $pdf = new Fpdi();
+            $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
             $pageCount = $pdf->setSourceFile($pdfPath);
+
+            $pdf->SetProtection(['print', 'modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-high'], '', '', 1);
 
             for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
                 $templateId = $pdf->importPage($pageNumber);
