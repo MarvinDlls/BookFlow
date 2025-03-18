@@ -71,15 +71,15 @@ class BookService
         return $book;
     }
 
-
     /**
      * Récupère les livres les plus populaires.
      */
     public function fetchPopularBooks(int $maxResults = 5): array
     {
-        return $this->bookRepository->findBy([], ['popularity' => 'DESC'], $maxResults);
+        $books = $this->bookRepository->findBy([], ['popularity' => 'DESC'], $maxResults);
+        return $books;
     }
-
+    
     /**
      * Ajoute un livre à la base de données.
      */
