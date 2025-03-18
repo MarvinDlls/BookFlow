@@ -61,7 +61,6 @@ class ReservationController extends AbstractController
     #[Route('/new/{id}', name: 'app_reservation_new', methods: ['GET', 'POST'])]
     public function new(Request $request, $id, EntityManagerInterface $entityManager): Response
     {
-        // TODO : Vérifier si le lien des livres est correct
         $id = (int) $id;
 
         // Récupérer le livre par son ID
