@@ -62,15 +62,15 @@
 											{{ ux_icon('line-md:check-all',{ class: 'h-4 w-4 mr-1' }) }}
 											En attente
 										</span>
-									{% elseif reservation.status == 'active' %}
+									{% elseif reservation.status == 'reserve' %}
 										<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-green-500 to-green-700 text-white shadow-md hover:shadow-lg transition-shadow">
 											{{ ux_icon('line-md:check-all',{ class: 'h-4 w-4 mr-1' }) }}
-											Active
+											Réservée
 										</span>
-									{% elseif reservation.status == 'termine' %}
+									{% elseif reservation.status == 'expire' %}
 										<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-sky-500 to-sky-700 text-white shadow-md hover:shadow-lg transition-shadow">
 											{{ ux_icon('line-md:check-all',{ class: 'h-4 w-4 mr-1' }) }}
-											Terminée
+											Expirée
 										</span>
 									{% elseif reservation.status == 'prolongation' %}
 										<span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r from-amber-500 to-amber-700 text-white shadow-md hover:shadow-lg transition-shadow">
