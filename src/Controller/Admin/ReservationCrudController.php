@@ -32,10 +32,10 @@ class ReservationCrudController extends AbstractCrudController
             ChoiceField::new('status')
                 ->setChoices([
                     'En attente' => 'en_attente',
-                    'Active' => 'active',
-                    'Annulé' => 'annule',
-                    'Terminé' => 'termine',
-                    'Prolongé' => 'prolonge',
+                    'Réservée' => 'reserve',
+                    'Annulée' => 'annule',
+                    'Expirée' => 'expire',
+                    'Prolongée' => 'prolonge',
                     'Prolongation' => 'prolongation',
                 ])
                 ->renderAsBadges()
@@ -59,17 +59,28 @@ class ReservationCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        $prolongerAction = Action::new('prolonger', 'Prolonger')
-            ->linkToCrudAction('prolongerReservation') // Méthode exécutée
+        $prolongerAction = Action::new('prolonge', 'Prolonger')
+            ->linkToCrudAction('prolongerReservation')
             ->displayIf(static function ($entity) {
-                return $entity->getStatus() === 'prolongation' || $entity->getStatus() === 'active';
+                return $entity->getStatus() === 'prolongation' || $entity->getStatus() === 'reserve';
             });
 
+        $reserverAction = Action::new('reserve', 'Reserver')
+            ->linkToCrudAction('reserverReservation')
+            ->displayIf(static function ($entity) {
+                return $entity->getStatus() === 'en_attente';
+            });
 
+        $annulerAction = Action::new('annule', 'Annuler')
+            ->linkToCrudAction('annulerReservation')
+            ->displayIf(static function ($entity) {
+                return $entity->getStatus() === 'en_attente' || $entity->getStatus() === 'reserve' || $entity->getStatus() === 'prolonge' || $entity->getStatus() === 'prolongation';
+            });
 
         return $actions
             ->add(Crud::PAGE_INDEX, $prolongerAction)
-            ->add(Crud::PAGE_DETAIL, $prolongerAction)
+            ->add(Crud::PAGE_INDEX, $reserverAction)
+            ->add(Crud::PAGE_INDEX, $annulerAction)
         ;
     }
 
@@ -92,6 +103,46 @@ class ReservationCrudController extends AbstractCrudController
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction('index')->generateUrl());
     }
 
+    public function reserverReservation(AdminContext $context, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): Response
+    {
+        $reservation = $context->getEntity()->getInstance();
+
+        if (!$reservation) {
+            $this->addFlash('error', 'Réservation introuvable.');
+        } else {
+            $reservation->setStatus('reserve');
+            $reservation->getBook()->setIsReserved(true);
+            $reservation->setUpdatedAt(new \DateTimeImmutable());
+            $reservation->setReservationDate(new \DateTime());
+            $reservation->setExpirationDate(new \DateTimeImmutable('+7 days'));
+            $entityManager->persist($reservation);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Réservation activée avec succès.');
+        }
+
+        return $this->redirect($adminUrlGenerator->setController(self::class)->setAction('index')->generateUrl());
+    }
+
+    public function annulerReservation(AdminContext $context, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): Response
+    {
+        $reservation = $context->getEntity()->getInstance();
+
+        if (!$reservation) {
+            $this->addFlash('error', 'Réservation introuvable.');
+        } else {
+            $reservation->setStatus('annule');
+            $reservation->getBook()->setIsReserved(false);
+            $reservation->setUpdatedAt(new \DateTimeImmutable());
+            $entityManager->persist($reservation);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Réservation annulée avec succès.');
+        }
+
+        return $this->redirect($adminUrlGenerator->setController(self::class)->setAction('index')->generateUrl());
+    }
+
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         if (!$entityInstance instanceof Reservation) {
@@ -101,7 +152,7 @@ class ReservationCrudController extends AbstractCrudController
         $now = new \DateTimeImmutable();
 
         switch ($entityInstance->getStatus()) {
-            case 'active':
+            case 'reserve':
                 $entityInstance->setUpdatedAt($now);
                 $entityInstance->setReservationDate(new \DateTime());
                 $entityInstance->setExpirationDate(new \DateTimeImmutable('+7 days'));
