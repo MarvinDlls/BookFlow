@@ -1,6 +1,7 @@
 <?php
 namespace App\Repository;
 
+use App\Entity\Book;
 use App\Entity\Reservation;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -37,4 +38,20 @@ class ReservationRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    // src/Repository/ReservationRepository.php
+    public function findActiveReservation(User $user, Book $book): ?Reservation
+    {
+        return $this->createQueryBuilder('r')
+            ->andWhere('r.user = :user')
+            ->andWhere('r.book = :book')
+            ->andWhere('r.status = :status') // Vérifie que la réservation est active
+            ->setParameter('user', $user)
+            ->setParameter('book', $book)
+            ->setParameter('status', 'active')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 }

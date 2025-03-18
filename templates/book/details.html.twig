@@ -52,16 +52,16 @@
                                         <div><span class="text-gray-600 text-sm">Niveau de popularité:</span><br><span class="font-medium">{{ book.popularity }}</span></div>
                                     </div>
                                 </div>
-{#                                {% if book.tags|length > 0 %}#}
-{#                                    <div class="mt-6">#}
-{#                                        <h3 class="text-sm font-medium text-gray-500 mb-2">Catégories</h3>#}
-{#                                        <div class="flex flex-wrap">#}
-{#                                            {% for tag in book.tags %}#}
-{#                                                <span class="bg-red-50 text-red-800 rounded-full px-3 py-1 text-sm mr-2 mb-2">{{ tag.name }}</span>#}
-{#                                            {% endfor %}#}
-{#                                        </div>#}
-{#                                    </div>#}
-{#                                {% endif %}#}
+                                {#                                {% if book.tags|length > 0 %}#}
+                                {#                                    <div class="mt-6">#}
+                                {#                                        <h3 class="text-sm font-medium text-gray-500 mb-2">Catégories</h3>#}
+                                {#                                        <div class="flex flex-wrap">#}
+                                {#                                            {% for tag in book.tags %}#}
+                                {#                                                <span class="bg-red-50 text-red-800 rounded-full px-3 py-1 text-sm mr-2 mb-2">{{ tag.name }}</span>#}
+                                {#                                            {% endfor %}#}
+                                {#                                        </div>#}
+                                {#                                    </div>#}
+                                {#                                {% endif %}#}
                             </div>
                             <div class="tab-pane fade mt-6" id="description" role="tabpanel" aria-labelledby="description-tab">
                                 {% if book.description %}
@@ -76,20 +76,23 @@
                     </div>
                     <div class="mt-8 flex flex-wrap gap-3">
                         <a href="{{ path('app_book_preview', {'id': book.id}) }}" class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors">
-                            {{ ux_icon('famicons:eye-outline', { class: 'h-5 w-5 mr-3' }) }}
+                            {{ ux_icon('mdi:file-eye-outline', { class: 'h-5 w-5 mr-3' }) }}
                             Aperçu
                         </a>
                         <button type="button" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
-                            {{ ux_icon('famicons:heart-circle', { class: 'h-5 w-5 mr-3' }) }}
+                            {{ ux_icon('line-md:heart-filled', { class: 'h-5 w-5 mr-3' }) }}
                             Ajouter aux favoris
                         </button>
-                        {% if app.user %}
-                            <div class="mt-4">
-                                <button type="button" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
-                                    {{ ux_icon('famicons:heart-circle', { class: 'h-5 w-5 mr-3' }) }}
-                                    <a href="{{ path('app_reservation_new', {'id': book.id}) }}" class="btn btn-sm btn-primary">Réserver le livre</a>
-                                </button>
-                            </div>
+                        {% if canRead %}
+                            <button type="button" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
+                                {{ ux_icon('line-md:file-document', { class: 'h-5 w-5 mr-3' }) }}
+                                <a href="{{ path('app_book_download', {'id': book.id}) }}" class="btn btn-primary">Lire le livre</a>
+                            </button>
+                        {% elseif app.user %}
+                            <button type="button" class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium rounded-lg transition-colors">
+                                {{ ux_icon('line-md:file-document-plus', { class: 'h-5 w-5 mr-3' }) }}
+                                <a href="{{ path('app_reservation_new', {'id': book.id}) }}" class="btn btn-sm btn-primary">Réserver le livre</a>
+                            </button>
                         {% endif %}
                     </div>
                 </div>
@@ -98,29 +101,29 @@
         <div class="mt-12">
             <h2 class="text-2xl font-bold text-gray-800 mb-6">Livres similaires</h2>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-{#                {% for similarBook in similarBooks %}#}
-{#                    <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105">#}
-{#                        <div class="h-48 bg-gray-100 flex items-center justify-center">#}
-{#                            <img src="{{ similarBook.cover }}" alt="{{ similarBook.name }}" class="w-full object-contain rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105">#}
-{#                        </div>#}
-{#                        <div class="p-4">#}
-{#                            <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">{{ similarBook.name }}</h3>#}
-{#                            <p class="text-sm text-gray-500 mb-2">{{ similarBook.author }}</p>#}
-{#                            <div class="flex items-center">#}
-{#                                <div class="flex text-yellow-400">#}
-{#                                    {% for j in 1..5 %}#}
-{#                                        {% if j <= similarBook.popularity // 20 %}#}
-{#                                            {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}#}
-{#                                        {% else %}#}
-{#                                            {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}#}
-{#                                        {% endif %}#}
-{#                                    {% endfor %}#}
-{#                                </div>#}
-{#                                <span class="text-xs text-gray-500 ml-1">({{ similarBook.popularity }})</span>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                {% endfor %}#}
+                {#                {% for similarBook in similarBooks %}#}
+                {#                    <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105">#}
+                {#                        <div class="h-48 bg-gray-100 flex items-center justify-center">#}
+                {#                            <img src="{{ similarBook.cover }}" alt="{{ similarBook.name }}" class="w-full object-contain rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105">#}
+                {#                        </div>#}
+                {#                        <div class="p-4">#}
+                {#                            <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">{{ similarBook.name }}</h3>#}
+                {#                            <p class="text-sm text-gray-500 mb-2">{{ similarBook.author }}</p>#}
+                {#                            <div class="flex items-center">#}
+                {#                                <div class="flex text-yellow-400">#}
+                {#                                    {% for j in 1..5 %}#}
+                {#                                        {% if j <= similarBook.popularity // 20 %}#}
+                {#                                            {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}#}
+                {#                                        {% else %}#}
+                {#                                            {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}#}
+                {#                                        {% endif %}#}
+                {#                                    {% endfor %}#}
+                {#                                </div>#}
+                {#                                <span class="text-xs text-gray-500 ml-1">({{ similarBook.popularity }})</span>#}
+                {#                            </div>#}
+                {#                        </div>#}
+                {#                    </div>#}
+                {#                {% endfor %}#}
             </div>
         </div>
         <div class="mt-12">
