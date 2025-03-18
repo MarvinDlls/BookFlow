@@ -23,7 +23,7 @@ class Reservation
     private ?\DateTimeInterface $reservation_date = null;
 
     #[ORM\Column]
-    #[Assert\Choice(['en_attente', 'active', 'annule', 'termine', 'prolonge'])]
+    #[Assert\Choice(['en_attente', 'reserve', 'annule', 'expire', 'prolonge'])]
     private ?string $status = 'en_attente';
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]

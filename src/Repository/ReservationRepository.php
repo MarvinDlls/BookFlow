@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repository;
 
 use App\Entity\Book;
@@ -32,9 +33,9 @@ class ReservationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('r')
             ->andWhere('r.user = :user')
-            ->andWhere('r.status = :status')
+            ->andWhere('r.status IN (:statuses)') // 📌 Vérifie les bons statuts
             ->setParameter('user', $user)
-            ->setParameter('status', true) // Pour les réservations actives
+            ->setParameter('statuses', ['en_attente', 'réservé']) // 📌 Statuts actifs
             ->getQuery()
             ->getResult();
     }
