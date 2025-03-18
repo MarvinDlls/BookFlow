@@ -21,6 +21,24 @@ final class BookController extends AbstractController
         $this->bookService = $bookService;
     }
 
+    #[Route('/', name: 'app_homepage', methods: ['GET'])]
+    public function homepage(): Response
+    {
+        try {
+            $popularBooks = $this->bookService->fetchPopularBooks(5);
+
+            return $this->render('page/index.html.twig', [
+                'popularBooks' => $popularBooks,
+            ]);
+        } catch (\Exception $e) {
+            $this->addFlash('error', 'Une erreur est survenue lors de la récupération des livres populaires.');
+            return $this->render('page/index.html.twig', [
+                'popularBooks' => [],
+            ]);
+        }
+    }
+
+
     #[Route('/books', name: 'app_books_list', methods: ['GET'])]
     public function index(Request $request): Response
     {
@@ -68,27 +86,30 @@ final class BookController extends AbstractController
 
         try {
             $books = $this->bookService->searchBooks($query, $limit, $startIndex);
+            $pagination = $paginator->paginate($books, $page, $limit);
 
-            $pagination = $paginator->paginate(
-                $books,
-                $page,
-                $limit
-            );
+            // Récupérer les tags pour éviter l'erreur dans le template
+            $tags = $this->bookService->getAllTags();
 
             return $this->render('book/books.html.twig', [
                 'pagination' => $pagination,
                 'query' => $query,
-                'title' => 'Recherche: ' . $query
+                'title' => 'Recherche: ' . $query,
+                'tags' => $tags, // Ajout de la variable tags
+                'selectedTagId' => 0, // Aucune sélection active par défaut
+                'sortByPopularity' => false // Pas de tri par popularité par défaut
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', 'Une erreur est survenue lors de la recherche.');
             return $this->render('book/books.html.twig', [
                 'pagination' => [],
                 'query' => $query,
-                'title' => 'Recherche : ' . $query . ' - Erreur'
+                'title' => 'Recherche : ' . $query . ' - Erreur',
+                'tags' => [] // Passer un tableau vide pour éviter l'erreur
             ]);
         }
     }
+
 
     #[Route('/book/{id}', name: 'app_book_details', methods: ['GET'])]
     public function detail(int $id): Response
