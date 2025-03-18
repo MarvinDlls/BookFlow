@@ -3,22 +3,29 @@
 namespace App\Controller;
 
 use App\Entity\Book;
+use App\Entity\Reservation;
+use App\Repository\ReservationRepository;
 use App\Service\BookService;
+use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use setasign\Fpdi\Fpdi;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class BookController extends AbstractController
 {
     private BookService $bookService;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(BookService $bookService)
+    public function __construct(BookService $bookService, EntityManagerInterface $entityManager)
     {
         $this->bookService = $bookService;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/books', name: 'app_books_list', methods: ['GET'])]
@@ -100,10 +107,26 @@ final class BookController extends AbstractController
             return $this->redirectToRoute('app_books_list');
         }
 
+        // Vérifier si l'utilisateur a une réservation active pour ce livre
+        $reservation = $this->entityManager->getRepository(Reservation::class)
+            ->findOneBy([
+                'user' => $this->getUser(),
+                'book' => $book,
+                'status' => 'active'
+            ]);
+
+        // Vérifier que la réservation est active et que la date d'expiration n'est pas passée
+        $canRead = false;
+        if ($reservation && $reservation->getExpirationDate() > new \DateTime()) {
+            $canRead = true;
+        }
+
+        // Passer la variable canRead au template
         return $this->render('book/details.html.twig', [
             'book' => $book,
             'title' => $book->getName(),
             'tags' => $book->getTags(),
+            'canRead' => $canRead,  // Passer la variable à la vue
         ]);
     }
 
@@ -141,32 +164,75 @@ final class BookController extends AbstractController
         return $response;
     }
 
+    #[Route('/book/download/{id}', name: 'app_book_download', methods: ['GET'])]
+    public function download(int $id, Security $security, ReservationRepository $reservationRepository): Response
+    {
+        $user = $security->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour télécharger ce livre.');
+        }
+
+        $book = $this->bookService->fetchBookById($id);
+
+        if (!$book) {
+            throw $this->createNotFoundException('Livre non trouvé.');
+        }
+
+        $reservation = $reservationRepository->findActiveReservation($user, $book);
+
+        if (!$reservation) {
+            $this->addFlash('warning', 'Vous n\'avez pas de réservation active pour ce livre. Veuillez réserver ce livre avant de le lire.');
+            return $this->redirectToRoute('app_book_details', ['id' => $id]);
+        }
+
+        $pdfPath = $this->getParameter('kernel.project_dir') . '/public' . $book->getPdfFile();
+
+        if (!file_exists($pdfPath)) {
+            throw $this->createNotFoundException('Fichier PDF non trouvé.');
+        }
+
+        $response = new StreamedResponse(function () use ($pdfPath) {
+            $pdf = new Fpdi();
+            $pageCount = $pdf->setSourceFile($pdfPath);
+
+            for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
+                $templateId = $pdf->importPage($pageNumber);
+                $size = $pdf->getTemplateSize($templateId);
+                $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
+                $pdf->useTemplate($templateId);
+            }
+
+            $pdf->Output();
+        });
+
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
+            ResponseHeaderBag::DISPOSITION_ATTACHMENT,
+            'book.pdf'
+        ));
+
+        return $response;
+    }
+
+
     private function extractFirstPages(string $pdfPath, int $pageCount, string $bookTitle): string
     {
-        // Créer une instance de FPDI (qui étend TCPDF)
         $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
 
-        // Définir le titre du PDF
         $pdf->SetTitle($bookTitle);
 
-        // Désactiver l'impression et la copie du texte
         $pdf->SetProtection(['print', 'modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-high'], '', '', 1);
 
-        // Ouvrir le fichier PDF original
         $pageCountOriginal = $pdf->setSourceFile($pdfPath);
 
-        // Limiter le nombre de pages à extraire
         $pageCount = min($pageCount, $pageCountOriginal);
 
-        // Ajouter chaque page au nouveau PDF
         for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
             $templateId = $pdf->importPage($pageNumber);
             $size = $pdf->getTemplateSize($templateId);
             $pdf->AddPage($size['orientation'], [$size['width'], $size['height']]);
             $pdf->useTemplate($templateId);
 
-            // Ajouter un filigrane après avoir ajouté chaque page
-            // Définir la police et la couleur du filigrane
             $pdf->SetFont('helvetica', 'B', 50);
             $pdf->SetTextColor(200, 200, 200);
             $pdf->SetAlpha(0.6);
