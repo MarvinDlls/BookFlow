@@ -46,7 +46,7 @@ class ReservationController extends AbstractController
             }
 
             if ($expirationDate <= $now) {
-                $reservation->setStatus('termine');
+                $reservation->setStatus('expire');
                 $book->setIsReserved(false); // Libère le livre
             }
         }
