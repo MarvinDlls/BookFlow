@@ -1,0 +1,219 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil - Réglages {% endblock %}
+
+{% block body %}
+    <div class="min-h-screen py-10">
+
+        <div class="w-full max-w-1/2 h-screen mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 min-h-screen">
+                <div class="h-full bg-white shadow-lg rounded-lg p-6 flex flex-col items-center justify-top">
+                    <div class="w-full flex flex-col items-center gap-10">
+                        <header class="flex flex-col items-center text-center">
+                            <img class="inline-flex object-cover border-4 border-red-800 rounded-full shadow-[5px_5px_0_0_rgba(0,0,0,1)] shadow-red-800/100 bg-red-80 text-red-800 h-24 w-24 !h-48 !w-48" src="{{app.user.image}}" alt="Profile Image">
+                            <h1 class="text-2xl text-gray-800 font-bold mt-4">{{app.user.username}}</h1>
+                        </header>
+                        <div class="mt-6 w-full">
+                            <ul class="flex flex-col items-center gap-4 pl-2 mt-4">
+                                <li class="flex items-center gap-2">
+                                    <div class="relative hover:text-[#ffffff] py-2 px-6 after:absolute after:h-1 after:hover:h-[100%] transition-all duration-500 hover:transition-all hover:duration-500 after:transition-all after:duration-500 after:hover:transition-all after:hover:duration-500 overflow-hidden z-20 after:z-[-20] after:bg-red-800 after:rounded-t-full after:w-full after:bottom-0 after:left-0 text-gray-600">
+                                        <a href="" class="flex items-center gap-2 p-1 relative">
+                                        {{ ux_icon('emojione:books', { class: 'h-8 w-8' }) }}
+                                        Ma bibliothèque
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <div class="relative hover:text-[#ffffff] py-2 px-6 after:absolute after:h-1 after:hover:h-[100%] transition-all duration-500 hover:transition-all hover:duration-500 after:transition-all after:duration-500 after:hover:transition-all after:hover:duration-500 overflow-hidden z-20 after:z-[-20] after:bg-red-800 after:rounded-t-full after:w-full after:bottom-0 after:left-0 text-gray-600">
+                                        <a href="{{ path('app_reservation_index') }}" class="flex items-center gap-2 p-1 relative">
+                                        {{ ux_icon('emojione:admission-tickets', { class: 'h-8 w-8' }) }}
+                                        Mes réservations
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <div class="relative hover:text-[#ffffff] py-2 px-6 after:absolute after:h-1 after:hover:h-[100%] transition-all duration-500 hover:transition-all hover:duration-500 after:transition-all after:duration-500 after:hover:transition-all after:hover:duration-500 overflow-hidden z-20 after:z-[-20] after:bg-red-800 after:rounded-t-full after:w-full after:bottom-0 after:left-0 text-gray-600">
+                                        <a href="" class="flex items-center gap-2 p-1 relative">
+                                        {{ ux_icon('emojione:heart-decoration', { class: 'h-8 w-8' }) }}
+                                        Mes favoris
+                                        </a>
+                                    </div>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <div class="relative hover:text-[#ffffff] py-2 px-6 after:absolute after:h-1 after:hover:h-[100%] transition-all duration-500 hover:transition-all hover:duration-500 after:transition-all after:duration-500 after:hover:transition-all after:hover:duration-500 overflow-hidden z-20 after:z-[-20] after:bg-red-800 after:rounded-t-full after:w-full after:bottom-0 after:left-0 text-gray-600">
+                                        <a href="" class="flex items-center gap-2 p-1 relative">
+                                        {{ ux_icon('emojione:left-speech-bubble', { class: 'h-8 w-8' }) }}
+                                        Mes avis
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="mt-6 text-gray-600 text-sm">
+                            <p class="text-center">Compte créé le : <strong>{{ app.user.createdAt|date('d/m/Y H:i') }}</strong></p>
+                            <p class="text-center">Dernière modification le : <strong>{{ app.user.updatedAt|date('d/m/Y H:i') }}</strong></p>
+                        </div>
+
+{#                        {{ include('user/_delete_form.html.twig') }}#}
+                    </div>
+                </div>
+
+                <div class="col-span-2 space-y-8">
+                    <div class="h-screen bg-white shadow-lg rounded-lg p-6">
+                        <h2 class="text-xl font-bold text-gray-800 mb-4">À propos de moi</h2>
+                        <div class="mb-6">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Informations personnelles</h3>
+                            {{ form(userForm) }}
+                        </div>
+                    </div>
+
+                    <!-- Offres -->
+{#                    <div class="space-y-4 lg:grid lg:grid-cols-3 sm:gap-4 xl:gap-6 lg:space-y-0 lg:items-center">#}
+{#                        <div class="group relative flex flex-col mx-auto w-full max-w-sm bg-white rounded-lg shadow-md transition-all duration-300 p-4 xl:p-6">#}
+{#                            <div class="border-b border-solid border-gray-200 pb-4 mb-4">#}
+{#                                <div class="flex justify-center items-center transition-all duration-300">#}
+{#                                    {{ ux_icon('line-md:star-pulsating-filled-loop', { class: 'w-12 h-12 text-red-800 group-hover:text-red-800' }) }}#}
+{#                                </div>#}
+{#                                <h3 class="font-manrope text-xl font-bold my-4 text-center text-red-800">Essentiel</h3>#}
+{#                                <div class="flex items-center justify-center">#}
+{#                                    <span class="font-manrope text-3xl font-medium text-gray-900">0€</span>#}
+{#                                    <span class="text-lg text-gray-500 ml-2">/ Mois</span>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <ul class="text-sm mb-6 space-y-3 text-left text-base text-gray-600 group-hover:text-gray-900">#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Formule gratuite</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Génération CV basique</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>1 Modèle compatible ATS</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Stockage Limité</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Optimisation de Base</span>#}
+{#                                </li>#}
+{#                            </ul>#}
+{#                            <a  class="py-2 px-4 bg-red-80 shadow-sm rounded-full transition-all duration-500 text-sm text-red-800 font-semibold text-center w-fit mx-auto group-hover:bg-red-800 group-hover:text-white">Choisir</a>#}
+{#                        </div>#}
+{#                        <div class="group relative flex flex-col mx-auto w-full max-w-sm bg-white rounded-lg shadow-md transition-all duration-300 p-4 xl:p-6">#}
+{#                            <div class="border-b border-solid border-gray-200 pb-4 mb-4">#}
+{#                                <div class="flex justify-center items-center transition-all duration-300">#}
+{#                                    {{ ux_icon('line-md:star-pulsating-filled-loop', { class: 'w-12 h-12 text-red-800 group-hover:text-red-800' }) }}#}
+{#                                    {{ ux_icon('line-md:star-pulsating-filled-loop', { class: 'w-12 h-12 text-red-800 group-hover:text-red-800' }) }}#}
+{#                                </div>#}
+{#                                <h3 class="font-manrope text-xl font-bold my-4 text-center text-red-800">Pro</h3>#}
+{#                                <div class="flex items-center justify-center">#}
+{#                                    <span class="font-manrope text-3xl font-medium text-gray-900">9.99€</span>#}
+{#                                    <span class="text-lg text-gray-500 ml-2">/ Mois</span>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <ul class="text-sm mb-6 space-y-3 text-left text-base text-gray-600 group-hover:text-gray-900">#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Génération CV avancée</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>5 Modèles ATS</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Stockage Illimité</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Analyse ATS Approfondie</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Suggestions Optimisation</span>#}
+{#                                </li>#}
+{#                            </ul>#}
+{#                            <a  class="py-2 px-4 bg-red-80 shadow-sm rounded-full transition-all duration-500 text-sm text-red-800 font-semibold text-center w-fit mx-auto group-hover:bg-red-800 group-hover:text-white">Choisir</a>#}
+{#                        </div>#}
+{#                        <div class="group relative flex flex-col mx-auto w-full max-w-sm bg-white rounded-lg shadow-md transition-all duration-300 p-4 xl:p-6">#}
+{#                            <div class="border-b border-solid border-gray-200 pb-4 mb-4">#}
+{#                                <div class="flex justify-center items-center transition-all duration-300">#}
+{#                                    {{ ux_icon('line-md:star-pulsating-filled-loop', { class: 'w-12 h-12 text-red-800 group-hover:text-red-800' }) }}#}
+{#                                    {{ ux_icon('line-md:star-pulsating-filled-loop', { class: 'w-12 h-12 text-red-800 group-hover:text-red-800' }) }}#}
+{#                                    {{ ux_icon('line-md:star-pulsating-filled-loop', { class: 'w-12 h-12 text-red-800 group-hover:text-red-800' }) }}#}
+{#                                </div>#}
+{#                                <h3 class="font-manrope text-xl font-bold my-4 text-center text-red-800">Expert</h3>#}
+{#                                <div class="flex items-center justify-center">#}
+{#                                    <span class="font-manrope text-3xl font-medium text-gray-900">19.99€</span>#}
+{#                                    <span class="text-lg text-gray-500 ml-2">/ Mois</span>#}
+{#                                </div>#}
+{#                            </div>#}
+{#                            <ul class="text-sm mb-6 space-y-3 text-left text-base text-gray-600 group-hover:text-gray-900">#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Toutes les fonctions Pro</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>CV Illimités</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Analyse Temps Réel</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Intégration LinkedIn</span>#}
+{#                                </li>#}
+{#                                <li class="flex items-center space-x-2">#}
+{#                                    <span class="w-1 h-1 rounded-full bg-red-800"></span>#}
+{#                                    <span>Suivi Candidatures</span>#}
+{#                                </li>#}
+{#                            </ul>#}
+{#                            <a class="py-2 px-4 bg-red-80 shadow-sm rounded-full transition-all duration-500 text-sm text-red-800 font-semibold text-center w-fit mx-auto group-hover:bg-red-800 group-hover:text-white">Choisir</a>#}
+{#                        </div>#}
+{#                    </div>#}
+
+                </div>
+                <div class="h-screen bg-white shadow-lg rounded-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-700 mb-2">Derniers livres réservés</h3>
+                    <div class="space-y-6">
+                        <!-- Boucle pour chaque livre réservé -->
+                        <div class="group relative cursor-pointer overflow-hidden bg-white px-6 pt-10 pb-8 shadow-xl ring-1 ring-gray-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl sm:mx-auto sm:max-w-sm sm:rounded-lg sm:px-10">
+                            <span class="absolute top-10 z-0 h-20 w-20 rounded-full bg-red-800 transition-all duration-300 group-hover:scale-[10]"></span>
+                            <div class="relative z-10 mx-auto max-w-md">
+                                <span class="grid h-20 w-20 place-items-center rounded-full bg-red-800 transition-all duration-300">
+                                    {{ ux_icon('line-md:calendar', { class: 'h-9 w-9 text-white' }) }}
+                                </span>
+                                <div class="relative z-10 mx-auto max-w-md flex items-center">
+                                    <!-- Couverture du livre (à gauche) -->
+                                    <span class="grid h-16 w-16 mr-4">
+                                        <img src="path_to_book_cover.jpg" alt="Couverture du livre" class="h-full w-full rounded-lg object-cover">
+                                    </span>
+
+                                    <!-- Détails de la réservation (à droite) -->
+                                    <div class="space-y-2 text-sm leading-6 text-gray-600 transition-all duration-300 group-hover:text-white/90">
+                                        <p><strong class="font-semibold">Nom du livre</strong>: Titre du livre réservé</p>
+                                        <p><strong class="font-semibold">Statut</strong>: <span class="text-green-500">Réservé</span></p>
+                                        <p><strong class="font-semibold">Date de réservation</strong>: 15 janvier 2025</p>
+                                    </div>
+                                </div>
+
+                                <!-- Bouton Voir les détails -->
+                                <div class="pt-5 text-base font-semibold leading-7">
+                                    <a href="#" class="text-red-800 transition-all duration-300 group-hover:text-white">Voir</a>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Fin boucle pour un livre -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,55 @@
+<header class="fixed inset-x-0 top-0 z-30 mx-auto w-full max-w-screen-md border border-red-800/50 py-3 shadow backdrop-blur-lg md:top-6 md:rounded-3xl lg:max-w-screen-lg">
+	<div class="px-4">
+		<div class="flex items-center justify-between">
+			<div class="flex shrink-0">
+				{% include 'components/_partials/logo.html.twig' %}
+			</div>
+			<div class="flex shrink-1 gap-3">
+				<a class="flex items-center transition-all duration-150 hover:text-red-700" href="{{ path('app_homepage') }}">
+					{{ ux_icon('line-md:home',{ class: 'h-4 w-4 mr-2' }) }}
+					Accueil
+				</a>
+				<a class="flex items-center transition-all duration-150 hover:text-red-700" href="{{ path('app_books_list') }}">
+					{{ ux_icon('line-md:person-search',{ class: 'h-4 w-4 mr-2' }) }}
+					Catalogue
+				</a>
+				{% if is_granted('ROLE_USER') %}
+					<a class="flex items-center transition-all duration-150 hover:text-red-700" href="{{ path('app_reservation_index') }}">
+						{{ ux_icon('line-md:file-document-plus',{ class: 'h-4 w-4 mr-2' }) }}
+						Mes réservations
+					</a>
+				{% endif %}
+			</div>
+			<div class="flex items-center justify-end gap-3">
+				{% if app.user  %}
+					<div class="inline-flex items-center justify-center rounded-xl bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+						{% if app.user.roles[0] == "ROLE_ADMIN" %}
+						<a class="flex items-center" href="/admin">
+							{{ ux_icon('line-md:account',{ class: 'h-4 w-4 mr-2' }) }}
+							Profil
+						</a>
+						{% else %}
+						<a class="flex items-center" href="{{path('app_user_profil') }}">
+							{{ ux_icon('line-md:account',{ class: 'h-4 w-4 mr-2' }) }}
+							Profil
+						</a>
+						{% endif %}
+					</div>
+					<a class="hidden items-center justify-center rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 hover:bg-gray-50 sm:inline-flex" href={{path('app_logout') }}>
+						Déconnexion
+					</a>
+				{% else %}
+					<a class="hidden items-center justify-center rounded-xl bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 transition-all duration-150 hover:bg-gray-50 sm:inline-flex" href={{path('app_register') }}>
+						Inscription
+					</a>
+					<div class="inline-flex items-center justify-center rounded-xl bg-red-800 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all duration-150 hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+						<a class="flex items-center" href={{path('app_login') }}>
+							{{ ux_icon('line-md:login',{ class: 'h-4 w-4 mr-2' }) }}
+							Connexion
+						</a>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+</header>

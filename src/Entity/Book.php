@@ -31,7 +31,7 @@ class Book
     #[ORM\Column]
     private ?int $popularity = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $slug = null;
 
     #[ORM\Column]
@@ -42,6 +42,9 @@ class Book
 
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
+
+    #[ORM\Column(options: ["default" => false])]
+    private bool $isReserved = false;
 
     /**
      * @var Collection<int, Reservation>
@@ -58,8 +61,29 @@ class Book
     /**
      * @var Collection<int, Tag>
      */
-    #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'book')]
+    #[ORM\ManyToMany(targetEntity: Tag::class, inversedBy: 'books')]
+    #[ORM\JoinTable(name: 'book_tag')]
     private Collection $tags;
+
+    #[ORM\Column(length: 255)]
+    private ?string $pdfFile = null;
+
+    /**
+     * Vérifie si le livre est réservé (statut actif).
+     *
+     * @return bool
+     */
+    public function isReserved(): bool
+    {
+        // Vérifie si le livre a une réservation active (status true)
+        foreach ($this->getReservations() as $reservation) {
+            if ($reservation->getStatus()) {
+                return true; // Le livre est réservé
+            }
+        }
+        
+        return false; // Le livre n'est pas réservé
+    }
 
     public function __construct()
     {
@@ -194,6 +218,17 @@ class Book
         return $this;
     }
 
+    public function getIsReserved(): bool
+    {
+        return $this->isReserved;
+    }
+
+    public function setIsReserved(bool $isReserved): self
+    {
+        $this->isReserved = $isReserved;
+        return $this;
+    }
+
     /**
      * @return Collection<int, Reservation>
      */
@@ -277,6 +312,18 @@ class Book
         if ($this->tags->removeElement($tag)) {
             $tag->removeBook($this);
         }
+
+        return $this;
+    }
+
+    public function getPdfFile(): ?string
+    {
+        return $this->pdfFile;
+    }
+
+    public function setPdfFile(string $pdfFile): self
+    {
+        $this->pdfFile = $pdfFile;
 
         return $this;
     }

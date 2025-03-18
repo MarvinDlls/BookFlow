@@ -1,0 +1,19 @@
+{% block knp_pagination_page_item %}
+    <li class="page-item {% if page == current_page %}active{% endif %}">
+        <a class="page-link" href="{{ path(route, query|merge({(page_parameter_name): page})) }}">
+            {{ page }}
+        </a>
+    </li>
+{% endblock %}
+
+{% block knp_pagination_previous %}
+    <li class="page-item {% if not previous %}disabled{% endif %}">
+        <a class="page-link" href="{{ path(route, query|merge({(page_parameter_name): previous})) }}">Précédent</a>
+    </li>
+{% endblock %}
+
+{% block knp_pagination_next %}
+    <li class="page-item {% if not next %}disabled{% endif %}">
+        <a class="page-link" href="{{ path(route, query|merge({(page_parameter_name): next})) }}">Suivant</a>
+    </li>
+{% endblock %}
