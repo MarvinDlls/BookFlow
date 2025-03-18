@@ -133,7 +133,7 @@ final class BookController extends AbstractController
             ->findOneBy([
                 'user' => $this->getUser(),
                 'book' => $book,
-                'status' => 'active'
+                'status' => 'reserve'
             ]);
 
         // Vérifier que la réservation est active et que la date d'expiration n'est pas passée
