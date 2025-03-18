@@ -49,7 +49,7 @@ class ReservationRepository extends ServiceEntityRepository
             ->andWhere('r.status = :status') // Vérifie que la réservation est active
             ->setParameter('user', $user)
             ->setParameter('book', $book)
-            ->setParameter('status', 'active')
+            ->setParameter('status', 'reserve')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
