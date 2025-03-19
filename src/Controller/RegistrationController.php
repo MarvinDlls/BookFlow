@@ -17,12 +17,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
 
+/**
+ * Controller utilisé pour gérer l'inscription des utilisateurs.
+ */
 class RegistrationController extends AbstractController
 {
+    /**
+     * Crée une nouvelle instance de RegistrationController.
+     *
+     * @param EmailVerifier $emailVerifier
+     */
     public function __construct(private EmailVerifier $emailVerifier)
     {
     }
 
+    /**
+     * Affiche le formulaire d'inscription.
+     *
+     * @param Request $request
+     * @param UserPasswordHasherInterface $userPasswordHasher
+     * @param EntityManagerInterface $entityManager
+     */
     #[Route('/register', name: 'app_register', methods: ['GET', 'POST'])]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityManagerInterface $entityManager): Response
     {
@@ -61,6 +76,13 @@ class RegistrationController extends AbstractController
         ]);
     }
 
+    /**
+     * Vérifie l'adresse email de l'utilisateur. (Prochainement)
+     *
+     * @param Request $request
+     * @param TranslatorInterface $translator
+     * @param UserRepository $userRepository
+     */
     #[Route('/verify/email', name: 'app_verify_email')]
     public function verifyUserEmail(Request $request, TranslatorInterface $translator, UserRepository $userRepository): Response
     {
@@ -83,7 +105,6 @@ class RegistrationController extends AbstractController
             return $this->redirectToRoute('app_register');
         }
 
-        // @TODO Change the redirect on success and handle or remove the flash message in your templates
         $this->addFlash('success', 'Votre adresse email a bien été vérifiée. Merci.');
 
         return $this->redirectToRoute('app_homepage');
