@@ -28,7 +28,7 @@
 
 		{% if reservations|length > 0 %}
 			<div class="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-3 rounded mb-6 text-center shadow-lg">
-                Vous avez <span class="font-bold">{{ reservations|filter(r => r.status)|length }}</span> réservation(s) active(s) sur 5 maximum.
+                Vous avez <span class="font-bold">{{ reservations|filter(r => r.status == 'reserve' )|length }}</span> réservation(s) active(s) sur 5 maximum.
 			</div>
 
 			<div class="text-center overflow-x-auto rounded-lg shadow-2xl transform transition-transform hover:scale-[1.005]">
