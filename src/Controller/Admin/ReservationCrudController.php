@@ -15,14 +15,27 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 
+/**
+ * Contrôleur CRUD pour la gestion des réservations.
+ */
 class ReservationCrudController extends AbstractCrudController
 {
+    /**
+     * Retourne le nom complet de l'entité gérée par ce contrôleur.
+     *
+     * @return string Le nom complet de la classe de l'entité Reservation.
+     */
     public static function getEntityFqcn(): string
     {
         return Reservation::class;
     }
 
-
+    /**
+     * Configure les champs à afficher dans le CRUD pour la gestion des réservations.
+     *
+     * @param string $pageName Le nom de la page actuelle (index, new, edit, etc.).
+     * @return iterable La liste des champs à afficher dans le formulaire de CRUD.
+     */
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -47,6 +60,12 @@ class ReservationCrudController extends AbstractCrudController
         ];
     }
 
+    /**
+     * Configure les options générales du CRUD pour la gestion des réservations.
+     *
+     * @param Crud $crud L'objet de configuration du CRUD.
+     * @return Crud L'objet de configuration modifié avec les nouvelles options.
+     */
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
@@ -57,6 +76,12 @@ class ReservationCrudController extends AbstractCrudController
         ;
     }
 
+    /**
+     * Configure les actions à afficher dans le CRUD pour la gestion des réservations.
+     *
+     * @param Actions $actions L'objet de configuration des actions.
+     * @return Actions L'objet de configuration modifié avec les nouvelles actions.
+     */
     public function configureActions(Actions $actions): Actions
     {
         $prolongerAction = Action::new('prolonge', 'Prolonger')
@@ -65,7 +90,7 @@ class ReservationCrudController extends AbstractCrudController
                 return $entity->getStatus() === 'prolongation' || $entity->getStatus() === 'reserve';
             });
 
-        $reserverAction = Action::new('reserve', 'Reserver')
+        $reserverAction = Action::new('reserve', 'Accepter')
             ->linkToCrudAction('reserverReservation')
             ->displayIf(static function ($entity) {
                 return $entity->getStatus() === 'en_attente';
@@ -84,6 +109,9 @@ class ReservationCrudController extends AbstractCrudController
         ;
     }
 
+    /**
+     * Gère l'action de prolongation d'une réservation.
+     */
     public function prolongerReservation(AdminContext $context, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): Response
     {
         $reservation = $context->getEntity()->getInstance();
@@ -103,6 +131,9 @@ class ReservationCrudController extends AbstractCrudController
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction('index')->generateUrl());
     }
 
+    /**
+     * Gère l'action de réservation d'une réservation.
+     */
     public function reserverReservation(AdminContext $context, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): Response
     {
         $reservation = $context->getEntity()->getInstance();
@@ -124,6 +155,9 @@ class ReservationCrudController extends AbstractCrudController
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction('index')->generateUrl());
     }
 
+    /**
+     * Gère l'action d'annulation d'une réservation.
+     */
     public function annulerReservation(AdminContext $context, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): Response
     {
         $reservation = $context->getEntity()->getInstance();
@@ -143,6 +177,9 @@ class ReservationCrudController extends AbstractCrudController
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction('index')->generateUrl());
     }
 
+    /**
+     * Met à jour une entité Reservation en fonction de son statut.
+     */
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
         if (!$entityInstance instanceof Reservation) {

@@ -13,6 +13,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 class DashboardController extends AbstractDashboardController
 {
+    /**
+     * Affiche le tableau de bord de l'administration.
+     *
+     * @Route("/admin", name="admin")
+     * @return Response La réponse contenant la vue du tableau de bord.
+     */
     #[Route('/admin', name: 'admin')]
     public function index(): Response
     {
@@ -20,12 +26,22 @@ class DashboardController extends AbstractDashboardController
         ]);
     }
 
+    /**
+     * Configure le tableau de bord de l'administration.
+     *
+     * @return Dashboard L'objet de configuration du tableau de bord.
+     */
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
             ->setTitle('BookFlow - Admin');
     }
 
+    /**
+     * Configure les éléments du menu dans le tableau de bord.
+     *
+     * @return iterable La liste des éléments de menu à afficher dans le tableau de bord.
+     */
     public function configureMenuItems(): iterable
     {
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-home');

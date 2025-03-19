@@ -1,6 +1,7 @@
 <div class="flex relative items-center space-x-4 mb-8 p-6 justify-center bg-white rounded-lg shadow-lg">
     <form method="GET" action="{{ path('app_books_list') }}" class="flex items-center space-x-4">
         <div class="flex items-center space-x-2 flex-1">
+            <label for="tagName" class="text-gray-700 font-medium"></label>
             <select name="tag" id="tagName" class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600 transition-all w-full max-w-xs">
                 <option value="0">TOUS</option>
                 {% for tag in tags %}

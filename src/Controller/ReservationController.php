@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+/**
+ * Controller utilisé pour gérer les réservations.
+ */
 #[Route('/reservation')]
 #[IsGranted('ROLE_USER')]
 class ReservationController extends AbstractController
@@ -19,35 +22,40 @@ class ReservationController extends AbstractController
     private EntityManagerInterface $entityManager;
     private ReservationRepository $reservationRepository;
 
-    public function __construct(
-        EntityManagerInterface $entityManager,
-        ReservationRepository $reservationRepository
-    ) {
+    /**
+     * Crée une nouvelle instance de ReservationController.
+     *
+     * @param EntityManagerInterface $entityManager
+     * @param ReservationRepository $reservationRepository
+     */
+    public function __construct(EntityManagerInterface $entityManager, ReservationRepository $reservationRepository)
+    {
         $this->entityManager = $entityManager;
         $this->reservationRepository = $reservationRepository;
     }
 
+    /**
+     * Affiche la liste des réservations.
+     *
+     */
     #[Route('', name: 'app_reservation_index', methods: ['GET'])]
     public function index(): Response
     {
         $user = $this->getUser();
-
         $reservations = $this->reservationRepository->findBy(['user' => $user], ['reservation_date' => 'DESC']);
-        $now = new \DateTimeImmutable();
+
         foreach ($reservations as $reservation) {
-            $book = $reservation->getBook();
-            $reservationDate = $reservation->getReservationDate();
+            $now = new \DateTimeImmutable();
             $expirationDate = $reservation->getExpirationDate();
-
-            $interval = $reservationDate->diff($expirationDate);
-
-            if ($interval->days === 3 && $expirationDate > $now) {
-                $this->addFlash('warning', 'Votre réservation du livre "' . $book->getName() . '" va expirer dans 3 jours.');
-            }
+            $book = $reservation->getBook();
 
             if ($expirationDate <= $now) {
                 $reservation->setStatus('expire');
-                $book->setIsReserved(false); // Libère le livre
+                $book->setIsReserved(false);
+            } elseif ($expirationDate->diff($now)->days === 3) {
+                $this->addFlash('warning', 'Votre réservation du livre "' . $book->getName() . '" va expirer dans 3 jours.');
+            } elseif ($expirationDate->diff($now)->days === 1) {
+                $this->addFlash('warning', 'Votre réservation du livre "' . $book->getName() . '" va expirer dans 1 jour.');
             }
         }
 
@@ -58,72 +66,63 @@ class ReservationController extends AbstractController
         ]);
     }
 
+    /**
+     * Crée une nouvelle réservation.
+     *
+     * @param int $id
+     * @param Request $request
+     */
     #[Route('/new/{id}', name: 'app_reservation_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, $id, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, int $id): Response
     {
-        $id = (int) $id;
-
-        // Récupérer le livre par son ID
-        $book = $entityManager->getRepository(Book::class)->find($id);
-
-        if (!$book) {
-            $this->addFlash('error', 'Livre non trouvé dans la base de données.');
-            // Rediriger vers la liste des livres ou la page précédente
-            $referer = $request->headers->get('referer');
-            return $this->redirect($referer ?: $this->generateUrl('app_books_list'));
-        }
-
         $user = $this->getUser();
 
-        // Vérifications des réservations existantes et des restrictions
-        $activeReservations = $entityManager->getRepository(Reservation::class)->findActiveByUser($user);
+        $book = $this->entityManager->getRepository(Book::class)->find($id);
+        if (!$book) {
+            $this->addFlash('error', 'Livre non trouvé.');
+            return $this->redirectToRoute('app_books_list');
+        }
 
-        if (count($activeReservations) >= 5) {
-            $this->addFlash('error', 'Vous avez déjà atteint le maximum de 5 réservations.');
+        if (count($this->reservationRepository->findActiveByUser($user)) >= 5) {
+            $this->addFlash('error', 'Vous avez atteint la limite de 5 réservations.');
             return $this->redirectToRoute('app_reservation_index');
         }
 
-        $existingReservation = $entityManager->getRepository(Reservation::class)->findOneBy([
-            'user' => $user,
-            'book' => $book,
-        ]);
-
-        if ($existingReservation) {
+        if ($this->reservationRepository->findOneBy(['user' => $user, 'book' => $book])) {
             $this->addFlash('warning', 'Vous avez déjà réservé ce livre.');
             return $this->redirectToRoute('app_reservation_index');
         }
 
-        // Vérifier si le livre est restreint
         if ($book->isRestricted() && !$this->isGranted('ROLE_PREMIUM')) {
             $this->addFlash('error', 'Ce livre est réservé aux membres premium.');
             return $this->redirectToRoute('app_books_list');
         }
 
-        // Créer une nouvelle réservation
-        $reservation = new Reservation();
-        $reservation->setUser($user);
-        $reservation->setBook($book);
-        $reservation->setReservationDate(new \DateTime());
-        $reservation->setExpirationDate(new \DateTimeImmutable('+7 days'));
-        $reservation->setCreatedAt(new \DateTimeImmutable());
-        $reservation->setUpdatedAt(new \DateTimeImmutable());
+        $reservation = (new Reservation())
+            ->setUser($user)
+            ->setBook($book)
+            ->setReservationDate(new \DateTime())
+            ->setExpirationDate(new \DateTimeImmutable('+7 days'))
+            ->setCreatedAt(new \DateTimeImmutable())
+            ->setUpdatedAt(new \DateTimeImmutable());
 
-        $book->setIsReserved(true); // Le livre est désormais réservé
+        $book->setIsReserved(true);
+        $this->entityManager->persist($reservation);
+        $this->entityManager->flush();
 
-        $entityManager->persist($reservation);
-        $entityManager->flush();
-
-        $this->addFlash('success', 'Votre réservation du livre "' . $book->getName() . '" a été enregistrée avec succès.');
-
-        // Rediriger vers la liste des réservations plutôt que vers les détails du livre
+        $this->addFlash('success', 'Votre réservation a été enregistrée avec succès.');
         return $this->redirectToRoute('app_reservation_index');
     }
 
+    /**
+     * Annule une réservation.
+     *
+     * @param Reservation $reservation
+     */
     #[Route('/{id}/cancel', name: 'app_reservation_cancel', methods: ['GET', 'POST'])]
     public function cancel(Reservation $reservation): Response
     {
         $user = $this->getUser();
-
         if ($reservation->getUser() !== $user) {
             throw $this->createAccessDeniedException('Vous n\'êtes pas autorisé à annuler cette réservation.');
         }
@@ -133,18 +132,20 @@ class ReservationController extends AbstractController
             return $this->redirectToRoute('app_reservation_index');
         }
 
-        $reservation->setStatus("annule");
-
-        $book = $reservation->getBook();
-        $book->setIsReserved(false);
-
+        $reservation->setStatus('annule');
+        $reservation->getBook()->setIsReserved(false);
         $this->entityManager->flush();
 
-        $this->addFlash('success', 'Votre réservation a été annulée avec succès.');
-
+        $this->addFlash('success', 'Votre réservation a été annulée.');
         return $this->redirectToRoute('app_reservation_index');
     }
 
+    /**
+     * Prolonge une réservation.
+     *
+     * @param Reservation $reservation
+     *
+     */
     #[Route('/extend/{id}', name: 'app_reservation_extend', methods: ['GET', 'POST'])]
     public function extend(Reservation $reservation): Response
     {
@@ -157,7 +158,6 @@ class ReservationController extends AbstractController
         $this->entityManager->flush();
 
         $this->addFlash('success', 'La demande de prolongation de réservation a été envoyée avec succès.');
-
         return $this->redirectToRoute('app_reservation_index');
     }
 }

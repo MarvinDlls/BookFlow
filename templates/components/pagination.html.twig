@@ -1,0 +1,50 @@
+{% if pageCount > 1 %}
+    <div class="inline-block">
+        <div class="flex relative items-center space-x-2 p-3 justify-center bg-white rounded-full shadow-sm">
+            {% if first is defined and current != first %}
+                <a href="{{ path(route, knp_pagination_query(query, first, options)) }}"
+                   class="w-10 h-10 flex items-center justify-center bg-white text-red-600 font-bold border border-gray-200 rounded-full transition-all duration-200 transform hover:bg-red-700 hover:text-white hover:scale-110 active:scale-95"
+                   aria-label="Première page">
+                    {{ ux_icon('line-md:chevron-small-triple-left', { class: 'h-6 w-6' }) }}
+                </a>
+            {% endif %}
+
+            {% if previous is defined %}
+                <a rel="prev" href="{{ path(route, knp_pagination_query(query, previous, options)) }}"
+                   class="w-10 h-10 flex items-center justify-center bg-white text-red-600 border border-gray-200 rounded-full transition-all duration-200 transform hover:bg-red-700 hover:text-white hover:scale-110 active:scale-95"
+                   aria-label="Page précédente">
+                    {{ ux_icon('line-md:chevron-small-left', { class: 'h-6 w-6' }) }}
+                </a>
+            {% endif %}
+
+            {% for page in pagesInRange %}
+                {% if page != current %}
+                    <a href="{{ path(route, knp_pagination_query(query, page, options)) }}"
+                       class="w-10 h-10 flex items-center justify-center bg-white text-red-600 border border-gray-200 rounded-full transition-all duration-200 transform hover:bg-red-700 hover:text-white hover:scale-110 active:scale-95 animate-fadeIn">
+                        {{ page }}
+                    </a>
+                {% else %}
+                    <span class="w-10 h-10 flex items-center justify-center bg-red-600 text-white font-bold rounded-full border border-gray-200 animate-bounce">
+                        {{ page }}
+                    </span>
+                {% endif %}
+            {% endfor %}
+
+            {% if next is defined %}
+                <a rel="next" href="{{ path(route, knp_pagination_query(query, next, options)) }}"
+                   class="w-10 h-10 flex items-center justify-center bg-white text-red-600 border border-gray-200 rounded-full transition-all duration-200 transform hover:bg-red-700 hover:text-white hover:scale-110 active:scale-95"
+                   aria-label="Page suivante">
+                    {{ ux_icon('line-md:chevron-small-right', { class: 'h-6 w-6' }) }}
+                </a>
+            {% endif %}
+
+            {% if last is defined and current != last %}
+                <a href="{{ path(route, knp_pagination_query(query, last, options)) }}"
+                   class="w-10 h-10 flex items-center justify-center bg-white text-red-600 font-bold border border-gray-200 rounded-full transition-all duration-200 transform hover:bg-red-700 hover:text-white hover:scale-110 active:scale-95"
+                   aria-label="Dernière page">
+                    {{ ux_icon('line-md:chevron-small-triple-right', { class: 'h-6 w-6' }) }}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

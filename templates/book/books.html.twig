@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{% endblock %}
+{% block title %}Catalogue - Bookflow{% endblock %}
 
 {% block body %}
 	<div class="container mx-auto p-6">
@@ -10,7 +10,6 @@
 			</h1>
 			<div class="relative flex flex-col items-center mt-5 md:mt-10">
 				<h1 class="text-2xl md:text-4xl lg:text-5xl font-semibold"></h1>
-				<div class="md:w-28 w-14 md:h-[4px] h-[2px] bg-red-900 mt-2"></div>
 			</div>
 		</div>
 
@@ -25,7 +24,9 @@
 
 		<div class="justify-self-center relative rounded-full overflow-hidden bg-white shadow-xl w-72 m-10">
 			<form action="{{ path('app_books_search') }}" method="get" class="d-flex">
-				<input type="text" name="q" class="input bg-transparent outline-none border-none pl-6 pr-10 py-3 w-full font-semibold" placeholder="Rechercher un livre...">
+				<label>
+					<input type="text" name="q" class="input bg-transparent outline-none border-none pl-6 pr-10 py-3 w-full font-semibold" placeholder="Rechercher un livre...">
+				</label>
 				<div class="absolute right-2 top-[0.4em]">
 					<button type="submit" class="w-10 h-10 rounded-full bg-red-900 group shadow-xl flex items-center justify-center relative overflow-hidden">
 						{{ ux_icon('line-md:search', { class: 'text-white relative z-10 h-5 w-5' }) }}
@@ -37,6 +38,10 @@
 		</div>
 
 		{% include 'components/filtre.html.twig' %}
+
+		<div class="my-6 flex justify-center">
+			{{ knp_pagination_render(pagination) }}
+		</div>
 
 		{% if pagination|length == 0 %}
 			<div class="alert alert-info text-center">
@@ -55,9 +60,7 @@
 							<h5 class="text-white mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300">
 								{{ book.author }}
 							</h5>
-
 							<div class="w-16 h-2 bg-red-600 rounded-full mb-5 transform translate-y-20 group-hover:translate-y-0 duration-300"></div>
-
 							<p class="min-h-[60px] opacity-0 text-white text text-sm group-hover:opacity-80 transform duration-500">
 								{{ book.description|length > 90 ? book.description|slice(0, 90) ~ '...' : book.description }}
 							</p>
@@ -65,48 +68,10 @@
 					</a>
 				{% endfor %}
 			</section>
-
 			<div class="mt-6 flex justify-center">
 				{{ knp_pagination_render(pagination) }}
 			</div>
 		{% endif %}
 	</div>
-
-{# On mettra ce script dans un fichier js plus tard (la patience est une vertue) #}
-{% block javascripts %}
-<script>
-async function addBookToDatabase(book) {
-    console.log("Données envoyées :", book);
-
-    try {
-        const response = await fetch('/book/add', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                name: book.title,
-                author: book.authors,
-                description: book.description,
-                cover: book.cover,
-                popularity: book.popularity,
-                slug: book.title.toLowerCase().replace(/\s+/g, '-').substring(0, 50),
-            }),
-        });
-
-        const result = await response.json();
-        console.log("Réponse serveur :", result);
-
-        if (result.success) {
-            window.location.href = `/books/${book.id}`;
-        } else {
-            console.error("Erreur lors de l'ajout du livre :", result.message);
-        }
-    } catch (error) {
-        console.error("Erreur réseau :", error);
-    }
-}
-</script>
-{% endblock %}
 {% endblock %}
 

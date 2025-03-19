@@ -2,13 +2,11 @@
 
 namespace App\Controller;
 
-use App\Entity\Book;
 use App\Entity\Reservation;
 use App\Repository\ReservationRepository;
 use App\Service\BookService;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
-use setasign\Fpdi\Fpdi;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,17 +15,31 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Controller utilisé pour gérer les actions liées aux livres.
+ */
 final class BookController extends AbstractController
 {
     private BookService $bookService;
     private EntityManagerInterface $entityManager;
 
+    /**
+     * Injecte les dépendances nécessaires pour gérer les livres.
+     *
+     * @param BookService $bookService Le service de gestion des livres
+     * @param EntityManagerInterface $entityManager Le gestionnaire d'entités
+     */
     public function __construct(BookService $bookService, EntityManagerInterface $entityManager)
     {
         $this->bookService = $bookService;
         $this->entityManager = $entityManager;
     }
 
+    /**
+     * Affiche la page d'accueil du site.
+     *
+     * @return Response La réponse HTTP
+     */
     #[Route('/', name: 'app_homepage', methods: ['GET'])]
     public function homepage(): Response
     {
@@ -45,18 +57,23 @@ final class BookController extends AbstractController
         }
     }
 
-
+    /**
+     * Affiche la liste des livres disponibles avec pagination et filtres.
+     *
+     * @param Request $request La requête HTTP
+     * @return Response La réponse HTTP
+     */
     #[Route('/books', name: 'app_books_list', methods: ['GET'])]
     public function index(Request $request): Response
     {
         try {
             $page = $request->query->getInt('page', 1);
             $limit = $request->query->getInt('limit', 40);
-            $tagId = $request->query->getInt('tag', 0); // Récupérer l'ID du tag plutôt que le nom
+            $tagId = $request->query->getInt('tag', 0);
             $sortByPopularity = $request->query->getBoolean('popular', false);
 
             $books = $this->bookService->fetchAllBooks($page, $limit, $tagId, $sortByPopularity);
-            $tags = $this->bookService->getAllTags(); // Récupérer tous les tags (objets complets)
+            $tags = $this->bookService->getAllTags();
 
             if (empty($books)) {
                 $this->addFlash('warning', 'Aucun livre trouvé.');
@@ -78,6 +95,13 @@ final class BookController extends AbstractController
         }
     }
 
+    /**
+     * Recherche des livres par mot-clé.
+     *
+     * @param Request $request La requête HTTP
+     * @param PaginatorInterface $paginator Le service de pagination
+     * @return Response La réponse HTTP
+     */
     #[Route('/books/search', name: 'app_books_search', methods: ['GET'])]
     public function search(Request $request, PaginatorInterface $paginator): Response
     {
@@ -95,16 +119,15 @@ final class BookController extends AbstractController
             $books = $this->bookService->searchBooks($query, $limit, $startIndex);
             $pagination = $paginator->paginate($books, $page, $limit);
 
-            // Récupérer les tags pour éviter l'erreur dans le template
             $tags = $this->bookService->getAllTags();
 
             return $this->render('book/books.html.twig', [
                 'pagination' => $pagination,
                 'query' => $query,
                 'title' => 'Recherche: ' . $query,
-                'tags' => $tags, // Ajout de la variable tags
-                'selectedTagId' => 0, // Aucune sélection active par défaut
-                'sortByPopularity' => false // Pas de tri par popularité par défaut
+                'tags' => $tags,
+                'selectedTagId' => 0,
+                'sortByPopularity' => false
             ]);
         } catch (\Exception $e) {
             $this->addFlash('error', 'Une erreur est survenue lors de la recherche.');
@@ -112,12 +135,18 @@ final class BookController extends AbstractController
                 'pagination' => [],
                 'query' => $query,
                 'title' => 'Recherche : ' . $query . ' - Erreur',
-                'tags' => [] // Passer un tableau vide pour éviter l'erreur
+                'tags' => []
             ]);
         }
     }
 
 
+    /**
+     * Affiche les détails d'un livre.
+     *
+     * @param int $id L'ID du livre
+     * @return Response La réponse HTTP
+     */
     #[Route('/book/{id}', name: 'app_book_details', methods: ['GET'])]
     public function detail(int $id): Response
     {
@@ -128,50 +157,49 @@ final class BookController extends AbstractController
             return $this->redirectToRoute('app_books_list');
         }
 
-        // Vérifier si l'utilisateur a une réservation active pour ce livre
         $reservation = $this->entityManager->getRepository(Reservation::class)
             ->findOneBy([
                 'user' => $this->getUser(),
                 'book' => $book,
-                'status' => 'active'
+                'status' => 'reserve'
             ]);
 
-        // Vérifier que la réservation est active et que la date d'expiration n'est pas passée
         $canRead = false;
         if ($reservation && $reservation->getExpirationDate() > new \DateTime()) {
             $canRead = true;
         }
 
-        // Passer la variable canRead au template
         return $this->render('book/details.html.twig', [
             'book' => $book,
             'title' => $book->getName(),
             'tags' => $book->getTags(),
-            'canRead' => $canRead,  // Passer la variable à la vue
+            'canRead' => $canRead,
         ]);
     }
 
+    /**
+     * Prévisualiser les 10 premières pages d'un livre en PDF avec un filigrane.
+     *
+     * @param string $id L'ID du livre
+     * @return Response La réponse HTTP
+     */
     #[Route('/book/preview/{id}', name: 'app_book_preview', methods: ['GET'])]
     public function preview(string $id): Response
     {
-        // Récupérer le livre depuis la base de données
         $book = $this->bookService->fetchBookById($id);
 
         if (!$book) {
             throw $this->createNotFoundException('Livre non trouvé.');
         }
 
-        // Chemin vers le fichier PDF
         $pdfPath = $this->getParameter('kernel.project_dir') . '/public' . $book->getPdfFile();
 
         if (!file_exists($pdfPath)) {
             throw $this->createNotFoundException('Fichier PDF non trouvé.');
         }
 
-        // Extraire les 10 premières pages du PDF
         $previewPdfPath = $this->extractFirstPages($pdfPath, 10, $book->getName());
 
-        // Retourner le PDF en tant que réponse
         $response = new Response(file_get_contents($previewPdfPath));
         $response->headers->set('Content-Type', 'application/pdf');
         $response->headers->set('Content-Disposition', $response->headers->makeDisposition(
@@ -179,12 +207,19 @@ final class BookController extends AbstractController
             'preview.pdf'
         ));
 
-        // Supprimer le fichier temporaire après l'envoi
         unlink($previewPdfPath);
 
         return $response;
     }
 
+    /**
+     * Visionnage d'un livre.
+     *
+     * @param int $id L'ID du livre
+     * @param Security $security Le service de sécurité
+     * @param ReservationRepository $reservationRepository Le dépôt des réservations
+     * @return Response La réponse HTTP
+     */
     #[Route('/book/download/{id}', name: 'app_book_download', methods: ['GET'])]
     public function download(int $id, Security $security, ReservationRepository $reservationRepository): Response
     {
@@ -213,8 +248,10 @@ final class BookController extends AbstractController
         }
 
         $response = new StreamedResponse(function () use ($pdfPath) {
-            $pdf = new Fpdi();
+            $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
             $pageCount = $pdf->setSourceFile($pdfPath);
+
+            $pdf->SetProtection(['print', 'modify', 'copy', 'annot-forms', 'fill-forms', 'extract', 'assemble', 'print-high'], '', '', 1);
 
             for ($pageNumber = 1; $pageNumber <= $pageCount; $pageNumber++) {
                 $templateId = $pdf->importPage($pageNumber);
@@ -235,7 +272,14 @@ final class BookController extends AbstractController
         return $response;
     }
 
-
+    /**
+     * Extrait les premières pages d'un fichier PDF avec un filigrane.
+     *
+     * @param string $pdfPath Le chemin du fichier PDF
+     * @param int $pageCount Le nombre de pages à extraire
+     * @param string $bookTitle Le titre du livre
+     * @return string Le chemin du fichier PDF extrait
+     */
     private function extractFirstPages(string $pdfPath, int $pageCount, string $bookTitle): string
     {
         $pdf = new \setasign\Fpdi\Tcpdf\Fpdi();
@@ -281,7 +325,6 @@ final class BookController extends AbstractController
             $pdf->SetAlpha(1);
         }
 
-        // Sauvegarder le PDF temporaire
         $previewPdfPath = sys_get_temp_dir() . '/preview_' . uniqid() . '.pdf';
         $pdf->Output($previewPdfPath, 'F');
 

@@ -85,7 +85,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->is_terms = false;
         $this->is_gpdr = false;
         $this->is_verified = false;
-        $this->image = 'default.jpg';
+        $this->image = "default.png";
         $this->roles = ['ROLE_USER'];
         $this->notifications = new ArrayCollection();
         $this->reservations = new ArrayCollection();
@@ -140,7 +140,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         $roles = $this->roles;
-        // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
 
         return array_unique($roles);
@@ -308,7 +307,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeNotification(Notification $notification): static
     {
         if ($this->notifications->removeElement($notification)) {
-            // set the owning side to null (unless already changed)
             if ($notification->getUser() === $this) {
                 $notification->setUser(null);
             }
@@ -338,7 +336,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeReservation(Reservation $reservation): static
     {
         if ($this->reservations->removeElement($reservation)) {
-            // set the owning side to null (unless already changed)
             if ($reservation->getUser() === $this) {
                 $reservation->setUser(null);
             }
@@ -368,7 +365,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeUserHistory(UserHistory $userHistory): static
     {
         if ($this->userHistories->removeElement($userHistory)) {
-            // set the owning side to null (unless already changed)
             if ($userHistory->getUser() === $this) {
                 $userHistory->setUser(null);
             }
@@ -382,7 +378,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
+
     }
 }

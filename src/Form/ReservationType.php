@@ -32,18 +32,17 @@ class ReservationType extends AbstractType
                 'widget' => 'single_text',
                 'label' => 'Date d\'expiration'
             ])
-            // 'created_at' et 'updated_at' sont omis, car gérés automatiquement par Doctrine
             ->add('user', EntityType::class, [
                 'class' => User::class,
-                'choice_label' => 'username',  // Affiche le nom d'utilisateur au lieu de l'id
-                'data' => $options['user'], // Associe l'utilisateur actuel à la réservation
-                'disabled' => true, // Empêche la modification de l'utilisateur
+                'choice_label' => 'username',
+                'data' => $options['user'],
+                'disabled' => true,
             ])
             ->add('book', EntityType::class, [
                 'class' => Book::class,
-                'choice_label' => 'title',  // Affiche le titre du livre au lieu de l'id
-                'data' => $options['book'], // Associe le livre spécifique à la réservation
-                'disabled' => true, // Empêche la modification du livre
+                'choice_label' => 'title',
+                'data' => $options['book'],
+                'disabled' => true,
             ])
         ;
     }
@@ -52,8 +51,8 @@ class ReservationType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Reservation::class,
-            'user' => null,  // L'utilisateur connecté doit être passé en paramètre
-            'book' => null,  // Le livre réservé doit être passé en paramètre
+            'user' => null,
+            'book' => null,
         ]);
     }
 }
