@@ -14,11 +14,22 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 
 class BookCrudController extends AbstractCrudController
 {
+    /**
+     * Retourne le nom complet de l'entité gérée par ce contrôleur.
+     *
+     * @return string Le nom complet de la classe de l'entité Book.
+     */
     public static function getEntityFqcn(): string
     {
         return Book::class;
     }
 
+    /**
+     * Configure les champs à afficher dans le CRUD pour la gestion des livres.
+     *
+     * @param string $pageName Le nom de la page actuelle (index, new, edit, etc.).
+     * @return iterable La liste des champs à afficher dans le formulaire de CRUD.
+     */
     public function configureFields(string $pageName): iterable
     {
         return [
@@ -32,6 +43,12 @@ class BookCrudController extends AbstractCrudController
         ];
     }
 
+    /**
+     * Configure les options générales du CRUD pour la gestion des livres.
+     *
+     * @param Crud $crud L'objet de configuration du CRUD.
+     * @return Crud L'objet de configuration modifié avec les nouvelles options.
+     */
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
