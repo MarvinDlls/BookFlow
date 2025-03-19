@@ -6,6 +6,7 @@
 parameters:
 #    google_book_api: '%env(GOOGLE_BOOK_API)%'
     pdf_directory: '%kernel.project_dir%/public/uploads/pdf'  # Chemin vers vos fichiers PDF
+    upload_users_images: '%kernel.project_dir%/public/medias/images/users'
 
 services:
     # default configuration for services in *this* file
