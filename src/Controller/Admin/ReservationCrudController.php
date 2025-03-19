@@ -131,9 +131,6 @@ class ReservationCrudController extends AbstractCrudController
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction('index')->generateUrl());
     }
 
-    /**
-     * Gère l'action de réservation d'une réservation.
-     */
     public function reserverReservation(AdminContext $context, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): Response
     {
         $reservation = $context->getEntity()->getInstance();
@@ -155,9 +152,6 @@ class ReservationCrudController extends AbstractCrudController
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction('index')->generateUrl());
     }
 
-    /**
-     * Gère l'action d'annulation d'une réservation.
-     */
     public function annulerReservation(AdminContext $context, EntityManagerInterface $entityManager, AdminUrlGenerator $adminUrlGenerator): Response
     {
         $reservation = $context->getEntity()->getInstance();
