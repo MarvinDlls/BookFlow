@@ -11,9 +11,17 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Controller utilisé pour gérer les notifications. (Prochainement)
+ */
 #[Route('/notification')]
 final class NotificationController extends AbstractController
 {
+    /**
+     * Affiche la liste des notifications.
+     *
+     * @param NotificationRepository $notificationRepository
+     */
     #[Route(name: 'app_notification_index', methods: ['GET'])]
     public function index(NotificationRepository $notificationRepository): Response
     {
@@ -22,6 +30,12 @@ final class NotificationController extends AbstractController
         ]);
     }
 
+    /**
+     * Crée une nouvelle notification.
+     *
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     */
     #[Route('/new', name: 'app_notification_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -42,6 +56,11 @@ final class NotificationController extends AbstractController
         ]);
     }
 
+    /**
+     * Affiche une notification.
+     *
+     * @param Notification $notification
+     */
     #[Route('/{id}', name: 'app_notification_show', methods: ['GET'])]
     public function show(Notification $notification): Response
     {
@@ -50,6 +69,13 @@ final class NotificationController extends AbstractController
         ]);
     }
 
+    /**
+     * Modifie une notification.
+     *
+     * @param Request $request
+     * @param Notification $notification
+     * @param EntityManagerInterface $entityManager
+     */
     #[Route('/{id}/edit', name: 'app_notification_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Notification $notification, EntityManagerInterface $entityManager): Response
     {
@@ -68,6 +94,13 @@ final class NotificationController extends AbstractController
         ]);
     }
 
+    /**
+     * Supprime une notification.
+     *
+     * @param Request $request
+     * @param Notification $notification
+     * @param EntityManagerInterface $entityManager
+     */
     #[Route('/{id}', name: 'app_notification_delete', methods: ['POST'])]
     public function delete(Request $request, Notification $notification, EntityManagerInterface $entityManager): Response
     {
