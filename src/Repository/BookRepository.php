@@ -16,6 +16,14 @@ class BookRepository extends ServiceEntityRepository
         parent::__construct($registry, Book::class);
     }
 
+    /**
+     * Recherche les livres en fonction d'une requête.
+     *
+     * @param string $query
+     * @param int $maxResults
+     * @param int|null $startIndex
+     * @return array
+     */
     public function search(string $query, int $maxResults = 10, ?int $startIndex = 0): array
     {
         return $this->createQueryBuilder('b')
@@ -27,6 +35,12 @@ class BookRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Sauvegarde un livre.
+     *
+     * @param Book $book
+     * @param bool $flush
+     */
     public function save(Book $book, bool $flush = true): void
     {
         $this->_em->persist($book);
