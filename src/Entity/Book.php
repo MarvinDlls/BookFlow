@@ -75,14 +75,13 @@ class Book
      */
     public function isReserved(): bool
     {
-        // Vérifie si le livre a une réservation active (status true)
         foreach ($this->getReservations() as $reservation) {
             if ($reservation->getStatus()) {
-                return true; // Le livre est réservé
+                return true;
             }
         }
         
-        return false; // Le livre n'est pas réservé
+        return false;
     }
 
     public function __construct()
@@ -250,7 +249,6 @@ class Book
     public function removeReservation(Reservation $reservation): static
     {
         if ($this->reservations->removeElement($reservation)) {
-            // set the owning side to null (unless already changed)
             if ($reservation->getBook() === $this) {
                 $reservation->setBook(null);
             }
@@ -280,7 +278,6 @@ class Book
     public function removeUserHistory(UserHistory $userHistory): static
     {
         if ($this->userHistories->removeElement($userHistory)) {
-            // set the owning side to null (unless already changed)
             if ($userHistory->getBook() === $this) {
                 $userHistory->setBook(null);
             }
