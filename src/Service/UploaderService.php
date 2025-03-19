@@ -7,12 +7,13 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class UploaderService
 {
-
     public function __construct(readonly private ParameterBagInterface $parameterBag){}
 
     /**
      * Téléversement d'un fichier
+     *
      * @param UploadedFile $file
+     * @param string $actualImage
      * @return string
      */
     public function uploadFile(UploadedFile $file, string $actualImage): string
@@ -30,7 +31,9 @@ class UploaderService
 
     /**
      * Suppression d'un fichier
+     *
      * @param string $fileName
+     * @return void
      */
     public function deleteFile(string $fileName): void
     {
