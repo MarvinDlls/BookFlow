@@ -33,26 +33,47 @@ class ReservationRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('r')
             ->andWhere('r.user = :user')
-            ->andWhere('r.status IN (:statuses)') // 📌 Vérifie les bons statuts
+            ->andWhere('r.status IN (:status)')
             ->setParameter('user', $user)
-            ->setParameter('statuses', ['en_attente', 'réservé']) // 📌 Statuts actifs
+            ->setParameter('status', ['en_attente', 'réservé'])
             ->getQuery()
             ->getResult();
     }
 
-    // src/Repository/ReservationRepository.php
+    /**
+     * Trouve une réservation active d'un utilisateur pour un livre.
+     *
+     * @param User $user
+     * @param Book $book
+     * @return Reservation|null
+     */
     public function findActiveReservation(User $user, Book $book): ?Reservation
     {
         return $this->createQueryBuilder('r')
             ->andWhere('r.user = :user')
             ->andWhere('r.book = :book')
-            ->andWhere('r.status = :status') // Vérifie que la réservation est active
+            ->andWhere('r.status = :status')
             ->setParameter('user', $user)
             ->setParameter('book', $book)
             ->setParameter('status', 'reserve')
             ->setMaxResults(1)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * Trouve les dernières réservations.
+     *
+     * @param int $limit Nombre maximum de réservations à retourner (par défaut 5).
+     * @return Reservation[]
+     */
+    public function findLatestReservations(int $limit = 5): array
+    {
+        return $this->createQueryBuilder('r')
+            ->orderBy('r.reservation_date', 'DESC')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
     }
 
 }
