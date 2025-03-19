@@ -1,8 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}
-    {{ book.name }}
-{% endblock %}
+{% block title %}{{ book.name }} - BookFlow{% endblock %}
 
 {% block body %}
     <div class="container mx-auto px-4 py-8 max-w-6xl">
@@ -52,16 +50,16 @@
                                         <div><span class="text-gray-600 text-sm">Niveau de popularité:</span><br><span class="font-medium">{{ book.popularity }}</span></div>
                                     </div>
                                 </div>
-                                {#                                {% if book.tags|length > 0 %}#}
-                                {#                                    <div class="mt-6">#}
-                                {#                                        <h3 class="text-sm font-medium text-gray-500 mb-2">Catégories</h3>#}
-                                {#                                        <div class="flex flex-wrap">#}
-                                {#                                            {% for tag in book.tags %}#}
-                                {#                                                <span class="bg-red-50 text-red-800 rounded-full px-3 py-1 text-sm mr-2 mb-2">{{ tag.name }}</span>#}
-                                {#                                            {% endfor %}#}
-                                {#                                        </div>#}
-                                {#                                    </div>#}
-                                {#                                {% endif %}#}
+                                {% if book.tags|length > 0 %}
+                                    <div class="mt-6">
+                                        <h3 class="text-sm font-medium text-gray-500 mb-2">Catégories</h3>
+                                        <div class="flex flex-wrap">
+                                            {% for tag in book.tags %}
+                                                <span class="bg-red-50 text-red-800 rounded-full px-3 py-1 text-sm mr-2 mb-2">{{ tag.name }}</span>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </div>
                             <div class="tab-pane fade mt-6" id="description" role="tabpanel" aria-labelledby="description-tab">
                                 {% if book.description %}
@@ -96,34 +94,6 @@
                         {% endif %}
                     </div>
                 </div>
-            </div>
-        </div>
-        <div class="mt-12">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Livres similaires</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {#                {% for similarBook in similarBooks %}#}
-                {#                    <div class="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:scale-105">#}
-                {#                        <div class="h-48 bg-gray-100 flex items-center justify-center">#}
-                {#                            <img src="{{ similarBook.cover }}" alt="{{ similarBook.name }}" class="w-full object-contain rounded-lg shadow-md transform transition-transform duration-300 hover:scale-105">#}
-                {#                        </div>#}
-                {#                        <div class="p-4">#}
-                {#                            <h3 class="font-medium text-gray-800 mb-2 line-clamp-2">{{ similarBook.name }}</h3>#}
-                {#                            <p class="text-sm text-gray-500 mb-2">{{ similarBook.author }}</p>#}
-                {#                            <div class="flex items-center">#}
-                {#                                <div class="flex text-yellow-400">#}
-                {#                                    {% for j in 1..5 %}#}
-                {#                                        {% if j <= similarBook.popularity // 20 %}#}
-                {#                                            {{ ux_icon('famicons:star', { class: 'h-4 w-4' }) }}#}
-                {#                                        {% else %}#}
-                {#                                            {{ ux_icon('famicons:star-outline', { class: 'h-4 w-4 text-gray-400' }) }}#}
-                {#                                        {% endif %}#}
-                {#                                    {% endfor %}#}
-                {#                                </div>#}
-                {#                                <span class="text-xs text-gray-500 ml-1">({{ similarBook.popularity }})</span>#}
-                {#                            </div>#}
-                {#                        </div>#}
-                {#                    </div>#}
-                {#                {% endfor %}#}
             </div>
         </div>
         <div class="mt-12">
@@ -226,49 +196,4 @@
             </div>
         </div>
     </div>
-    {% block javascripts %}
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                const tabs = document.querySelectorAll('#bookTabs button');
-                const tabPanes = document.querySelectorAll('.tab-pane');
-
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', function() {
-                        tabs.forEach(t => {
-                            t.classList.remove('text-red-600', 'border-red-600', 'active');
-                            t.classList.add('text-gray-500', 'border-transparent');
-                            t.setAttribute('aria-selected', 'false');
-                        });
-
-                        tabPanes.forEach(pane => {
-                            pane.classList.remove('show', 'active');
-                        });
-
-                        this.classList.remove('text-gray-500', 'border-transparent');
-                        this.classList.add('text-red-600', 'border-red-600', 'active');
-                        this.setAttribute('aria-selected', 'true');
-
-                        const targetId = this.getAttribute('data-bs-target').substring(1);
-                        const targetPane = document.getElementById(targetId);
-                        targetPane.classList.add('show', 'active');
-                    });
-                });
-
-                const ratingStars = document.querySelectorAll('form button svg');
-                ratingStars.forEach((star, index) => {
-                    star.parentElement.addEventListener('click', function() {
-                        ratingStars.forEach((s, i) => {
-                            if (i <= index) {
-                                s.parentElement.classList.remove('text-gray-300');
-                                s.parentElement.classList.add('text-yellow-400');
-                            } else {
-                                s.parentElement.classList.remove('text-yellow-400');
-                                s.parentElement.classList.add('text-gray-300');
-                            }
-                        });
-                    });
-                });
-            });
-        </script>
-    {% endblock %}
 {% endblock %}
