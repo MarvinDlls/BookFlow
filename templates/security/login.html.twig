@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Connexion - BookFlow{% endblock %}
 
 {% block body %}
     <form class="h-screen grid justify-center items-center" method="post">
@@ -28,8 +28,10 @@
                 </div>
             </div>
 
-            <div class="grid gap-6 w-full">
-                <input class="p-3 shadow-2xl glass w-full placeholder:text-black outline-none focus:border-solid border-red-800 focus:border-[1px]" type="email" value="{{ last_username }}" name="_username" id="username" autocomplete="email" required autofocus placeholder="Email">
+            <div class="grid gap-1 w-full">
+                <label for="username" class="text-gray-500">Adresse email</label>
+                <input class="p-3 shadow-2xl glass w-full text-black outline-none focus:border-solid border-red-800 focus:border-[1px]" type="email" value="{{ last_username }}" name="_username" id="username" autocomplete="email" required autofocus placeholder="Email">
+                <label for="password" class="text-gray-500 mt-2">Mot de passe</label>
                 <input class="p-3 shadow-2xl glass w-full text-black outline-none focus:border-solid focus:border-[1px] border-red-800" type="password" name="_password" id="password" autocomplete="current-password" required placeholder="Mot de passe">
             </div>
 
