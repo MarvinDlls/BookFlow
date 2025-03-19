@@ -1,11 +1,31 @@
-<h1>Hi! Please confirm your email!</h1>
+<div class="max-w-2xl mx-auto my-10 bg-white p-8 rounded-lg shadow-lg">
+    <div class="text-center border-b border-gray-200 pb-6">
+        <h1 class="text-2xl font-bold text-blue-600">Confirmez votre adresse email</h1>
+    </div>
 
-<p>
-    Please confirm your email address by clicking the following link: <br><br>
-    <a href="{{ signedUrl|raw }}">Confirm my Email</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
-</p>
+    <div class="mt-6 text-gray-700">
+        <p class="mb-4">Bonjour,</p>
+        <p class="mb-4">
+            Merci de confirmer votre adresse email en cliquant sur le lien ci-dessous :
+        </p>
 
-<p>
-    Cheers!
-</p>
+        <div class="text-center my-6">
+            <a href="{{ signedUrl|raw }}" class="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300">
+                Confirmer mon email
+            </a>
+        </div>
+
+        <p class="mb-4 text-sm text-gray-500">
+            Ce lien expirera dans {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
+        </p>
+
+        <p class="mb-4">Si vous n'avez pas créé de compte sur notre plateforme, vous pouvez ignorer cet email.</p>
+        <p class="mb-4">Cordialement,</p>
+        <p class="font-semibold">L'équipe de BookFlow</p>
+    </div>
+
+    <div class="mt-8 pt-6 border-t border-gray-200 text-sm text-gray-500 text-center">
+        <p>Si vous rencontrez des problèmes, contactez-nous à <a href="" class="text-blue-600 hover:underline">contact@bookflow.com</a>.</p>
+        <p class="mt-2">&copy; {{ "now"|date("Y") }} BookFlow. Tous droits réservés.</p>
+    </div>
+</div>
